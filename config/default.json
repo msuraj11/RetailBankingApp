@@ -1,0 +1,3 @@
+{
+    "mongoURI" : "mongodb+srv://msuraj11:msuraj11@retailbankingapp-tyine.mongodb.net/test?retryWrites=true&w=majority"
+}
