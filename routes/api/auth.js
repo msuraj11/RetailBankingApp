@@ -1,11 +1,15 @@
 const express = require('express');
 const auth =  require('../../middleware/auth');
 const User = require('../../models/User');
+const {check, validationResult} = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jsonWebToken = require('jsonwebtoken');
+const config = require('config');
 
 const router = express.Router();
 
 // @route   GET api/auth
-// @desc    Teste route
+// @desc    Validate with middleware
 // @access  Public
 router.get('/', auth, async (req, res) => {
     try {
@@ -16,5 +20,54 @@ router.get('/', auth, async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+// @route   POST api/auth
+// @desc    Authenticate user
+// @access  Public
+router.post('/', [
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Password is required').exists()
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const {email, password} = req.body;
+
+    try {
+        // Check if user exists
+        let user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({errors: [ {msg: 'Invalid Credentials'} ]});
+        }
+
+        // Check if password is correct
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({errors: [ {msg: 'Invalid Credentials'} ]});
+        }
+
+        //JSONWebToken Implimentation
+        const payload = {
+            user: {
+                id: user.id
+            }
+        }
+        jsonWebToken.sign(
+            payload,
+            config.get('jwtSecret'),
+            { expiresIn: 360000 }, // basically prefered 3600 in prod mode
+            (err, token) => {
+                if (err) throw err;
+                res.json({ token });
+            }
+        );
+    } catch(err) {
+        console.log(err.message);
+        res.status(500).send('Server error');
+    }
+}
+);
 
 module.exports = router;
