@@ -51,6 +51,7 @@ router.post('/', [
             //Save to Data-base
             await user.save();
 
+            //JSONWebToken Implimentation
             const payload = {
                 user: {
                     id: user.id
