@@ -26,7 +26,7 @@ router.post('/', [
             // Check if user already exists
             let user = await User.findOne({ email });
             if (user) {
-                return res.status(400).json({errors: [ {msg: 'User already exist, Please try logging in.'} ]})
+                return res.status(400).json({errors: [ {msg: 'User already exist, Please try logging in.'} ]});
             }
 
             // Avatar
@@ -42,7 +42,7 @@ router.post('/', [
                 email,
                 avatar,
                 password
-            })
+            });
 
             // Password Encyption
             const salt = await bcrypt.genSalt(10);
