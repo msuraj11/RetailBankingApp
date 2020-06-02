@@ -77,6 +77,9 @@ const ProfileScema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    txDate: {
+        type: Date
     }
 });
 

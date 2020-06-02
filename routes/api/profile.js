@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
@@ -51,13 +52,15 @@ router.post('/', [auth, [
                 motherName,
                 spouse
             },
-            user: req.user.id
+            user: req.user.id,
+            txDate: moment()
         };
 
         try { 
-
+                // Check if Profile is already built for user, then only we can update
+                // the current address and add some amount to thee account
                 let profiler = await Profile.findOne({ user: req.user.id });
-                console.log(profiler);
+
                 if (profiler) {
                     if (currentAddress && profiler.currentAddress !== currentAddress) {
                         profiler = await Profile.findOneAndUpdate(
@@ -70,8 +73,13 @@ router.post('/', [auth, [
                         profiler = await Profile.findOneAndUpdate(
                             { user: req.user.id },
                             { addAmount: profiler.addAmount + addAmount },
-                            { new: true }
-                        );
+                            { new: true });
+
+                        profiler = await Profile.findOneAndUpdate(
+                            { user: req.user.id },
+                            { txDate: moment() },
+                            { new: true });
+                        
                     } else if (addAmount <= 0) {
                         return res.status(400).json({errors: [ {msg: 'Add a valid positive amount'} ]});
                     }
@@ -79,34 +87,41 @@ router.post('/', [auth, [
                     return res.json(profiler);
                 }
 
+                // If JavaScript thread comes here it means profile is'nt built for user
+                // Here we are checking for mandatory fields error
                 const errors = validationResult(req);
                 if (!errors.isEmpty()) {
                     return res.status(400).json({errors: errors.array()});
                 }
 
+                // Check for unique PAN card number in the whole database
                 profiler = await Profile.findOne({ PANCardNo });
                 if (profiler) {
                     return res.status(400).json({errors: [
                         {msg: 'PAN card number already exist by some user. Please enter a valid one'} ]});
                 }
 
+                // Check for unique Aadhar number in the whole database
                 profiler = await Profile.findOne({ AadharNo });
                 if (profiler) {
                     return res.status(400).json({errors: [
                         {msg: 'Aadhar card number already exist by some user. Please enter a valid one'} ]});
                 }
 
+                // Check for unique contact email Id in the whole database
                 profiler = await Profile.findOne({ contactEmailID });
                 if (profiler) {
                     return res.status(400).json({errors: [ {msg: 'Please try with new E-mail ID'} ]});
                 }
 
+                // Check for unique Mobile number in the whole database
                 profiler = await Profile.findOne({ mobileNumber });
                 if (profiler) {
                     return res.status(400).json({errors: [
-                        {msg: 'This number is already registered. Please try with new Number'} ]});
+                        {msg: 'This Mobile number is already registered. Please try with new Number'} ]});
                 }
 
+                // If everything is alright then creating an instance of Profile as profiler and saving in database
                 profiler = new Profile(profileFields);
                 await profiler.save();
                 
