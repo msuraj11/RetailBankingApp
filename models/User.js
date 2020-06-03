@@ -10,9 +10,19 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    mobileNumber: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     password: {
         type: String,
         required: true
+    },
+    customerId: {
+        type: Number,
+        default: Number(Math.floor(100000000 + Math.random() * 900000000)),
+        unique: true
     },
     avatar: {
         type: String

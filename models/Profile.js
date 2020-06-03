@@ -30,12 +30,8 @@ const ProfileScema = new mongoose.Schema({
     permanentAddress: {
         type: String
     },
-    contactEmailID: {
-        type: String,
-        required: true
-    },
-    mobileNumber: {
-        type: String,
+    alternateContactNumber: {
+        type: Number,
         required: true,
         unique: true
     },
@@ -69,6 +65,9 @@ const ProfileScema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    accountBalance: {
+        type: Number
+    },
     accountNumber: {
         type: Number,
         default: Number('56010'+Math.floor(10000 + Math.random() * 90000)),
@@ -78,9 +77,17 @@ const ProfileScema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    txDate: {
-        type: Date
-    }
+    txDetails: [
+        {
+            txDates: {
+                type: Date
+            },
+            txId: {
+                type: String,
+                unique: true
+            }
+        }
+    ]
 });
 
 module.exports = Profile = mongoose.model('profile', ProfileScema);

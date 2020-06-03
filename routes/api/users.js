@@ -13,20 +13,32 @@ const config = require('config');
 router.post('/', [
         check('name', 'Name is required').not().isEmpty(),
         check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Please enter the password with 6 or more characters').isLength({min: 6})
+        check('mobileNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
+        check('password', 'Please enter the password with 6 or more characters').isLength({min: 6}),
+        check('confirmPassword', 'Please enter the confirm-password same as of password').isLength({min: 6}),
     ], async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
         }
 
-        const {name, email, password} = req.body;
+        const {name, email, mobileNumber, password, confirmPassword} = req.body;
+        // Checking confirmPassword with password
+        if (confirmPassword !== password) {
+            return res.status(400).json({errors: [ {msg: 'Passwords didnot match'} ]});
+        }
 
         try {
             // Check if user already exists
-            let user = await User.findOne({ email });
+            let user = await User.findOne({ mobileNumber });
             if (user) {
-                return res.status(400).json({errors: [ {msg: 'User already exist, Please try logging in.'} ]});
+                return res.status(400).json({errors: [ {msg: 'User already exist, Please try with new Number.'} ]});
+            }
+
+            // Checking confirmPassword with password
+            user = await User.findOne({ email });
+            if (user) {
+                return res.status(400).json({errors: [ {msg: 'E-mail already registered, Please try with new one'} ]});
             }
 
             // Avatar
@@ -40,6 +52,7 @@ router.post('/', [
             user = new User({
                 name,
                 email,
+                mobileNumber,
                 avatar,
                 password
             });
