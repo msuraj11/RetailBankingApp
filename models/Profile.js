@@ -61,10 +61,6 @@ const ProfileScema = new mongoose.Schema({
         type: String,
         required: true
     },
-    addAmount: {
-        type: Number,
-        required: true
-    },
     accountBalance: {
         type: Number
     },
@@ -79,6 +75,13 @@ const ProfileScema = new mongoose.Schema({
     },
     txDetails: [
         {
+            txType: {
+                type: String
+            },
+            txAmount: {
+                type: Number,
+                required: true
+            },
             txDates: {
                 type: Date
             },

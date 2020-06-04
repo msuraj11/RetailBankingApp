@@ -38,16 +38,16 @@ router.post('/', [auth, [
     check('sourceOfIncome', 'Please fill this field').not().isEmpty(),
     check('occupation', 'Please fill this field').not().isEmpty(),
     check('accountType', 'Please choose an account type').notEmpty(),
-    check('addAmount', 'Please add minimum of 1000 rupees').notEmpty().isNumeric().isLength({min: 4})
+    check('txAmount', 'Please add minimum of 1000 rupees').notEmpty().isNumeric().isLength({min: 4})
 ]], async (req, res) => {
 
         const {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
-            alternateContactNumber, sourceOfIncome, occupation, company, accountType, addAmount, fatherName,
+            alternateContactNumber, sourceOfIncome, occupation, company, accountType, txAmount, fatherName,
             motherName, spouse} = req.body;
 
         const profileFields = {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
-            alternateContactNumber, sourceOfIncome, occupation, company, accountType, addAmount,
-            accountBalance: 0+addAmount,
+            alternateContactNumber, sourceOfIncome, occupation, company, accountType,
+            accountBalance: 0+txAmount,
             familyDetails: {
                 fatherName,
                 motherName,
@@ -70,25 +70,22 @@ router.post('/', [auth, [
                             { new: true }
                         );
                     }
-                    if (addAmount && addAmount > 0) {
+                    if (txAmount && txAmount > 0) {
                         profiler = await Profile.findOneAndUpdate(
                             { user: req.user.id },
-                            { accountBalance: profiler.accountBalance + addAmount },
+                            { accountBalance: profiler.accountBalance + txAmount },
                             { new: true });
 
-                        profiler = await Profile.findOneAndUpdate(
-                            { user: req.user.id },
-                            { addAmount },
-                            { new: true });
-                        
                         profiler.txDetails.push({
+                            txType: 'Credited',
+                            txAmount,
                             txDates: moment(),
                             txId: crypto.randomBytes(20).toString('hex')
                         });
 
                         await profiler.save();
                         
-                    } else if (addAmount <= 0) {
+                    } else if (txAmount <= 0) {
                         return res.status(400).json({errors: [ {msg: 'Add a valid positive amount'} ]});
                     }
 
@@ -118,6 +115,8 @@ router.post('/', [auth, [
 
                 // If everything is alright then creating an instance of Profile as profiler and saving in database
                 profileFields.txDetails.push({
+                    txType: 'Credited',
+                    txAmount,
                     txDates: moment(),
                     txId: crypto.randomBytes(20).toString('hex')
                 });
