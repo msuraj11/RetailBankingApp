@@ -38,7 +38,7 @@ router.post('/', [auth, [
     check('sourceOfIncome', 'Please fill this field').not().isEmpty(),
     check('occupation', 'Please fill this field').not().isEmpty(),
     check('accountType', 'Please choose an account type').notEmpty(),
-    check('txAmount', 'Please add minimum of 1000 rupees').notEmpty().isNumeric().isLength({min: 4})
+    check('txAmount', 'Please add some amount to open account').notEmpty().isNumeric()
 ]], async (req, res) => {
 
         const {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
@@ -73,13 +73,14 @@ router.post('/', [auth, [
                     if (txAmount && txAmount > 0) {
                         profiler = await Profile.findOneAndUpdate(
                             { user: req.user.id },
-                            { accountBalance: profiler.accountBalance + txAmount },
+                            { accountBalance: (profiler.accountBalance + txAmount).toFixed(2) },
                             { new: true });
 
-                        profiler.txDetails.push({
+                        profiler.txDetails.unshift({
                             txType: 'Credited',
                             txAmount,
                             txDates: moment(),
+                            currentBalance: profiler.accountBalance,
                             txId: crypto.randomBytes(20).toString('hex')
                         });
 
@@ -118,6 +119,7 @@ router.post('/', [auth, [
                     txType: 'Credited',
                     txAmount,
                     txDates: moment(),
+                    currentBalance: profileFields.accountBalance,
                     txId: crypto.randomBytes(20).toString('hex')
                 });
                 profiler = new Profile(profileFields);

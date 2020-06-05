@@ -85,6 +85,9 @@ const ProfileScema = new mongoose.Schema({
             txDates: {
                 type: Date
             },
+            currentBalance: {
+                type: Number
+            },
             txId: {
                 type: String,
                 unique: true
