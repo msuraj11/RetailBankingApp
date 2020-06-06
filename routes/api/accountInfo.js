@@ -23,18 +23,30 @@ router.get('/', auth, async (req, res) => {
             IFSC_Code: IFSC, accBranch: branch} = profile;
         const {accountBalance: totalAccBalance} = transactions;
 
-        const accountInformation = new AccountInfo({
-            user: req.user.id,
-            totalAccBalance: transactions ? totalAccBalance : 0,
-            accNo,
-            accType,
-            accHolder: `${firstName} ${lastName}`,
-            IFSC,
-            branch
-        });
-
-        await accountInformation.save();
-        res.json(accountInformation);
+        let isAccountInfoUpdated = await AccountInfo.findOne({ user: req.user.id });
+        if (!isAccountInfoUpdated) {
+            const accountInformation = new AccountInfo({
+                user: req.user.id,
+                totalAccBalance: transactions ? totalAccBalance : 0,
+                accNo,
+                accType,
+                accHolder: `${firstName} ${lastName}`,
+                IFSC,
+                branch
+            });
+    
+            await accountInformation.save();
+            res.json(accountInformation);
+        }
+        
+        isAccountInfoUpdated = await AccountInfo.findOneAndUpdate(
+                {user: req.user.id},
+                {totalAccBalance},
+                {new: true}
+            );
+        
+        await isAccountInfoUpdated.save();
+        res.json(isAccountInfoUpdated);
 
     } catch (err) {
         console.log(err.message);
