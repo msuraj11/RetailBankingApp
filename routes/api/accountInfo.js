@@ -14,6 +14,7 @@ router.get('/', auth, async (req, res) => {
         const profile =  await Profile.findOne({ user: req.user.id });
         const transactions = await Transactions.findOne({ user: req.user.id });
 
+        // Here profile is mandatory to show User's data
         if (!profile) {
             return res.status(400)
             .json({ msg: 'There is no profile for this user. Please do KYC to get Account Information' });
@@ -23,7 +24,10 @@ router.get('/', auth, async (req, res) => {
             IFSC_Code: IFSC, accBranch: branch} = profile;
         const {accountBalance: totalAccBalance} = transactions;
 
+        // Already fetched this API anytime before? then just update the accountBalance
+        // If it's not fetched then creating new instance in data-base
         let isAccountInfoUpdated = await AccountInfo.findOne({ user: req.user.id });
+        // First fetch
         if (!isAccountInfoUpdated) {
             const accountInformation = new AccountInfo({
                 user: req.user.id,
@@ -39,6 +43,7 @@ router.get('/', auth, async (req, res) => {
             res.json(accountInformation);
         }
         
+        // Already fetched/ updated
         isAccountInfoUpdated = await AccountInfo.findOneAndUpdate(
                 {user: req.user.id},
                 {totalAccBalance},

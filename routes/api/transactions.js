@@ -26,12 +26,15 @@ router.post('/', [auth, [
         }
         
         try {
+            // Here profile is used to fetch account number hence it is mandatory
             const profile = await Profile.findOne({ user: req.user.id });
             if (!profile) {
                 return res.status(400).json({ msg: 'There is no profile for this user. Please do KYC and perform transactions' });
             }
 
             const isPrevTransaction = await Transactions.findOne({ user: req.user.id });
+            // First transaction initializing accountBalance: 0. so that it is not null
+            // Also keeping accNumber initialised at once and updating only required ones
             if (!isPrevTransaction) {
                 const setTransaction = new Transactions({
                     accNumber: profile.accountNumber,
@@ -42,12 +45,15 @@ router.post('/', [auth, [
                 await setTransaction.save();
             }
 
+            // Again fetching updated tranactions after updating above
+            // This is mainly for first transaction purpose to fetch again
             const getTransactionDetails = await Transactions.findOne({ user: req.user.id });
 
             if (txType === 'Debited') {
 
                 if ((getTransactionDetails.accountBalance === 0) || (txAmount > getTransactionDetails.accountBalance) ) {
-                    return res.status(400).json({ msg: 'There is no sufficient balance in your account to complete this transaction.' });
+                    return res.status(400)
+                    .json({ msg: 'There is no sufficient balance in your account to complete this transaction.' });
                 }
 
                 if (txAmount && txAmount > 0) {
