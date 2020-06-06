@@ -5,15 +5,23 @@ const AccountInfoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },
-    profile: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'profile'
+    totalAccBalance: {
+        type: Number
     },
-    toDate: {
-        type: Date
+    accNo: {
+        type: Number
     },
-    fromDate: {
-        type: Date
+    accType: {
+        type: String
+    },
+    accHolder: {
+        type: String
+    },
+    IFSC: {
+        type: String
+    },
+    branch: {
+        type: String
     }
 });
 

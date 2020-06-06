@@ -12,7 +12,8 @@ const {check, validationResult} = require('express-validator');
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOne({user: req.user.id}).populate('user', ['name', 'avatar', 'customerId', 'mobileNumber']);
+        const profile = await Profile.findOne({user: req.user.id})
+        .populate('user', ['name', 'avatar', 'customerId', 'mobileNumber']);
 
         if (!profile) {
             return res.status(400).json({ msg: 'There is no profile for this user' });
@@ -31,27 +32,32 @@ router.get('/me', auth, async (req, res) => {
 router.post('/', [auth, [
     check('firstName', 'Please provide First-name').not().isEmpty(),
     check('lastName', 'Please provide Last-name').not().isEmpty(),
+    check('dateOfBirth', 'Please provide DOB in MM/DD/YYYY format').not().isEmpty(),
     check('PANCardNo', 'Please provide a valid PAN Card Number').isLength({min: 10, max:10}),
     check('AadharNo', 'Please provide a valid Aadhar Card Number').isNumeric().isLength({min: 12, max:12}),
     check('currentAddress', 'Please provide your current location address').not().isEmpty(),
     check('alternateContactNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
     check('sourceOfIncome', 'Please fill this field').not().isEmpty(),
     check('occupation', 'Please fill this field').not().isEmpty(),
-    check('accountType', 'Please choose an account type').notEmpty()
+    check('accountType', 'Please choose an account type.').notEmpty(),
+    check('accBranch', 'Please provide valid branch name.').notEmpty(),
+    check('IFSC_Code', 'Please provide valid IFSC code for branch').notEmpty().isLength({min: 11, max:11})
 ]], async (req, res) => {
 
-        const {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
+        const {firstName, lastName, dateOfBirth, PANCardNo, AadharNo, currentAddress, permanentAddress,
             alternateContactNumber, sourceOfIncome, occupation, company, fatherName, accountType,
-            motherName, spouse} = req.body;
+            motherName, spouse, accBranch, IFSC_Code} = req.body;
 
-        const profileFields = {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
-            alternateContactNumber, sourceOfIncome, occupation, company, accountType,
+        const profileFields = {firstName, lastName, dateOfBirth, PANCardNo, AadharNo, currentAddress,
+            permanentAddress, alternateContactNumber, sourceOfIncome, occupation, company, accountType,
             familyDetails: {
                 fatherName,
                 motherName,
                 spouse
             },
-            user: req.user.id
+            user: req.user.id,
+            accBranch,
+            IFSC_Code
         };
 
         try { 
@@ -66,14 +72,13 @@ router.post('/', [auth, [
                             { currentAddress },
                             { new: true }
                         );
+                        profiler.date.push(moment());
+                        await profiler.save();
+                        return res.json(profiler);
+                    } else {
+                        // Trying to update without any changes
+                        return res.status(400).json({errors: [{msg: 'Profile Already up to date'}]});
                     }
-                    profiler = await Profile.findOneAndUpdate(
-                        { user: req.user.id },
-                        { date: moment() },
-                        { new: true }
-                    );
-
-                    return res.json(profiler);
                 }
 
                 // If JavaScript thread comes here it means profile is'nt built for user
@@ -102,6 +107,17 @@ router.post('/', [auth, [
                 if (user.mobileNumber === profileFields.alternateContactNumber) {
                     return res.status(400).json({errors: [
                         {msg: 'Mobile number and alternate contact number cannot be same'} ]});
+                }
+
+                // Check date format
+                const date_regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
+                if (!date_regex.test(dateOfBirth)) {
+                    return res.status(400).json({errors: [{msg: 'Please provide DOB in MM/DD/YYYY format'}]});
+                }
+
+                // Check for valid IFSC
+                if (!('BOS'.includes(IFSC_Code.substring(0, 3)))) {
+                    return res.status(400).json({errors: [{msg: 'This IFSC doesn\'t belong to our bank'}]});
                 }
 
                 // If everything is alright then creating an instance of Profile as profiler and saving in database

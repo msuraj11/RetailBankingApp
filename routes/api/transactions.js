@@ -11,15 +11,20 @@ const {check, validationResult} = require('express-validator');
 // @access  Private
 router.post('/', [auth, [
     check('txAmount', 'Please add some amount to open account').notEmpty().isNumeric(),
-    check('txType', 'Please select Credited or Debited').notEmpty()
+    check('txType', 'Please select Credited or Debited').notEmpty(),
+    check('txBy', 'Please provide mode of transaction').notEmpty()
 ]], async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
         }
 
-        const {txAmount, txType} = req.body;
+        const {txAmount, txType, txBy} = req.body;
 
+        if (txAmount <= 0) {
+            return res.status(400).json({errors: [ {msg: 'Add a valid positive amount'} ]});
+        }
+        
         try {
             const profile = await Profile.findOne({ user: req.user.id });
             if (!profile) {
@@ -55,6 +60,7 @@ router.post('/', [auth, [
                         txType,
                         txAmount: -txAmount,
                         txDates: moment(),
+                        txBy,
                         currentBalance: txs.accountBalance
                     });
     
@@ -73,6 +79,7 @@ router.post('/', [auth, [
                     txType,
                     txAmount,
                     txDates: moment(),
+                    txBy,
                     currentBalance: txs.accountBalance
                 });
 

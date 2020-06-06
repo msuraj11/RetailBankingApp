@@ -24,6 +24,10 @@ const TransactionsSchema = new mongoose.Schema({
             txDates: {
                 type: Date
             },
+            txBy: {
+                type: String,
+                required: true
+            },
             currentBalance: {
                 type: Number
             }
