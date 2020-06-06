@@ -12,7 +12,7 @@ const {check, validationResult} = require('express-validator');
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOne({user: req.user.id}).populate('user', ['name', 'avatar', 'customerId']);
+        const profile = await Profile.findOne({user: req.user.id}).populate('user', ['name', 'avatar', 'customerId', 'mobileNumber']);
 
         if (!profile) {
             return res.status(400).json({ msg: 'There is no profile for this user' });
@@ -37,29 +37,26 @@ router.post('/', [auth, [
     check('alternateContactNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
     check('sourceOfIncome', 'Please fill this field').not().isEmpty(),
     check('occupation', 'Please fill this field').not().isEmpty(),
-    check('accountType', 'Please choose an account type').notEmpty(),
-    check('txAmount', 'Please add some amount to open account').notEmpty().isNumeric()
+    check('accountType', 'Please choose an account type').notEmpty()
 ]], async (req, res) => {
 
         const {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
-            alternateContactNumber, sourceOfIncome, occupation, company, accountType, txAmount, fatherName,
+            alternateContactNumber, sourceOfIncome, occupation, company, fatherName, accountType,
             motherName, spouse} = req.body;
 
         const profileFields = {firstName, lastName, PANCardNo, AadharNo, currentAddress, permanentAddress,
             alternateContactNumber, sourceOfIncome, occupation, company, accountType,
-            accountBalance: 0+txAmount,
             familyDetails: {
                 fatherName,
                 motherName,
                 spouse
             },
-            user: req.user.id,
-            txDetails: []
+            user: req.user.id
         };
 
         try { 
                 // Check if Profile is already built for user, then only we can update
-                // the current address and add some amount to thee account
+                // the current address and add some amount to the account
                 let profiler = await Profile.findOne({ user: req.user.id });
 
                 if (profiler) {
@@ -70,25 +67,11 @@ router.post('/', [auth, [
                             { new: true }
                         );
                     }
-                    if (txAmount && txAmount > 0) {
-                        profiler = await Profile.findOneAndUpdate(
-                            { user: req.user.id },
-                            { accountBalance: (profiler.accountBalance + txAmount).toFixed(2) },
-                            { new: true });
-
-                        profiler.txDetails.unshift({
-                            txType: 'Credited',
-                            txAmount,
-                            txDates: moment(),
-                            currentBalance: profiler.accountBalance,
-                            txId: crypto.randomBytes(20).toString('hex')
-                        });
-
-                        await profiler.save();
-                        
-                    } else if (txAmount <= 0) {
-                        return res.status(400).json({errors: [ {msg: 'Add a valid positive amount'} ]});
-                    }
+                    profiler = await Profile.findOneAndUpdate(
+                        { user: req.user.id },
+                        { date: moment() },
+                        { new: true }
+                    );
 
                     return res.json(profiler);
                 }
@@ -114,14 +97,14 @@ router.post('/', [auth, [
                         {msg: 'Aadhar card number already exist by some user. Please enter a valid one'} ]});
                 }
 
+                // Check if user mobile number and alternate contact are same
+                const user = await User.findById(req.user.id).select('-password');
+                if (user.mobileNumber === profileFields.alternateContactNumber) {
+                    return res.status(400).json({errors: [
+                        {msg: 'Mobile number and alternate contact number cannot be same'} ]});
+                }
+
                 // If everything is alright then creating an instance of Profile as profiler and saving in database
-                profileFields.txDetails.push({
-                    txType: 'Credited',
-                    txAmount,
-                    txDates: moment(),
-                    currentBalance: profileFields.accountBalance,
-                    txId: crypto.randomBytes(20).toString('hex')
-                });
                 profiler = new Profile(profileFields);
                 await profiler.save();
                 

@@ -61,9 +61,6 @@ const ProfileScema = new mongoose.Schema({
         type: String,
         required: true
     },
-    accountBalance: {
-        type: Number
-    },
     accountNumber: {
         type: Number,
         default: Number('56010'+Math.floor(10000 + Math.random() * 90000)),
@@ -72,28 +69,7 @@ const ProfileScema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    },
-    txDetails: [
-        {
-            txType: {
-                type: String
-            },
-            txAmount: {
-                type: Number,
-                required: true
-            },
-            txDates: {
-                type: Date
-            },
-            currentBalance: {
-                type: Number
-            },
-            txId: {
-                type: String,
-                unique: true
-            }
-        }
-    ]
+    }
 });
 
 module.exports = Profile = mongoose.model('profile', ProfileScema);

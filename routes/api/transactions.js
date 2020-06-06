@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const crypto = require('crypto');
 const auth = require('../../middleware/auth');
 const Transactions = require('../../models/Transactions');
+const Profile = require('../../models/Profile');
 const {check, validationResult} = require('express-validator');
 
 // @route   POST api/transactions
@@ -21,31 +21,41 @@ router.post('/', [auth, [
         const {txAmount, txType} = req.body;
 
         try {
-            const txnsProfile = await Transactions.findOne({ profile: req.profile.id });
-
-            if (!txnsProfile) {
-                return res.status(400).json({ msg: 'There is no profile for this user' });
+            const profile = await Profile.findOne({ user: req.user.id });
+            if (!profile) {
+                return res.status(400).json({ msg: 'There is no profile for this user. Please do KYC and perform transactions' });
             }
+
+            const isPrevTransaction = await Transactions.findOne({ user: req.user.id });
+            if (!isPrevTransaction) {
+                const setTransaction = new Transactions({
+                    accNumber: profile.accountNumber,
+                    accountBalance: 0,
+                    txDetails: [],
+                    user: req.user.id,
+                });
+                await setTransaction.save();
+            }
+
+            const getTransactionDetails = await Transactions.findOne({ user: req.user.id });
 
             if (txType === 'Debited') {
 
-                if ((txnsProfile.accountBalance && txnsProfile.accountBalance === 0) ||
-                    (txAmount > txnsProfile.accountBalance) ) {
+                if ((getTransactionDetails.accountBalance === 0) || (txAmount > getTransactionDetails.accountBalance) ) {
                     return res.status(400).json({ msg: 'There is no sufficient balance in your account to complete this transaction.' });
                 }
 
                 if (txAmount && txAmount > 0) {
                     const txs = await Transactions.findOneAndUpdate(
-                        { profile: req.profile.id },
-                        { accountBalance: (txs.accountBalance - txAmount).toFixed(2) },
+                        { user: req.user.id },
+                        { accountBalance: (getTransactionDetails.accountBalance - txAmount).toFixed(2) },
                         { new: true });
     
                     txs.txDetails.unshift({
                         txType,
                         txAmount: -txAmount,
                         txDates: moment(),
-                        currentBalance: txs.accountBalance,
-                        txId: crypto.randomBytes(20).toString('hex')
+                        currentBalance: txs.accountBalance
                     });
     
                     await txs.save();
@@ -55,17 +65,15 @@ router.post('/', [auth, [
 
             if (txType === 'Credited' && txAmount && txAmount > 0) {
                 const txs = await Transactions.findOneAndUpdate(
-                    { profile: req.profile.id },
-                    { accountBalance: (txs.accountBalance !== null ?
-                        txs.accountBalance + txAmount : 0+txAmount).toFixed(2) },
+                    { user: req.user.id },
+                    { accountBalance: (getTransactionDetails.accountBalance + txAmount).toFixed(2) },
                     { new: true });
 
                 txs.txDetails.unshift({
                     txType,
                     txAmount,
                     txDates: moment(),
-                    currentBalance: txs.accountBalance,
-                    txId: crypto.randomBytes(20).toString('hex')
+                    currentBalance: txs.accountBalance
                 });
 
                 await txs.save();

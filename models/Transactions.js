@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 
 const TransactionsSchema = new mongoose.Schema({
-    profile: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'profile'
+        ref: 'user'
     },
     accountBalance: {
+        type: Number
+    },
+    accNumber: {
         type: Number
     },
     txDetails: [
@@ -23,10 +26,6 @@ const TransactionsSchema = new mongoose.Schema({
             },
             currentBalance: {
                 type: Number
-            },
-            txId: {
-                type: String,
-                unique: true
             }
         }
     ]
