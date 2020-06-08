@@ -35,7 +35,7 @@ router.post('/', [
                 return res.status(400).json({errors: [ {msg: 'User already exist, Please try with new Number.'} ]});
             }
 
-            // Checking confirmPassword with password
+            // Checking E-mail already registered or not
             user = await User.findOne({ email });
             if (user) {
                 return res.status(400).json({errors: [ {msg: 'E-mail already registered, Please try with new one'} ]});
