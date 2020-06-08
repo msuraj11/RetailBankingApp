@@ -14,12 +14,15 @@ app.use(express.json({ extended: false }));
 
 app.get('/', (req, res) => res.send('API Running'));
 
-// Define Routes
+// Define Routes of user
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/accountInfo', require('./routes/api/accountInfo'));
 app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/transactions', require('./routes/api/transactions'));
+
+// Define Routes of admin
+app.use('/api/admin', require('./routes/api/adminRoutes/adminReg'));
 
 const PORT = process.env.PORT || 5000;
 

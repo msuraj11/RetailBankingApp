@@ -73,7 +73,7 @@ router.post('/', [
             jsonWebToken.sign(
                 payload,
                 config.get('jwtSecret'),
-                { expiresIn: 360000 }, // basically prefered 3600 in prod mode
+                { expiresIn: 3600 }, // basically prefered 3600 in prod mode
                 (err, token) => {
                     if (err) throw err;
                     res.json({ token });
