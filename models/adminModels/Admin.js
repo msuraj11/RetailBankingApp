@@ -45,3 +45,5 @@ const AdminSchema = new mongoose.Schema({
         default: moment()
     }
 });
+
+module.exports = Admin = mongoose.model('admin', AdminSchema);

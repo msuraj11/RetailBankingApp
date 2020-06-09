@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const Admin = require('../../../models/adminModels/Admin');
-//const User = require('../../../models/User');
 
 // @route   POST api/admin
 // @desc    Register Admin
@@ -65,11 +64,13 @@ router.post('/', [
             }
 
             // Checking E-mail already registered or not
-            const emailForAdmin = emailTypes.filter(item => {
-                admin = await Admin.findOne({ email: item });
-                return !admin;
-            });
-            
+            const emailForAdmin = [];
+            for (let i=0; i< emailTypes.length; i++) {
+                admin = await Admin.findOne({ email: emailTypes[i] });
+                if (!admin) {
+                    emailForAdmin.push(emailTypes[i]);
+                }
+            }            
 
             // Avatar
             const avatar = gravatar.url(emailForAdmin[0], {
@@ -79,7 +80,7 @@ router.post('/', [
             });
 
             // Creating instance of user from mongoDB
-            admin = new Admin({
+            const createdAdmin = new Admin({
                 firstName,
                 lastName,
                 email: emailForAdmin[0],
@@ -92,15 +93,15 @@ router.post('/', [
 
             // Password Encyption
             const salt = await bcrypt.genSalt(10);
-            admin.password = await bcrypt.hash(password, salt);
+            createdAdmin.password = await bcrypt.hash(password, salt);
 
             //Save to Data-base
-            await admin.save();
+            await createdAdmin.save();
 
             //JSONWebToken Implimentation
             const payload = {
                 admin: {
-                    id: admin.id
+                    id: createdAdmin.id
                 }
             }
             jsonWebToken.sign(
