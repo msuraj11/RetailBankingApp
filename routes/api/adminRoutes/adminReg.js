@@ -57,7 +57,7 @@ router.post('/', [
         }
 
         try {
-            // Check if user already exists
+            // Check if admin already exists
             let admin = await Admin.findOne({ mobileNumber });
             if (admin) {
                 return res.status(400).json({errors: [ {msg: 'User already exist, Please try with new Number.'} ]});
@@ -79,7 +79,7 @@ router.post('/', [
                 d: 'mm'
             });
 
-            // Creating instance of user from mongoDB
+            // Creating instance of admin from mongoDB
             const createdAdmin = new Admin({
                 firstName,
                 lastName,

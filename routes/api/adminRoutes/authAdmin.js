@@ -10,7 +10,7 @@ const router = express.Router();
 
 // @route   GET api/authAdmin
 // @desc    Validate with middleware
-// @access  Public
+// @access  Private
 router.get('/', adminAuth, async (req, res) => {
     try {
         const admin = await Admin.findById(req.admin.id).select('-password');
