@@ -35,7 +35,7 @@ const ProfileScema = new mongoose.Schema({
         type: String
     },
     alternateContactNumber: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },

@@ -3,9 +3,9 @@ const router = express.Router();
 const moment = require('moment');
 const User = require('../../../models/User');
 const Profile = require('../../../models/Profile');
+const Transactions = require('../../../models/Transactions');
 const adminAuth = require('../../../middleware/adminAuth');
 const Admin = require('../../../models/adminModels/Admin');
-const {check, validationResult} = require('express-validator');
 
 // @route   GET api/adminAction/getAllUsers
 // @desc    Getting all the users data
@@ -32,19 +32,16 @@ router.get('/getAllUsers', adminAuth, async (req, res) => {
 // @route   PUT api/adminAction/updateUserInfo
 // @desc    Update user info via admin
 // @access  Private
-router.put('/updateUserInfo', [adminAuth,[
-    check('userId', 'Please a userId').notEmpty(),
-    check('mobileNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN')
-]], async (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
+router.put('/updateUserInfo', adminAuth, async (req, res) => {
     const {userId, mobileNumber, currentAddress, permanentAddress} = req.body;
 
     if (!(mobileNumber || currentAddress || permanentAddress)) {
         return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});
+    }
+
+    const mobRegX = /^((\+){1}91){1}[1-9]{1}[0-9]{9}$/ ;
+    if (mobileNumber && !mobRegX.test(mobileNumber)) {
+        return res.status(400).json({errors: [{msg: 'Please provide a valid mobile number.'}]});
     }
 
     try {
@@ -52,13 +49,18 @@ router.put('/updateUserInfo', [adminAuth,[
         const userIdsArray = users.map(item => (item._id).toString());    // TODO issue might come here toString()
 
         // Checking if userId sent in request body is valid or not
-        if (!userIdsArray.includes(userId)) {
-            return res.status(400).json({errors: [{msg: 'User cannot be updated or this user is unavailable'}]});
+        if (!userId || !userIdsArray.includes(userId)) {
+            return res.status(400).json({errors: [{msg: 'User not found'}]});
         }
 
         // If valid then update the information
         const getProfile = await Profile.findOne({ user: userId }).populate('user', ['mobileNumber']);
-        console.log(getProfile);
+
+        if (mobileNumber === getProfile.alternateContactNumber) {
+            return res.status(400).json({errors: [
+                {msg: 'Mobile number and alternate contact number cannot be same'} ]});
+        }
+
         if (mobileNumber === getProfile.user.mobileNumber ||
             currentAddress === getProfile.currentAddress ||
             permanentAddress === getProfile.permanentAddress) {
@@ -66,12 +68,15 @@ router.put('/updateUserInfo', [adminAuth,[
                 msg:'Mobile-number/Current-address/Permanent-address is already up to date'}]
             });
         }
-        const user = await User.findOneAndUpdate(
-            { _id: userId },
-            { mobileNumber },
-            { new: true }
-        );
-        await user.save();
+        
+        if (mobileNumber) {
+            const user = await User.findOneAndUpdate(
+                { _id: userId },
+                { mobileNumber },
+                { new: true }
+            );
+            await user.save();
+        }
 
         if (currentAddress) {
             const profile = await Profile.findOneAndUpdate(
@@ -96,6 +101,35 @@ router.put('/updateUserInfo', [adminAuth,[
         
     } catch (err) {
         console.log(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   DELETE api/adminAction/deleteUser/:user_id
+// @desc    Delete the user and it's data
+// @access  Private
+router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
+    try {
+        const {user_id} = req.params;
+        const user = await User.findById(user_id);
+        const profile = await Profile.findOne({user: user_id});
+        const transactions = await Transactions.findOne({user: user_id});
+
+        await User.findByIdAndRemove({ _id: user_id });
+
+        if (profile) {
+            await Profile.findOneAndRemove({ user: user_id });
+        }
+        if (transactions) {
+            await Transactions.findOneAndRemove({ user: user_id });
+        }
+
+        return res.json({ success: `Deleted ${user.name}'s data.` })
+    } catch (err) {
+        console.log(err.message);
+        if (err.kind == 'ObjectId') {
+            return res.status(400).json({msg: 'User not found'});
+        }
         res.status(500).send('Server Error');
     }
 });
