@@ -6,6 +6,7 @@ const Profile = require('../../../models/Profile');
 const Transactions = require('../../../models/Transactions');
 const adminAuth = require('../../../middleware/adminAuth');
 const Admin = require('../../../models/adminModels/Admin');
+const AdminActionLogs = require('../../../models/adminModels/AdminActionLogs');
 
 // @route   GET api/adminAction/getAllUsers
 // @desc    Getting all the users data
@@ -17,6 +18,16 @@ router.get('/getAllUsers', adminAuth, async (req, res) => {
         if (!users) {
             res.send(400).json({errors: [{msg: 'There are no users'}]});
         }
+
+        const isAdminLogs = await AdminActionLogs.findOne({ admin:  req.admin.id });
+        if (!isAdminLogs) {
+            const adminLogs = new AdminActionLogs({
+                admin: req.admin.id,
+                updationLogs: []
+            });
+            await adminLogs.save();
+        }
+
         const admin = await Admin.findById(req.admin.id).select('-password');
         const resJson = {
             users,
@@ -59,7 +70,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
         }
 
         // If valid then update the information
-        const getProfile = await Profile.findOne({ user: userId }).populate('user', ['mobileNumber']);
+        const getProfile = await Profile.findOne({ user: userId }).populate('user', ['mobileNumber', 'avatar']);
         if (!getProfile) {
             return res.status(400).json({errors: [
                 {msg: 'Profile not found'} ]});
@@ -77,6 +88,16 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 msg:'Mobile-number/Current-address/Permanent-address is already up to date'}]
             });
         }
+
+        const userDetails = {
+            userAvatar: getProfile.user.avatar,
+            accNumber: `${getProfile.accountNumber}`,
+            userName: getProfile.firstName,
+            userBranch: getProfile.accBranch,
+            userIFSC: getProfile.IFSC_Code
+        };
+
+        const adminLogs = await AdminActionLogs.findOne({ admin:  req.admin.id });
         
         if (mobileNumber) {
             await User.findOneAndUpdate(
@@ -89,6 +110,14 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Mobile-number`
             });
             await getProfile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Mobile-number changed from ${getProfile.user.mobileNumber} to ${mobileNumber}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
         }
 
         if (currentAddress) {
@@ -102,6 +131,14 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Current Address`
             });
             await profile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Current Address changed from ${getProfile.currentAddress} to ${currentAddress}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
         }
 
         if (permanentAddress) {
@@ -115,6 +152,14 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
             });
             await profile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Permanent Address changed from ${getProfile.permanentAddress} to ${permanentAddress}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
         }
         return res.json({ success: `Updated ${getProfile.firstName}'s data.` });
         
@@ -138,8 +183,12 @@ router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
         const user = await User.findById(user_id);
         const profile = await Profile.findOne({user: user_id});
         const transactions = await Transactions.findOne({user: user_id});
-
-        await User.findByIdAndRemove({ _id: user_id });
+        const adminLogs = await AdminActionLogs.findOne({ admin:  req.admin.id });
+        
+        if (!user) {
+            return res.status(400).json({msg: 'User not found'});
+        }
+        await User.findOneAndRemove({ _id: user_id });
 
         if (profile) {
             await Profile.findOneAndRemove({ user: user_id });
@@ -147,6 +196,20 @@ router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
         if (transactions) {
             await Transactions.findOneAndRemove({ user: user_id });
         }
+
+        adminLogs.logs.unshift({
+            actionType: 'DELETE',
+            updatedChanges: `Removed ${user.name}'s data.`,
+            userDetails: {
+                userAvatar: user.avatar,
+                accNumber: profile ? `${profile.accountNumber}` : 'Not generated',
+                userName: user.name,
+                userBranch: profile ? profile.accBranch : 'Not generated',
+                userIFSC: profile ? profile.IFSC_Code : 'Not generated'
+            },
+            updatedOn: moment()
+        })
+        await adminLogs.save();
 
         return res.json({ success: `Deleted ${user.name}'s data.` })
     } catch (err) {
