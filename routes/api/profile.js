@@ -31,6 +31,7 @@ router.get('/me', auth, async (req, res) => {
 router.post('/', [auth, [
     check('firstName', 'Please provide First-name').not().isEmpty(),
     check('lastName', 'Please provide Last-name').not().isEmpty(),
+    check('gender', 'Please choose any option').notEmpty(),
     check('dateOfBirth', 'Please provide DOB in MM/DD/YYYY format').not().isEmpty(),
     check('PANCardNo', 'Please provide a valid PAN Card Number').isLength({min: 10, max:10}),
     check('AadharNo', 'Please provide a valid Aadhar Card Number').isNumeric().isLength({min: 12, max:12}),
@@ -44,7 +45,7 @@ router.post('/', [auth, [
 ]], async (req, res) => {
 
         const {firstName, lastName, dateOfBirth, PANCardNo, AadharNo, currentAddress, permanentAddress,
-            alternateContactNumber, sourceOfIncome, occupation, company, fatherName, accountType,
+            alternateContactNumber, sourceOfIncome, occupation, company, fatherName, accountType, gender,
             motherName, spouse, accBranch, IFSC_Code} = req.body;
 
         const profileFields = {firstName, lastName, dateOfBirth, PANCardNo, AadharNo, currentAddress,
@@ -56,7 +57,12 @@ router.post('/', [auth, [
             },
             user: req.user.id,
             accBranch,
-            IFSC_Code
+            IFSC_Code,
+            gender,
+            date: {
+                lastUpdated: moment(),
+                updatedBy: `User: ${firstName}`
+            }
         };
 
         try { 
@@ -71,7 +77,10 @@ router.post('/', [auth, [
                             { currentAddress },
                             { new: true }
                         );
-                        profiler.date.push(moment());
+                        profiler.date.push({
+                            lastUpdated: moment(),
+                            updatedBy: `User: ${profiler.firstName}`
+                        });
                         await profiler.save();
                         return res.json(profiler);
                     } else {

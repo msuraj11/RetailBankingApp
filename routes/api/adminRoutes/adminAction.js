@@ -45,6 +45,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     try {
+        const admin = await Admin.findById(req.admin.id);
+        if (admin.permissions.length < 2) {
+            return res.status(400).json({msg: 'Permission denied'});
+        }
+
         const users = await User.find().select('-password');
         const userIdsArray = users.map(item => (item._id).toString());    // TODO issue might come here toString()
 
@@ -55,6 +60,10 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
 
         // If valid then update the information
         const getProfile = await Profile.findOne({ user: userId }).populate('user', ['mobileNumber']);
+        if (!getProfile) {
+            return res.status(400).json({errors: [
+                {msg: 'Profile not found'} ]});
+        }
 
         if (mobileNumber === getProfile.alternateContactNumber) {
             return res.status(400).json({errors: [
@@ -70,12 +79,16 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
         }
         
         if (mobileNumber) {
-            const user = await User.findOneAndUpdate(
+            await User.findOneAndUpdate(
                 { _id: userId },
                 { mobileNumber },
                 { new: true }
             );
-            await user.save();
+            getProfile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Mobile-number`
+            });
+            await getProfile.save();
         }
 
         if (currentAddress) {
@@ -84,7 +97,10 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 { currentAddress },
                 { new: true }
             );
-            profile.date.push(moment());
+            profile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Current Address`
+            });
             await profile.save();
         }
 
@@ -94,7 +110,10 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 { permanentAddress },
                 { new: true }
             );
-            profile.date.push(moment());
+            profile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
+            });
             await profile.save();
         }
         return res.json({ success: `Updated ${getProfile.firstName}'s data.` });
@@ -110,6 +129,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
 // @access  Private
 router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
     try {
+        const admin = await Admin.findById(req.admin.id);
+        if (admin.permissions.length < 3) {
+            return res.status(400).json({msg: 'Permission denied'});
+        }
+
         const {user_id} = req.params;
         const user = await User.findById(user_id);
         const profile = await Profile.findOne({user: user_id});

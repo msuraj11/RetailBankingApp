@@ -15,6 +15,7 @@ router.post('/', [
         check('lastName', 'Please provide Last-name').notEmpty(),
         check('mobileNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
         check('experienceInBanking', 'Experience is mandatory').notEmpty().isNumeric(),
+        check('gender', 'Please choose any option').notEmpty(),
         check('adminBranch', 'Please provide your branch').notEmpty(),
         check('password', 'Please enter the password with 6 or more characters').isLength({min: 6}),
         check('confirmPassword', 'Please enter the confirm-password same as of password').isLength({min: 6}),
@@ -24,7 +25,7 @@ router.post('/', [
             return res.status(400).json({errors: errors.array()});
         }
 
-        const {firstName, lastName, mobileNumber, experienceInBanking, adminBranch,
+        const {firstName, lastName, mobileNumber, experienceInBanking, adminBranch, gender,
             password, confirmPassword} = req.body;
 
         // Create an admin email using fName, lName
@@ -84,6 +85,7 @@ router.post('/', [
                 firstName,
                 lastName,
                 email: emailForAdmin[0],
+                gender,
                 mobileNumber,
                 permissions,
                 avatar,
