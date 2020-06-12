@@ -221,4 +221,27 @@ router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
     }
 });
 
+//@route    GET api/adminAction/logs
+//@des      Gets all the admin logs delete/update
+//access    Private
+router.get('/logs', adminAuth, async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.admin.id);
+        if (!admin) {
+            return res.status(400).json({msg: 'User not found'});
+        }
+        if (admin.permissions.length < 2) {
+            return res.status(401).json({msg: 'Permission Denied'});
+        }
+        const adminLogs = await AdminActionLogs.findOne({ admin: req.admin.id });
+        if (!adminLogs || adminLogs.logs.length === 0) {
+            return res.status(400).json({msg: 'There are no logs yet.'});
+        }
+        return res.json(adminLogs.logs);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
