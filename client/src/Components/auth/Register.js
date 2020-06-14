@@ -131,7 +131,8 @@ const Register = () => {
                     className='btn btn-primary'
                     disabled={!isPasswordMatch || isErrorMessageOnMobNumb || isEmailError ||
                         isEmpty(name) || isEmpty(email) || isEmpty(mobileNumber) ||
-                        isEmpty(password) || isEmpty(confirmPassword)}
+                        isEmpty(password) || isEmpty(confirmPassword) || password.length < 6 ||
+                        confirmPassword.length < 6 }
                 >
                     Register
                 </button>
