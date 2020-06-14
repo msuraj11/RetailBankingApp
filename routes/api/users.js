@@ -14,8 +14,7 @@ router.post('/', [
         check('name', 'Name is required').not().isEmpty(),
         check('email', 'Please include a valid email').isEmail(),
         check('mobileNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
-        check('password', 'Please enter the password with 6 or more characters').isLength({min: 6}),
-        check('confirmPassword', 'Please enter the confirm-password same as of password').isLength({min: 6}),
+        check('password', 'Please enter the password with 6 or more characters').isLength({min: 6})
     ], async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -23,10 +22,6 @@ router.post('/', [
         }
 
         const {name, email, mobileNumber, password, confirmPassword} = req.body;
-        // Checking confirmPassword with password
-        if (confirmPassword !== password) {
-            return res.status(400).json({errors: [ {msg: 'Passwords didnot match'} ]});
-        }
 
         try {
             // Check if user already exists
