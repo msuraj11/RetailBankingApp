@@ -5,6 +5,7 @@ import Navbar from './Components/layouts/Navbar';
 import Landing from './Components/layouts/Landing';
 import Register from './Components/auth/Register';
 import Login from './Components/auth/Login';
+import TokenVerifier from './Components/auth/TokenVerifier';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Switch>
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
+            <Route path="/tokenVerifier" component={TokenVerifier} />
           </Switch>
         </section>
       </Fragment>

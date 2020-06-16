@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {isEmpty} from 'lodash';
 
-const Register = () => {
+const Register = (props) => {
     const [formData, setFormData] = useState({
         fields:{
             name:'',
@@ -12,7 +12,7 @@ const Register = () => {
             confirmPassword: ''
         },
         isErrorMessageOnMobNumb: false,
-        isPasswordMatch: false,
+        isPasswordMatch: true,
         isEmailError: false
     });
 
@@ -24,7 +24,7 @@ const Register = () => {
     };
 
     const onBlurFields = e => {
-        if (password !== confirmPassword) {
+        if (!isEmpty(confirmPassword) && password !== confirmPassword) {
             setFormData({...formData, isPasswordMatch: false});
         } else {
             setFormData({...formData, isPasswordMatch: true});
@@ -43,6 +43,7 @@ const Register = () => {
     const onSubmitForm = e => {
         e.preventDefault();
         console.log(formData);
+        props.history.push('/tokenVerifier');
     };
 
     return (

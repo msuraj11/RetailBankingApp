@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
+const nodemailer = require('nodemailer');
 
 // @route   POST api/users
 // @desc    Register User
@@ -21,7 +22,10 @@ router.post('/', [
             return res.status(400).json({errors: errors.array()});
         }
 
-        const {name, email, mobileNumber, password, confirmPassword} = req.body;
+        const {name, email, mobileNumber, password} = req.body;
+        const fromMail = 'vaishnavimatchings.mamidi77@gmail.com';
+        const toMail = email;
+        const subject = 'Welcome to BOS';
 
         try {
             // Check if user already exists
@@ -71,6 +75,38 @@ router.post('/', [
                 { expiresIn: 3600 }, // basically prefered 3600 in prod mode
                 (err, token) => {
                     if (err) throw err;
+
+                    //Send Profile to E-Mail
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: fromMail ,
+                            pass: 'jaibhavani'
+                        }
+                    });
+            
+                    const text = `Hi ${name},
+
+Welcome to Bank of Suraj(BOS). Please note down your token: ${token}. Note that this is confidential.
+
+
+Thanks,
+BOS`;
+                    const mailOptions = {
+                        from: fromMail,
+                        to: toMail,
+                        subject: subject,
+                        text: text
+                    };
+            
+                    transporter.sendMail(mailOptions, (error, response) => {
+                        if (error) {
+                            console.log('error:',error);
+                            return res.status(404).json({msg: 'E-mail is not valid'});
+                        }
+                        console.log('response', response)
+                        });
+
                     res.json({ token });
                 }
             );

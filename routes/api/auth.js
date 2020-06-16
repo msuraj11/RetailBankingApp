@@ -5,6 +5,7 @@ const {check, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
+const nodemailer = require('nodemailer');
 
 const router = express.Router();
 
@@ -14,6 +15,40 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
+        const fromMail = 'vaishnavimatchings.mamidi77@gmail.com';
+        const toMail = user.email;
+        const subject = 'Welcome to BOS';
+        const text = `Hi ${user.name},
+
+Welcome to Bank of Suraj(BOS). Please note down your Customer-ID: ${user.customerId}. Note that this is confidential.
+
+
+Thanks,
+BOS`;
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: fromMail ,
+                pass: 'jaibhavani'
+            }
+        });
+
+        const mailOptions = {
+            from: fromMail,
+            to: toMail,
+            subject: subject,
+            text: text
+        };
+
+        transporter.sendMail(mailOptions, (error, response) => {
+            if (error) {
+                console.log('error:',error);
+                return res.status(404).json({msg: 'E-mail is not valid'});
+            }
+            console.log('response', response)
+            });
+
         res.json(user);
     } catch (err) {
         console.log(err.message);
