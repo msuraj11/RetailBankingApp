@@ -1,8 +1,11 @@
 import React, { Fragment, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {isEmpty} from 'lodash';
+import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types';
 
-const Register = (props) => {
+const Register = ({setAlert, history}) => {
     const [formData, setFormData] = useState({
         fields:{
             name:'',
@@ -13,10 +16,11 @@ const Register = (props) => {
         },
         isErrorMessageOnMobNumb: false,
         isPasswordMatch: true,
-        isEmailError: false
+        isEmailError: false,
+        disableRegButton: false
     });
 
-    const {fields, isErrorMessageOnMobNumb, isPasswordMatch, isEmailError} = formData;
+    const {fields, isErrorMessageOnMobNumb, isPasswordMatch, isEmailError, disableRegButton} = formData;
     const {name, email, mobileNumber, password, confirmPassword} = fields;
 
     const onFieldChange = e => {
@@ -35,7 +39,7 @@ const Register = (props) => {
             setFormData({...formData, isErrorMessageOnMobNumb: !mobRegX.test(mobNum)});            
         }
         if (e.target.name === 'email') {
-            const emailRegX = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+            const emailRegX = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
             setFormData({...formData, isEmailError: !emailRegX.test(email)});
         }
     };
@@ -43,7 +47,9 @@ const Register = (props) => {
     const onSubmitForm = e => {
         e.preventDefault();
         console.log(formData);
-        props.history.push('/tokenVerifier');
+        setAlert('Registered Successfully!!', 'success');
+        setFormData({...formData, disableRegButton: true});
+        setTimeout(() => history.push('/tokenVerifier'), 4000);
     };
 
     return (
@@ -133,7 +139,7 @@ const Register = (props) => {
                     disabled={!isPasswordMatch || isErrorMessageOnMobNumb || isEmailError ||
                         isEmpty(name) || isEmpty(email) || isEmpty(mobileNumber) ||
                         isEmpty(password) || isEmpty(confirmPassword) || password.length < 6 ||
-                        confirmPassword.length < 6 }
+                        confirmPassword.length < 6 || disableRegButton}
                 >
                     Register
                 </button>
@@ -145,4 +151,9 @@ const Register = (props) => {
     );
 };
 
-export default Register;
+Register.prototypes = {
+    setAlert: PropTypes.func.isRequired,
+    history: PropTypes.object
+};
+
+export default connect(null, {setAlert})(Register);

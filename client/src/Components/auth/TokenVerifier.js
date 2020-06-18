@@ -75,7 +75,7 @@ const TokenVerifier = () => {
                 </button>
             </form>
             <p className="my-1">
-                Didn't get token? <Link to='' onClick={onLinkClick}>Click here</Link> to get token again.
+                Didn't get token? <Link to='#' onClick={onLinkClick}>Click here</Link> to get token again.
             </p>
             {displayResendFields &&
                 <Fragment>
