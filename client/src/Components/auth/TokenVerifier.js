@@ -2,8 +2,10 @@ import React, {Fragment, useState} from 'react';
 import { Link } from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
 
-const TokenVerifier = () => {
+const TokenVerifier = ({setAlert}) => {
     const [tokenData, setTokenData] = useState({
         token: '',
         resendData: {
@@ -36,6 +38,8 @@ const TokenVerifier = () => {
         try {
             const res = await axios.get('/api/auth', config);
             console.log(res.data);
+            setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.',
+                'success');
         } catch (error) {
             console.error(error.response.data);
             setTokenData({...tokenData, isValidToken: false})
@@ -121,4 +125,4 @@ const TokenVerifier = () => {
     );
 };
 
-export default TokenVerifier;
+export default connect(null, {setAlert})(TokenVerifier);

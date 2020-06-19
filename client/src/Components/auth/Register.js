@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import { setAlert } from '../../actions/alert';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const Register = ({setAlert, history}) => {
     const [formData, setFormData] = useState({
@@ -44,12 +45,30 @@ const Register = ({setAlert, history}) => {
         }
     };
 
-    const onSubmitForm = e => {
+    const onSubmitForm = async e => {
         e.preventDefault();
         console.log(formData);
-        setAlert('Registered Successfully!!', 'success');
-        setFormData({...formData, disableRegButton: true});
-        setTimeout(() => history.push('/tokenVerifier'), 4000);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        const body = JSON.stringify({name, email, mobileNumber: `+91${mobileNumber}`, password});
+
+        try {
+            const res = await axios.post('/api/users', body, config);
+            console.log(res.data);
+            setAlert('Registered Successfully!!', 'success');
+            setFormData({...formData, disableRegButton: true});
+            setTimeout(() => history.push('/tokenVerifier'), 4000);
+        } catch (err) {
+            console.error(err.response.data);
+            const errors = err.response.data.errors;
+            if (errors) {
+                errors.forEach(error => setAlert(error.msg, 'danger', 10000));
+            }
+        }
     };
 
     return (
