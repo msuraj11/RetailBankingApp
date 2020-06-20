@@ -1,11 +1,12 @@
 import React, {Fragment, useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types';
 
-const TokenVerifier = ({setAlert}) => {
+const TokenVerifier = ({setAlert, isAuthenticated, history}) => {
     const [tokenData, setTokenData] = useState({
         token: '',
         resendData: {
@@ -36,13 +37,15 @@ const TokenVerifier = ({setAlert}) => {
         };
 
         try {
-            const res = await axios.get('/api/auth', config);
+            const res = await axios.get('/api/auth/verifyToken', config);
             console.log(res.data);
             setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.',
-                'success');
+                'success', 12000);
+            setTokenData({...tokenData, token: ''});
+            setTimeout(() => history.push('/login'), 12000);
         } catch (error) {
             console.error(error.response.data);
-            setTokenData({...tokenData, isValidToken: false})
+            setTokenData({...tokenData, isValidToken: false});
         }
     };
 
@@ -50,6 +53,10 @@ const TokenVerifier = ({setAlert}) => {
         e.preventDefault();
         console.log(resendData);
     };
+
+    if (isAuthenticated) {
+        return <Redirect to='/dashboard' />
+    }
 
     return (
         <Fragment>
@@ -125,4 +132,14 @@ const TokenVerifier = ({setAlert}) => {
     );
 };
 
-export default connect(null, {setAlert})(TokenVerifier);
+TokenVerifier.prototypes = {
+    setAlert: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool,
+    history: PropTypes.object
+}
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, {setAlert})(TokenVerifier);

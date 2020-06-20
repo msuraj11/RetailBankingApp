@@ -7,6 +7,7 @@ const User = require('../../models/User');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const nodemailer = require('nodemailer');
+const sendEmail = require('../utils/emailTemplate');
 
 // @route   POST api/users
 // @desc    Register User
@@ -23,9 +24,6 @@ router.post('/', [
         }
 
         const {name, email, mobileNumber, password} = req.body;
-        const fromMail = 'vaishnavimatchings.mamidi77@gmail.com';
-        const toMail = email;
-        const subject = 'Welcome to BOS';
 
         try {
             // Check if user already exists
@@ -76,36 +74,8 @@ router.post('/', [
                 (err, token) => {
                     if (err) throw err;
 
-                    //Send Profile to E-Mail
-                    const transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: fromMail ,
-                            pass: 'jaibhavani'
-                        }
-                    });
-            
-                    const text = `Hi ${name},
-
-Welcome to Bank of Suraj(BOS). Please note down your token: ${token}. Note that this is confidential.
-
-
-Thanks,
-BOS`;
-                    const mailOptions = {
-                        from: fromMail,
-                        to: toMail,
-                        subject: subject,
-                        text: text
-                    };
-            
-                    transporter.sendMail(mailOptions, (error, response) => {
-                        if (error) {
-                            console.log('error:',error);
-                            return res.status(404).json({msg: 'E-mail is not valid'});
-                        }
-                        console.log('response', response)
-                        });
+                    //Send token to E-Mail
+                    sendEmail(email, name, `token: ${token}`);
 
                     res.json({ token });
                 }
