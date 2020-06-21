@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import { setAlert } from '../../actions/alert';
+import { setTimer } from '../../actions/timer';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-const Register = ({setAlert, isAuthenticated, history}) => {
+const Register = ({setAlert, isAuthenticated, history, setTimer}) => {
     const [formData, setFormData] = useState({
         fields:{
             name:'',
@@ -61,7 +62,10 @@ const Register = ({setAlert, isAuthenticated, history}) => {
             console.log(res.data);
             setAlert('Registered Successfully!!', 'success');
             setFormData({...formData, disableRegButton: true});
-            setTimeout(() => history.push('/tokenVerifier'), 4000);
+            setTimeout(() => {
+                history.push('/tokenVerifier');
+                setTimer();
+            }, 4000);
         } catch (err) {
             console.error(err.response.data);
             const errors = err.response.data.errors;
@@ -71,11 +75,8 @@ const Register = ({setAlert, isAuthenticated, history}) => {
         }
     };
 
-    if (isAuthenticated) {
-        return <Redirect to='/dashboard' />
-    }
-
-    return (
+    return (isAuthenticated ?
+        <Redirect to='/dashboard' /> :
         <Fragment>
             <h1 className="large text-primary">Sign Up</h1>
             <p className="lead"><i className="fas fa-user"></i> Create Your Account</p>
@@ -177,11 +178,12 @@ const Register = ({setAlert, isAuthenticated, history}) => {
 Register.propTypes = {
     setAlert: PropTypes.func.isRequired,
     history: PropTypes.object,
-    isAuthenticated: PropTypes.bool
+    isAuthenticated: PropTypes.bool,
+    setTimer: PropTypes.func
 };
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, {setAlert})(Register);
+export default connect(mapStateToProps, {setAlert, setTimer})(Register);

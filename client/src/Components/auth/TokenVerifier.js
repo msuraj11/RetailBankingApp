@@ -5,8 +5,9 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { setAlert } from '../../actions/alert';
 import PropTypes from 'prop-types';
+import Timer from '../layouts/Timer';
 
-const TokenVerifier = ({setAlert, isAuthenticated, history}) => {
+const TokenVerifier = ({setAlert, isAuthenticated, history, showTimer}) => {
     const [tokenData, setTokenData] = useState({
         token: '',
         resendData: {
@@ -54,14 +55,12 @@ const TokenVerifier = ({setAlert, isAuthenticated, history}) => {
         console.log(resendData);
     };
 
-    if (isAuthenticated) {
-        return <Redirect to='/dashboard' />
-    }
-
-    return (
+    return (isAuthenticated ?
+        <Redirect to='/dashboard' /> :
         <Fragment>
             <h1 className="large text-primary">Verify Token</h1>
             <p className="lead"><i className="fas fa-paper-plane"></i> Check for Token in your Inbox of E-Mail you provided</p>
+            {showTimer && <Timer />}
             <form className="form" onSubmit={e => onSubmitForm(e)}>
                 <div className="form-group">
                     <input
@@ -135,11 +134,13 @@ const TokenVerifier = ({setAlert, isAuthenticated, history}) => {
 TokenVerifier.prototypes = {
     setAlert: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
+    showTimer: PropTypes.bool,
     history: PropTypes.object
 }
 
 const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    showTimer: state.auth.showTimer
 });
 
 export default connect(mapStateToProps, {setAlert})(TokenVerifier);

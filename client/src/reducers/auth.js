@@ -1,10 +1,12 @@
-import { USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL } from '../actions/types';
+import { USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, SET_TIMER, CLEAR_TIMER } from '../actions/types';
 
 const initialState = {
     token: localStorage.getItem('token'),
     isAuthenticated: false,
     loading: true,
-    user: null
+    user: null,
+    startTimer: false,
+    showTimer: false
 };
 
 export default function(state = initialState, action) {
@@ -30,6 +32,7 @@ export default function(state = initialState, action) {
 
         case AUTH_ERROR:
         case LOGIN_FAIL:
+        case LOGOUT:
             localStorage.removeItem('token');
             return {
                 ...state,
@@ -37,6 +40,19 @@ export default function(state = initialState, action) {
                 isAuthenticated: false,
                 loading: false
             };
+
+        case SET_TIMER:
+            return {
+                ...state,
+                startTimer: true,
+                showTimer: true
+            }
+        
+        case CLEAR_TIMER:
+            return {
+                ...state,
+                startTimer: false
+            }
 
         default:
             return state;
