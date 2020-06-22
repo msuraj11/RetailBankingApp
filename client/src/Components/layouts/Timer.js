@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 class Timer extends Component {
     state = {
-        minutes: 2,
+        minutes: 5,
         seconds: 0
     };
 

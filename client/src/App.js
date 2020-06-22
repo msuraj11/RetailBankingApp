@@ -7,6 +7,8 @@ import Register from './Components/auth/Register';
 import Login from './Components/auth/Login';
 import TokenVerifier from './Components/auth/TokenVerifier';
 import Alert from './Components/layouts/Alert';
+import Dashboard from './Components/dashboard/Dashboard';
+import PrivateRoute from './Components/routing/PrivateRoute';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -34,6 +36,7 @@ const App = () => {
               <Route path="/register" component={Register} />
               <Route path="/login" component={Login} />
               <Route path="/tokenVerifier" component={TokenVerifier} />
+              <PrivateRoute path="/dashboard" component={Dashboard} />
             </Switch>
           </section>
         </Fragment>

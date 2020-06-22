@@ -6,5 +6,5 @@ export const setTimer = () => dispatch => {
     });
     setTimeout(() => {
         dispatch({ type: CLEAR_TIMER });
-    }, 120000);
+    }, 300000);
 };
