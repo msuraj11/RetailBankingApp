@@ -9,6 +9,7 @@ import TokenVerifier from './Components/auth/TokenVerifier';
 import Alert from './Components/layouts/Alert';
 import Dashboard from './Components/dashboard/Dashboard';
 import PrivateRoute from './Components/routing/PrivateRoute';
+import KYC from './Components/dashboard/profile/KYC';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/login" component={Login} />
               <Route path="/tokenVerifier" component={TokenVerifier} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
+              <PrivateRoute path="/kyc" component={KYC} />
             </Switch>
           </section>
         </Fragment>

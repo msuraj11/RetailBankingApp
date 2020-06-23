@@ -23,7 +23,7 @@ export default function(state = initialState, action) {
             
         case LOGIN_SUCCESS:
             localStorage.setItem('token', payload.token);
-            return{
+            return {
                 ...state,
                 ...payload,
                 isAuthenticated:true,
@@ -35,9 +35,8 @@ export default function(state = initialState, action) {
         case LOGOUT:
             localStorage.removeItem('token');
             return {
-                ...state,
+                ...initialState,
                 token: null,
-                isAuthenticated: false,
                 loading: false
             };
 
