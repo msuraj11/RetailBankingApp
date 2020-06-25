@@ -27,7 +27,7 @@ const ProfileScema = new mongoose.Schema({
         unique: true
     },
     AadharNo: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },

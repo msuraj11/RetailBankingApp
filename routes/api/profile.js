@@ -34,7 +34,7 @@ router.post('/', [auth, [
     check('gender', 'Please choose any option').notEmpty(),
     check('dateOfBirth', 'Please provide DOB in MM/DD/YYYY format').not().isEmpty(),
     check('PANCardNo', 'Please provide a valid PAN Card Number').isLength({min: 10, max:10}),
-    check('AadharNo', 'Please provide a valid Aadhar Card Number').isNumeric().isLength({min: 12, max:12}),
+    check('AadharNo', 'Please provide a valid Aadhar Card Number').isLength({min: 14, max:14}),
     check('currentAddress', 'Please provide your current location address').not().isEmpty(),
     check('alternateContactNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
     check('sourceOfIncome', 'Please fill this field').not().isEmpty(),
@@ -115,12 +115,6 @@ router.post('/', [auth, [
                 if (user.mobileNumber === profileFields.alternateContactNumber) {
                     return res.status(400).json({errors: [
                         {msg: 'Mobile number and alternate contact number cannot be same'} ]});
-                }
-
-                // Check date format
-                const date_regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
-                if (!date_regex.test(dateOfBirth)) {
-                    return res.status(400).json({errors: [{msg: 'Please provide DOB in MM/DD/YYYY format'}]});
                 }
 
                 // Check for valid IFSC

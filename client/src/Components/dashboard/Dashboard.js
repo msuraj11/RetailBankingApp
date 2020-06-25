@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 const Dashboard = ({getCurrentProfile, auth: {user}, profile: {profile, loading}}) => {
     useEffect(() => {
         getCurrentProfile();
-    }, [profile, getCurrentProfile]);
+    }, [getCurrentProfile]);
 
     return loading && profile === null ? <Spinner /> :
         <Fragment>

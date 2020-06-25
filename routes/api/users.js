@@ -46,25 +46,26 @@ router.post('/', [
             });
 
             // Creating instance of user from mongoDB
-            user = new User({
+            const newUser = new User({
                 name,
                 email,
                 mobileNumber,
                 avatar,
+                customerId: Number(Math.floor(100000000 + Math.random() * 900000000)),
                 password
             });
 
             // Password Encyption
             const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
+            newUser.password = await bcrypt.hash(password, salt);
 
             //Save to Data-base
-            await user.save();
+            await newUser.save();
 
             //JSONWebToken Implimentation
             const payload = {
                 user: {
-                    id: user.id
+                    id: newUser.id
                 }
             }
             jsonWebToken.sign(

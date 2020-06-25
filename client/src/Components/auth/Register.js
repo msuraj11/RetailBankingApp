@@ -37,7 +37,7 @@ const Register = ({setAlert, isAuthenticated, history, setTimer}) => {
         }
         if (e.target.name === 'mobileNumber') {
             const mobNum = `+91${e.target.value}`
-            const mobRegX = /^((\+){1}91){1}[1-9]{1}[0-9]{9}$/;
+            const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
             setFormData({...formData, isErrorMessageOnMobNumb: !mobRegX.test(mobNum)});            
         }
         if (e.target.name === 'email') {
