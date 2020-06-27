@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { getCurrentProfile } from '../../actions/profile';
 import Spinner from '../layouts/Spinner';
 import { Link } from 'react-router-dom';
+import ShowProfile from './profile/ShowProfile';
 
 const Dashboard = ({getCurrentProfile, auth: {user}, profile: {profile, loading}}) => {
     useEffect(() => {
@@ -17,7 +18,10 @@ const Dashboard = ({getCurrentProfile, auth: {user}, profile: {profile, loading}
                 <i className='fas fa-user'></i> Welcome {user && user.name}
             </p>
             {
-                profile !== null ? <Fragment>Has</Fragment> :
+                profile !== null ?
+                    <Fragment>
+                        <ShowProfile profile={profile} />
+                    </Fragment> :
                     <Fragment>
                         <p>You have not yet done KYC, Please provide details by clicking below</p>
                         <Link to='/kyc' className='btn btn-primary my-1'>Complete KYC</Link>

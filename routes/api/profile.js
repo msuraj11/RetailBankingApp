@@ -123,10 +123,10 @@ router.post('/', [auth, [
                 }
 
                 // If everything is alright then creating an instance of Profile as profiler and saving in database
-                profiler = new Profile(profileFields);
-                await profiler.save();
+                const newProfile = new Profile(profileFields);
+                await newProfile.save();
                 
-                return res.json(profiler);
+                res.json(newProfile);
         } catch(err) {
             console.log(err.message);
             res.status(500).send('Server Error');
