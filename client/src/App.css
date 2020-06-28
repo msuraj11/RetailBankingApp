@@ -419,6 +419,12 @@ button {
   text-align: center;
 }
 
+.profile-about .edit-icon {
+  display: flex;
+  flex-direction: row-reverse;
+  cursor: pointer;
+}
+
 .profile-exp {
   grid-area: exp;
 }

@@ -20,7 +20,7 @@ const Dashboard = ({getCurrentProfile, auth: {user}, profile: {profile, loading}
             {
                 profile !== null ?
                     <Fragment>
-                        <ShowProfile profile={profile} />
+                        <ShowProfile profile={profile} getCurrentProfile={getCurrentProfile} />
                     </Fragment> :
                     <Fragment>
                         <p>You have not yet done KYC, Please provide details by clicking below</p>

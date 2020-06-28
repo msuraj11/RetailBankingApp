@@ -1,14 +1,63 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import axios from 'axios';
+import {isEmpty} from 'lodash';
 
-const ShowProfile = ({profile}) => {
+const ShowProfile = ({profile, getCurrentProfile}) => {
     const {firstName, lastName, accountNumber, dateOfBirth, PANCardNo, AadharNo, currentAddress,
         permanentAddress, alternateContactNumber, sourceOfIncome, occupation, company, accountType,
         familyDetails: {fatherName, motherName, spouse}, accBranch, IFSC_Code, gender, date,
         user: {avatar, customerId, mobileNumber}} = profile;
+
     const dateObj = date[date.length - 1];
+
+    const [isEditEnabled, toggleEdit] = useState(false);
+    const [fieldAddress, setFieldAddress] = useState(currentAddress);
+    const [alertObj, setAlertObj] = useState({
+        isAlert: false,
+        alertMsg: '',
+        alertType: ''
+    });
+    const {isAlert, alertMsg, alertType} = alertObj;
+
+    const editAddress = () => {
+        toggleEdit(!isEditEnabled);
+    };
+
+    const onFieldChange = e => {
+        setFieldAddress(e.target.value);
+    };
+
+    const submitAddress = async () => {
+        console.log(fieldAddress);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        try {
+            const res = await axios.post('/api/profile', {currentAddress: fieldAddress}, config);
+            console.log(res.data);
+            setAlertObj({isAlert: true, alertMsg: 'Updated the Current address!!', alertType: 'success'});
+            setTimeout(() => {
+                setAlertObj({isAlert: false, alertMsg: '', alertType: ''});
+            }, 3000);
+            editAddress();
+            getCurrentProfile();
+        } catch (err) {
+            console.error(err.response.data);
+            const errors = err.response.data.errors;
+            if (errors) {
+                setAlertObj({isAlert: true, alertMsg: errors[0].msg, alertType: 'danger'});
+                setTimeout(() => {
+                    setAlertObj({isAlert: false, alertMsg: '', alertType: ''});
+                }, 3000);
+            }
+        }
+    };
+
     return (
         <div className="profile-grid my-1">
             <div className="profile-top bg-primary p-2">
@@ -28,12 +77,39 @@ const ShowProfile = ({profile}) => {
                     <Link to='#'><i className="fab fa-amazon-pay fa-2x"></i></Link>
                     <Link to='#'><i className="fab fa-google-pay fa-2x"></i></Link>
                 </div>
-                <small>{`Last updated: ${moment(dateObj.lastUpdated).format('DD-MM-YYYY HH:MM:SS')} by ${dateObj.updatedBy}`}</small>
+                <small>{`Last updated: ${moment(dateObj.lastUpdated).format('DD-MM-YYYY HH:mm:ss')} by ${dateObj.updatedBy}`}</small>
             </div>
 
             <div className="profile-about bg-light p-2">
+                <div className='edit-icon'>
+                    <i className={isEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editAddress}></i>
+                </div>
                 <h2 className="text-primary">You live here</h2>
-                <p>{currentAddress}</p>
+                {isAlert &&
+                    <div className={`alert alert-${alertType}`}>
+                        {alertMsg}
+                    </div>
+                }
+                {isEditEnabled ?
+                    (
+                        <div className="form">
+                            <textarea
+                                placeholder="* Current Address"
+                                name="currentAddress"
+                                value={fieldAddress}
+                                onChange={e => onFieldChange(e)}
+                            />
+                            <button
+                                className="btn btn-primary m-1"
+                                onClick={() => submitAddress()}
+                                disabled={isEmpty(fieldAddress)}
+                            >
+                                submit
+                            </button>
+                        </div>
+                    ) :
+                    <p>{currentAddress}</p>
+                }
                 <div className="line" />
                 {permanentAddress &&
                     <Fragment>
