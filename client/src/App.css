@@ -412,6 +412,10 @@ button {
   text-align: center;
 }
 
+.profile-submit {
+  text-align: center;
+}
+
 .profile-about .skills {
   display: flex;
   align-items: center;
@@ -419,9 +423,14 @@ button {
   text-align: center;
 }
 
-.profile-about .edit-icon {
+.profile-about .edit-icon,
+.profile-exp .edit-icon,
+.profile-edu .edit-icon {
   display: flex;
   flex-direction: row-reverse;
+}
+
+.edit-icon .fas {
   cursor: pointer;
 }
 
