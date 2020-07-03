@@ -1,16 +1,10 @@
 import React, { Fragment } from 'react';
-import moment from 'moment';
 import {isEmpty} from 'lodash';
 
 const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFields, submitAddress}) => {
     const {isAboutEditEnabled, isEditEnabled, fieldCurrAddress, fieldPermAddress, fieldMobileNum,
-        isErrorMessageOnMobNumb, currentAddress, permanentAddress, AadharNo, PANCardNo, date,
+        isValidMobNumb, currentAddress, permanentAddress, AadharNo, PANCardNo, dateDiff,
         user: {mobileNumber}} = profile;
-    
-    const dateObj = date[date.length - 1];
-    const lastUpdatedDate = moment(dateObj.lastUpdated).format('DD-MM-YYYY');
-    const currentDate = moment().format('DD-MM-YYYY');
-    const dateDiff = moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') < 15;
 
     return (
         <div className="profile-about bg-light p-2">
@@ -91,7 +85,7 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
                                 onBlur={e => onBlurFields(e)}
                                 disabled={dateDiff}
                             />
-                            {isErrorMessageOnMobNumb &&
+                            {!isValidMobNumb &&
                                 <small className="form-danger">
                                     Mobile number entered is not valid.
                                 </small>

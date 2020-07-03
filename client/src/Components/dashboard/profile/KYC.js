@@ -113,8 +113,9 @@ const KYC = ({setAlert, history}) => {
                 'Content-Type': 'application/json'
             }
         };
+        const updatedForm = {...formData, alternateContactNumber: `+91${alternateContactNumber}`};
         try {
-            const res = await axios.post('/api/profile', formData, config);
+            const res = await axios.post('/api/profile', updatedForm, config);
             console.log(res.data);
             setAlert('Congratulations your KYC is done!!', 'success');
             setErrorMsgs({...errorMsgs, disableSubmitButton: true});

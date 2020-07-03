@@ -8,28 +8,28 @@ import {animateScroll as scroll} from 'react-scroll';
 import { setAlert } from '../../../actions/alert';
 import ProfileTop from '../subComponents/ProfileTop';
 import ProfileAbout from '../subComponents/ProfileAbout';
+import PersonalInfo from '../subComponents/PersonalInfo';
 
 const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
-    const {dateOfBirth, currentAddress, permanentAddress, alternateContactNumber,
-        sourceOfIncome, occupation, company, accountType, familyDetails: {fatherName, motherName, spouse},
-        accBranch, IFSC_Code, gender, date, user: {mobileNumber}} = profile;
+    const {currentAddress, permanentAddress, alternateContactNumber,
+        familyDetails: {spouse}, date, user: {mobileNumber}} = profile;
 
     const dateObj = date[date.length - 1];
     const lastUpdatedDate = moment(dateObj.lastUpdated).format('DD-MM-YYYY');
     const currentDate = moment().format('DD-MM-YYYY');
-    const dateDiff = moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') < 15;
+    const dateDiff = moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') < 0;
 
     const [componentState, setComponentState] = useState({
         isAboutEditEnabled: false,
         isEditEnabled: false,
-        isErrorMessageOnMobNumb: false,
+        isValidMobNumb: true,
         fieldCurrAddress: currentAddress,
         fieldPermAddress: permanentAddress,
         spouseName: spouse,
-        fieldMobileNum: mobileNumber
+        fieldMobileNum: mobileNumber,
+        fieldAltContNum: alternateContactNumber
     });
-    const {isAboutEditEnabled, fieldCurrAddress, isEditEnabled, fieldPermAddress,
-        isErrorMessageOnMobNumb, spouseName, fieldMobileNum} = componentState;
+    const {isAboutEditEnabled, fieldCurrAddress, isEditEnabled, isValidMobNumb} = componentState;
 
     const editAddress = () => {
         setComponentState({...componentState, isAboutEditEnabled: !isAboutEditEnabled});
@@ -70,15 +70,15 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
 
     const onBlurFields = e => {
         if (isEmpty(e.target.value)) {
-            if (isErrorMessageOnMobNumb) {
-                setComponentState({...componentState, fieldMobileNum: mobileNumber, isErrorMessageOnMobNumb: false});
+            if (!isValidMobNumb) {
+                setComponentState({...componentState, fieldMobileNum: mobileNumber, isValidMobNumb: true});
             } else {
                 setComponentState({...componentState, fieldMobileNum: mobileNumber});
             }
         } else {
             const mobNum = e.target.value;
             const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
-            setComponentState({...componentState, isErrorMessageOnMobNumb: !mobRegX.test(mobNum)});
+            setComponentState({...componentState, isValidMobNumb: mobRegX.test(mobNum)});
         }
     };
 
@@ -90,59 +90,20 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
         <Fragment>
             <div className="profile-grid my-1">
                 <ProfileTop profile={profile} />
-
                 <ProfileAbout
-                    profile={{...profile, ...componentState}}
+                    profile={{...profile, ...componentState, dateDiff}}
                     editAddress={editAddress}
                     editInfo={editInfo}
                     onFieldChange={onFieldChange}
                     onBlurFields={onBlurFields}
                     submitAddress={submitAddress}
                 />
-                <div className="profile-exp bg-white p-2">
-                    <div className='edit-icon'>
-                        <i className={isEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editInfo}></i>
-                    </div>
-                    <h2 className="text-primary">Personal Information</h2>
-                    <div>
-                        <h3 className="text-dark">Self and Family Details</h3>
-                        <br />
-                        <p><strong>Date of birth: </strong>{moment(dateOfBirth).format('DD-MM-YYYY')}</p>
-                        <p><strong>Gender: </strong>{gender}</p>
-                        <p><strong>Father's name: </strong>{fatherName}</p>
-                        <p><strong>Mother's name: </strong>{motherName}</p>
-                        {isEditEnabled ?
-                            <div className='form'>
-                                <input
-                                    type="text"
-                                    placeholder="Spouse"
-                                    name="spouse"
-                                    value={spouseName}
-                                    onChange={e => onFieldChange(e)}
-                                    disabled={dateDiff}
-                                />
-                            </div> : <p><strong>Spouse: </strong>{spouse || '--'}</p>
-                        }
-                        <p><strong>Alternate Contact: </strong>{alternateContactNumber}</p>
-                    </div>
-                </div>
-
-                <div className="profile-edu bg-white p-2">
-                    <div className='edit-icon'>
-                        <i className={isEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editInfo}></i>
-                    </div>
-                    <h2 className="text-primary">Professional Information</h2>
-                    <div>
-                        <h3>Work and branch Details</h3>
-                        <br />
-                        <p><strong>Occupation: </strong>{occupation}</p>
-                        <p><strong>Sourace of Income: </strong>{sourceOfIncome}</p>
-                        <p><strong>Working at: </strong>{company}</p>
-                        <p><strong>Account type: </strong>{accountType}</p>
-                        <p><strong>Account branch </strong>{accBranch}</p>
-                        <p><strong>IFSC code </strong>{IFSC_Code}</p>
-                    </div>
-                </div>
+                <PersonalInfo
+                    profile={{...profile, ...componentState, dateDiff}}
+                    editInfo={editInfo}
+                    onFieldChange={onFieldChange}
+                    onBlurFields={onBlurFields}
+                />
             </div>
             {isEditEnabled &&
                 <div className='profile-submit'>
