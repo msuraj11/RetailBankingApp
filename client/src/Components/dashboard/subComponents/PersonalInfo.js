@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import moment from 'moment';
 
-const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurFields}) => {
+const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) => {
     const {isEditEnabled, dateOfBirth, gender, fatherName, motherName, spouseName, dateDiff, spouse,
         alternateContactNumber, occupation, sourceOfIncome, company, accountType, accBranch, IFSC_Code,
-        isValidMobNumb, fieldAltContNum} = profile;
+        fieldAltContNum, isValidAltCont, fieldOccupation, fieldSOI, fieldCompany} = profile;
     return (
         <Fragment>
             <div className="profile-exp bg-white p-2">
@@ -39,9 +39,10 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurFields}) => {
                                     minLength="10"
                                     value={fieldAltContNum}
                                     onChange={e => onFieldChange(e)}
-                                    onBlur={e => onBlurFields(e)}
+                                    onBlur={e => onBlurAltContField(e)}
+                                    disabled={dateDiff}
                                 />
-                                {!isValidMobNumb &&
+                                {!isValidAltCont &&
                                     <small className="form-danger">
                                         Mobile number entered is not valid.
                                     </small>
@@ -68,7 +69,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurFields}) => {
                     {isEditEnabled ?
                         <Fragment>
                             <div className="form">
-                                <select name="occupation" value={occupation} onChange={e => onFieldChange(e)}>
+                                <select name="fieldOccupation" value={fieldOccupation} disabled={dateDiff} onChange={e => onFieldChange(e)}>
                                     <option value=''>* --Select occupation--</option>
                                     <option value='Salaried with PVT.'>Salaried with PVT.</option>
                                     <option value='Salaried with Govt.'>Salaried with Govt.</option>
@@ -79,8 +80,8 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurFields}) => {
                                     <option value='Others'>Others</option>
                                 </select>
                             </div>
-                            <div className="form">
-                                <select name="sourceOfIncome" value={sourceOfIncome} onChange={e => onFieldChange(e)}>
+                            <div className="form py">
+                                <select name="fieldSOI" value={fieldSOI} disabled={dateDiff} onChange={e => onFieldChange(e)}>
                                     <option value=''>* --Select source of Income--</option>
                                     <option value='Salary'>Salary</option>
                                     <option value='Business-income'>Business-income</option>
@@ -93,9 +94,10 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurFields}) => {
                                 <input
                                     type="text"
                                     placeholder="* Company"
-                                    name="company"
-                                    value={company}
+                                    name="fieldCompany"
+                                    value={fieldCompany}
                                     onChange={e => onFieldChange(e)}
+                                    disabled={dateDiff}
                                 />
                             </div>
                         </Fragment> :
