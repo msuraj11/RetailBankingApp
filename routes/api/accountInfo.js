@@ -49,12 +49,12 @@ router.get('/', auth, async (req, res) => {
 
         const {accountNumber, accountType, firstName, lastName,
             IFSC_Code, accBranch} = profile;
-        const {accountBalance} = transactions;
+        const accountBalance = transactions ? transactions.accountBalance : 0;
 
         const accountInfo = {
             accountNumber,
             accountType,
-            accountBalance: transactions ? accountBalance : 0,
+            accountBalance,
             accHolder: `${firstName} ${lastName}`,
             IFSC_Code,
             accBranch

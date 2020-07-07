@@ -102,6 +102,8 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
 
     const submitInfo = () => {
         console.log(omit(componentState, ['isAboutEditEnabled', 'isEditEnabled', 'isValidMobNumb', 'isValidAltCont']));
+        setAlert('Request submitted successfully', 'success', 5000);
+        editInfo();
     };
 
     return (

@@ -8,8 +8,10 @@ import ShowProfile from './profile/ShowProfile';
 
 const Dashboard = ({getCurrentProfile, auth: {user}, profile: {profile, loading}}) => {
     useEffect(() => {
-        getCurrentProfile();
-    }, [getCurrentProfile]);
+        if (!profile) {
+            getCurrentProfile();
+        }
+    }, [getCurrentProfile, profile]);
 
     return loading && profile === null ? <Spinner /> :
         <Fragment>

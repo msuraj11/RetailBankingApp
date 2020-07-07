@@ -1,4 +1,4 @@
-import { USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_PROFILE } from './types';
+import { USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_PROFILE, CLEAR_ACC_INFO } from './types';
 import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
 import { setAlert } from './alert';
@@ -52,4 +52,5 @@ export const login = (customerId, password) => async dispatch => {
 export const logout = () => dispatch => {
     dispatch({ type: LOGOUT });
     dispatch({ type: CLEAR_PROFILE });
+    dispatch({ type: CLEAR_ACC_INFO })
 }

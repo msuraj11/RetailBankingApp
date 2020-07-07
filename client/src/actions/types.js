@@ -10,3 +10,6 @@ export const CLEAR_TIMER = 'CLEAR_TIMER';
 export const GET_PROFILE = 'GET_PROFILE';
 export const PROFILE_ERROR = 'PROFILE_ERROR';
 export const CLEAR_PROFILE = 'CLEAR_PROFILE';
+export const GET_ACCOUNT_INFO = 'GET_ACCOUNT_INFO';
+export const ACCOUNT_INFO_ERROR = 'ACCOUNT_INFO_ERROR';
+export const CLEAR_ACC_INFO = 'CLEAR_ACC_INFO';
