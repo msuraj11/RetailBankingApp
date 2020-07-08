@@ -1,15 +1,62 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import {isEmpty} from 'lodash';
 import Spinner from '../layouts/Spinner';
-import { getAccountInfo } from '../../actions/accountInfo';
+import { getAccountInfo, getStatement, removeStatement } from '../../actions/accountInfo';
+import { setAlert } from '../../actions/alert';
+import StatementTable from './StatementTable';
 
-const AccountInfo = ({getAccountInfo, accountInfo: {accInfo, loading}, profile:{profile}}) => {  
+const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loading, statement},
+    profile:{profile}, setAlert, removeStatement}) => {  
     useEffect(() => {
         if (!accInfo) {
             getAccountInfo();
         }
     }, [getAccountInfo, accInfo]);
 
+
+    const [dateItems, setDates] = useState({
+        from: moment(profile.date[0].lastUpdated).format('YYYY-MM-DD'),
+        to: moment().format('YYYY-MM-DD'),
+        isValidDate: true
+    });
+
+    const {from, to, isValidDate} = dateItems;
+
+    const onFieldChange = e => {
+        console.log(e.target.value);
+        setDates({...dateItems, [e.target.name]: e.target.value});
+    };
+
+    const onBlurFields = e => {
+        const validDate = moment(e.target.value).isValid();
+        const validDateRange = validDate && moment(moment(e.target.value).format('YYYY-MM-DD')).isBetween(
+            moment(profile.date[0].lastUpdated).format('YYYY-MM-DD'),
+            moment().format('YYYY-MM-DD'), undefined, []);
+        const validCombination = validDate && moment(from).isSameOrBefore(to);
+        console.log(validDate, validDateRange, validCombination);
+        if (!validDate) {
+            setAlert('Invalid date format', 'danger', 7000);
+            removeStatement();
+        }
+        if (validDate && !validDateRange) {
+            setAlert('Please enter relevent date', 'danger', 7000);
+            removeStatement();
+        }
+        if (validDate && !isEmpty(to) && !isEmpty(from) && !validCombination) {
+            setAlert('From-date cannot be after To-date', 'danger', 7000);
+            removeStatement();
+        }
+        setDates({
+            ...dateItems,
+            isValidDate: validDate && validDateRange && validCombination
+        });
+    };
+
+    const submitDates = () => {
+        getStatement(from, to);
+    };
 
     return (loading && (accInfo === null || profile === null) ? <Spinner /> :
         <Fragment>
@@ -38,6 +85,40 @@ const AccountInfo = ({getAccountInfo, accountInfo: {accInfo, loading}, profile:{
                     </ul>
                 </div>
             </div>
+            <div className='statement-dates'>
+                <div className='form'>
+                    <input
+                        type="date"
+                        placeholder="* From"
+                        name="from"
+                        value={from}
+                        min={moment(profile.date[0].lastUpdated).format('YYYY-MM-DD')}
+                        max={moment().format('YYYY-MM-DD')}
+                        onChange={e => onFieldChange(e)}
+                        onBlur={e => onBlurFields(e)}
+                    />
+                </div>
+                <div className='form mx'>
+                    <input
+                        type="date"
+                        placeholder="* To"
+                        name="to"
+                        value={to}
+                        min={from || moment(profile.date[0].lastUpdated).format('YYYY-MM-DD')}
+                        max={moment().format('YYYY-MM-DD')}
+                        onChange={e => onFieldChange(e)}
+                        onBlur={e => onBlurFields(e)}
+                    />
+                </div>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => submitDates()}
+                    disabled={!isValidDate || isEmpty(from) || isEmpty(to)}
+                >
+                    Get Statement
+                </button>
+            </div>
+            {statement && isValidDate && <StatementTable data={statement} />}
         </Fragment>
     );
 };
@@ -47,4 +128,4 @@ const mapStateToProps = state => ({
     profile: state.profile
 });
 
-export default connect(mapStateToProps, {getAccountInfo})(AccountInfo);
+export default connect(mapStateToProps, {getAccountInfo, setAlert, getStatement, removeStatement})(AccountInfo);

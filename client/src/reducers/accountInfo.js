@@ -1,8 +1,9 @@
-import { GET_ACCOUNT_INFO, ACCOUNT_INFO_ERROR, CLEAR_ACC_INFO } from '../actions/types';
+import { GET_ACCOUNT_INFO, ACCOUNT_INFO_ERROR, CLEAR_ACC_INFO, GET_ACC_STATEMENT, CLEAR_STATEMENT, REMOVE_STATEMENT } from '../actions/types';
 
 const initialState = {
     loading: true,
-    accInfo: null
+    accInfo: null,
+    statement: null
 };
 
 export default function(state = initialState, action) {
@@ -15,13 +16,27 @@ export default function(state = initialState, action) {
                 loading: false,
                 accInfo: payload
             };
+
+        case GET_ACC_STATEMENT:
+            return {
+                ...state,
+                statement: payload
+            };
+
+        case REMOVE_STATEMENT:
+            return {
+                ...state,
+                statement: null
+            };
             
         case ACCOUNT_INFO_ERROR:
         case CLEAR_ACC_INFO:
+        case CLEAR_STATEMENT:
             return {
                 ...state,
                 accInfo: null,
-                loading: false
+                loading: false,
+                statement: null
             }
 
         default:

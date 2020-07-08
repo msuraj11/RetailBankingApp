@@ -1,4 +1,4 @@
-import {GET_ACCOUNT_INFO, ACCOUNT_INFO_ERROR} from './types';
+import {GET_ACCOUNT_INFO, ACCOUNT_INFO_ERROR, GET_ACC_STATEMENT, REMOVE_STATEMENT} from './types';
 import axios from 'axios';
 import { setAlert } from './alert';
 
@@ -19,3 +19,22 @@ export const getAccountInfo = () => async dispatch => {
         }
     }
 };
+
+export const getStatement = (fromDate, toDate) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/accountInfo/statement/${fromDate}/${toDate}`);
+        dispatch({
+            type: GET_ACC_STATEMENT,
+            payload: res.data
+        });
+    } catch (err) {
+        const error = err.response.data.msg;
+        if (error) {
+            dispatch(setAlert(error, 'danger'));
+        }
+    }
+};
+
+export const removeStatement = () => dispatch => {
+    dispatch({ type: REMOVE_STATEMENT });
+}

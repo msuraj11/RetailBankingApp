@@ -12,6 +12,9 @@ const router = express.Router();
 router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
     try {
         const transactions = await Transactions.findOne({ user: req.user.id });
+        if (!transactions) {
+            return res.status(400).json({ msg: 'There are no transsactions' });
+        }
         const {txDetails} = transactions;
         const {start_date, end_date} = req.params;
 
@@ -20,7 +23,7 @@ router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
         }
 
         const filteredTxDetails = txDetails.filter(item => {
-            return moment(item.txDates).isBetween(start_date, end_date);
+            return moment(moment(item.txDates).format('YYYY-MM-DD')).isBetween(start_date, end_date, undefined, []);
         });
         if (filteredTxDetails.length === 0) {
             return res.status(400).json({ msg: 'There are no transsactions in these dates' });
