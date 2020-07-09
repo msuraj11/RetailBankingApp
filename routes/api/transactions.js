@@ -29,7 +29,7 @@ router.post('/', [auth, [
             // Here profile is used to fetch account number hence it is mandatory
             const profile = await Profile.findOne({ user: req.user.id });
             if (!profile) {
-                return res.status(400).json({ msg: 'There is no profile for this user. Please do KYC and perform transactions' });
+                return res.status(400).json({errors: [{ msg: 'There is no profile for this user. Please do KYC and perform transactions' }]});
             }
 
             const isPrevTransaction = await Transactions.findOne({ user: req.user.id });
@@ -53,7 +53,7 @@ router.post('/', [auth, [
 
                 if ((getTransactionDetails.accountBalance === 0) || (txAmount > getTransactionDetails.accountBalance) ) {
                     return res.status(400)
-                    .json({ msg: 'There is no sufficient balance in your account to complete this transaction.' });
+                    .json({errors: [{ msg: 'There is no sufficient balance in your account to complete this transaction.' }]});
                 }
 
                 if (txAmount && txAmount > 0) {
@@ -94,7 +94,7 @@ router.post('/', [auth, [
             }
 
             if (!['Credited', 'Debited'].includes(txType)) {
-                return res.status(400).json({ msg: 'Please give a valid Transaction type' });
+                return res.status(400).json({errors: [{ msg: 'Please give a valid Transaction type' }]});
             }
             
         } catch (err) {

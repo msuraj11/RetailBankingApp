@@ -14,12 +14,20 @@ const Navbar = ({auth:{isAuthenticated, loading}, logout, profile}) => {
                 </Link>
             </li>
             {profile &&
-                <li>
-                    <Link to='/accountInformation'>
-                        <i className='fas fa-info'></i>
-                        <span className='hide-sm'> Account Info</span>
-                    </Link>
-                </li>
+                <Fragment>
+                    <li>
+                        <Link to='/accountInformation'>
+                            <i className='fas fa-info'></i>
+                            <span className='hide-sm'> Account Info</span>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to='/transaction'>
+                            <i className='fas fa-rupee-sign'></i>
+                            <span className='hide-sm'> Transaction</span>
+                        </Link>
+                    </li>
+                </Fragment>
             }
             <li>
                 <Link to='/' onClick={logout}>

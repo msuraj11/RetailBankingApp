@@ -12,8 +12,11 @@ const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loadi
     useEffect(() => {
         if (!accInfo) {
             getAccountInfo();
+            return  () => {
+                removeStatement();
+            }
         }
-    }, [getAccountInfo, accInfo]);
+    }, [getAccountInfo, accInfo, removeStatement]);
 
 
     const [dateItems, setDates] = useState({
