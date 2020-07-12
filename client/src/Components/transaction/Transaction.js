@@ -3,8 +3,9 @@ import {isEmpty, isNumber} from 'lodash';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { setAlert } from '../../actions/alert';
+import { getAccountInfo } from '../../actions/accountInfo';
 
-const Transaction = ({setAlert}) => {
+const Transaction = ({setAlert, getAccountInfo}) => {
     const [txState, setTx] = useState({
         txAmount: '',
         txType: '',
@@ -22,11 +23,10 @@ const Transaction = ({setAlert}) => {
     };
 
     const onBlurField = e => {
-        const numbersOnlyRegx = /^[0-9]{9}$/;
         const isNumberTxAble = e.target.value < 100000 && e.target.value > 0;
         setTx({
             ...txState,
-            isValidAmount: !isEmpty(e.target.value) && !numbersOnlyRegx.test(e.target.value) && isNumberTxAble
+            isValidAmount: !isEmpty(e.target.value) && isNumberTxAble
         });
     };
 
@@ -44,7 +44,7 @@ const Transaction = ({setAlert}) => {
             console.log(res.data);
             setAlert(`Your account is ${txType} with amount: ${txAmount} Rupees`, 'success');
             setTx({txAmount: '', txBy: '', txType: '', isValidAmount: true});
-            
+            getAccountInfo();
         } catch (err) {
             console.error(err.response.data);
             const errors = err.response.data.errors;
@@ -102,4 +102,4 @@ const Transaction = ({setAlert}) => {
     )
 };
 
-export default connect(null, {setAlert})(Transaction);
+export default connect(null, {setAlert, getAccountInfo})(Transaction);

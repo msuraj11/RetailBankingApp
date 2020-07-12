@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import {isEmpty} from 'lodash';
+import {Element} from 'react-scroll';
 import Spinner from '../layouts/Spinner';
 import { getAccountInfo, getStatement, removeStatement } from '../../actions/accountInfo';
 import { setAlert } from '../../actions/alert';
@@ -10,11 +11,9 @@ import StatementTable from './StatementTable';
 const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loading, statement},
     profile:{profile}, setAlert, removeStatement}) => {  
     useEffect(() => {
+        removeStatement();
         if (!accInfo) {
             getAccountInfo();
-            return  () => {
-                removeStatement();
-            }
         }
     }, [getAccountInfo, accInfo, removeStatement]);
 
@@ -75,7 +74,7 @@ const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loadi
                         <h2>{accInfo.accHolder}</h2>
                         <p>A/C: {accInfo.accountNumber}</p>
                         <p>{accInfo.accountType}</p>
-                        <p><strong>{accInfo.accountBalance}{' '}</strong><i className="fas fa-rupee-sign"></i></p>
+                        <p><i className="fas fa-rupee-sign"></i>{' '}<strong>{accInfo.accountBalance}</strong></p>
                     </div>
 
                     <ul>
@@ -121,7 +120,9 @@ const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loadi
                     Get Statement
                 </button>
             </div>
-            {statement && isValidDate && <StatementTable data={statement} />}
+            <Element name='table'>
+                {statement && isValidDate && <StatementTable data={statement} />}
+            </Element>
         </Fragment>
     );
 };
