@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
-const nodemailer = require('nodemailer');
 const sendEmail = require('../utils/emailTemplate');
 
 // @route   POST api/users

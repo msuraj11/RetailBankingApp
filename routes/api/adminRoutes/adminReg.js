@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const Admin = require('../../../models/adminModels/Admin');
+const sendEmail = require('../../utils/emailTemplate');
 
 // @route   POST api/admin
 // @desc    Register Admin
@@ -14,6 +15,7 @@ router.post('/', [
         check('firstName', 'Please provide First-name').notEmpty(),
         check('lastName', 'Please provide Last-name').notEmpty(),
         check('mobileNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
+        check('personalEmail', 'Please include a valid email').isEmail(),
         check('experienceInBanking', 'Experience is mandatory').notEmpty().isNumeric(),
         check('gender', 'Please choose any option').notEmpty(),
         check('adminBranch', 'Please provide your branch').notEmpty(),
@@ -25,7 +27,7 @@ router.post('/', [
             return res.status(400).json({errors: errors.array()});
         }
 
-        const {firstName, lastName, mobileNumber, experienceInBanking, adminBranch, gender,
+        const {firstName, lastName, mobileNumber, experienceInBanking, adminBranch, gender, personalEmail,
             password, confirmPassword} = req.body;
 
         // Create an admin email using fName, lName
@@ -48,7 +50,8 @@ router.post('/', [
         }
 
         // Checking correct branch
-        if (!['E-City P-2', 'Neeladri'].includes(adminBranch)) {
+        if (!['E-City, Bangalore', 'Neeladri, Bangalore', 'Kempegowda, Bangalore',
+            'Koramangala, Bangalore'].includes(adminBranch)) {
             return res.status(400).json({errors: [ {msg: 'Branch is not valid'} ]});
         }
 
@@ -62,6 +65,11 @@ router.post('/', [
             let admin = await Admin.findOne({ mobileNumber });
             if (admin) {
                 return res.status(400).json({errors: [ {msg: 'User already exist, Please try with new Number.'} ]});
+            }
+
+            const adminEmail = await Admin.findOne({ personalEmail });
+            if (adminEmail) {
+                return res.status(400).json({errors: [ {msg: 'E-mail already registered, Please try with new one'} ]});
             }
 
             // Checking E-mail already registered or not
@@ -86,6 +94,7 @@ router.post('/', [
                 lastName,
                 email: emailForAdmin[0],
                 gender,
+                personalEmail,
                 mobileNumber,
                 permissions,
                 avatar,
@@ -112,6 +121,10 @@ router.post('/', [
                 { expiresIn: 3600 }, // basically prefered 3600 in prod mode
                 (err, token) => {
                     if (err) throw err;
+
+                    //Send token to E-Mail
+                    sendEmail(personalEmail, firstName, `token: ${token}`);
+
                     res.json({ token });
                 }
             );

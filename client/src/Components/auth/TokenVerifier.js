@@ -7,7 +7,7 @@ import { setAlert } from '../../actions/alert';
 import PropTypes from 'prop-types';
 import Timer from '../layouts/Timer';
 
-const TokenVerifier = ({setAlert, isAuthenticated, history, showTimer}) => {
+const TokenVerifier = ({setAlert, isAuthenticated, isAdminAuthenticated, history, showTimer, match: {params}}) => {
     const [tokenData, setTokenData] = useState({
         token: '',
         resendData: {
@@ -21,6 +21,8 @@ const TokenVerifier = ({setAlert, isAuthenticated, history, showTimer}) => {
 
     const {token, resendData, isValidToken, displayResendFields, isValidUser} = tokenData;
     const {email, password} = resendData;
+    const {fromScreen} = params;
+    const tokenKey = fromScreen === 'user' ? 'x-auth-token' : 'x-auth-admin-token';
 
     const onFieldChange = e => setTokenData({...tokenData, token: e.target.value, isValidToken: true});
 
@@ -33,17 +35,18 @@ const TokenVerifier = ({setAlert, isAuthenticated, history, showTimer}) => {
         e.preventDefault();
         const config = {
             headers: {
-                'x-auth-token': token
+                [tokenKey]: token
             }
         };
 
         try {
-            const res = await axios.get('/api/auth/verifyToken', config);
+            const res = await axios.get(fromScreen === 'user' ?
+                '/api/auth/verifyToken' : '/api/authAdmin/verifyToken', config);
             console.log(res.data);
             setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.',
                 'success', 12000);
             setTokenData({...tokenData, token: ''});
-            setTimeout(() => history.push('/login'), 12000);
+            setTimeout(() => history.push(fromScreen === 'user' ? '/login' : '/adminLogin'), 12000);
         } catch (error) {
             console.error(error.response.data);
             setTokenData({...tokenData, isValidToken: false});
@@ -55,8 +58,8 @@ const TokenVerifier = ({setAlert, isAuthenticated, history, showTimer}) => {
         console.log(resendData);
     };
 
-    return (isAuthenticated ?
-        <Redirect to='/dashboard' /> :
+    return (isAuthenticated ? //TODO componentDidMount of Admin is stored in redux-state and can be used here for navigation
+        <Redirect to='/dashboard' /> : (isAdminAuthenticated ? <Redirect to='/adminDashboard' /> :
         <Fragment>
             <h1 className="large text-primary">Verify Token</h1>
             <p className="lead"><i className="fas fa-paper-plane"></i> Check for Token in your Inbox of E-Mail you provided</p>
@@ -127,7 +130,7 @@ const TokenVerifier = ({setAlert, isAuthenticated, history, showTimer}) => {
                     </form>
                 </Fragment>
             }
-        </Fragment>
+        </Fragment>)
     );
 };
 
@@ -140,6 +143,7 @@ TokenVerifier.prototypes = {
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
+    isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
     showTimer: state.auth.showTimer
 });
 

@@ -63,7 +63,7 @@ const Register = ({setAlert, isAuthenticated, history, setTimer}) => {
             setAlert('Registered Successfully!!', 'success');
             setFormData({...formData, disableRegButton: true});
             setTimeout(() => {
-                history.push('/tokenVerifier');
+                history.push('/tokenVerifier/user');
                 setTimer();
             }, 4000);
         } catch (err) {

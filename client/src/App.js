@@ -12,19 +12,27 @@ import PrivateRoute from './Components/routing/PrivateRoute';
 import KYC from './Components/dashboard/profile/KYC';
 import AccountInfo from './Components/account-Info/AccountInfo';
 import Transaction from './Components/transaction/Transaction';
+import AdminRegister from './Components/auth/admin/AdminRegister';
+import AdminLogin from './Components/auth/admin/AdminLogin';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
+import { loadAdmin } from './actions/authAdmin';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
 
+if (localStorage.adminToken) {
+  setAuthToken(localStorage.adminToken, false);
+}
+
 const App = () => {
   useEffect(() => {
     store.dispatch(loadUser());
+    store.dispatch(loadAdmin());
   }, []);
 
   return (
@@ -37,8 +45,10 @@ const App = () => {
             <Alert />
             <Switch>
               <Route path="/register" component={Register} />
+              <Route path="/adminRegister" component={AdminRegister} />
               <Route path="/login" component={Login} />
-              <Route path="/tokenVerifier" component={TokenVerifier} />
+              <Route path="/adminLogin" component={AdminLogin} />
+              <Route path="/tokenVerifier/:fromScreen" component={TokenVerifier} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/kyc" component={KYC} />
               <PrivateRoute path="/accountInformation" component={AccountInfo} />

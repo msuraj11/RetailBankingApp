@@ -5,6 +5,7 @@ const {check, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
+const sendEmail = require('../../utils/emailTemplate');
 
 const router = express.Router();
 
@@ -14,6 +15,22 @@ const router = express.Router();
 router.get('/', adminAuth, async (req, res) => {
     try {
         const admin = await Admin.findById(req.admin.id).select('-password');
+        res.json(admin);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/authAdmin/verifyToken
+// @desc    Validate with middleware
+// @access  Public
+router.get('/verifyToken', adminAuth, async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.admin.id).select('-password');
+        
+        sendEmail(admin.personalEmail, admin.firstName, `Login Email-ID: ${admin.email}`);
+
         res.json(admin);
     } catch (err) {
         console.log(err.message);

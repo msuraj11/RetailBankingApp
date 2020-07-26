@@ -14,13 +14,18 @@ const AdminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    personalEmail: {
+        type: String,
+        required: true,
+        unique: true
+    },
     email: {
         type: String,
         required: true,
         unique: true
     },
     mobileNumber: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },
