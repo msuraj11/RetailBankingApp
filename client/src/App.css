@@ -354,6 +354,12 @@ button {
   height: 100vh;
 }
 
+.landing-admin {
+  position: relative;
+  background: url('./img/showcaseAdmin.jpg') no-repeat center center/cover;
+  height: 100vh;
+}
+
 .landing-inner {
   color: #fff;
   height: 100%;

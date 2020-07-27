@@ -1,4 +1,5 @@
-import { ADMIN_LOADED, ADMIN_AUTH_ERROR, ADMIN_LOGIN_FAIL, ADMIN_LOGIN_SUCCESS, ADMIN_LOGOUT } from './types';
+import { ADMIN_LOADED, ADMIN_AUTH_ERROR, ADMIN_LOGIN_FAIL, ADMIN_LOGIN_SUCCESS, ADMIN_LOGOUT,
+    SET_ADMIN_NAV_LINKS, RESET_ADMIN_NAV_LINKS } from './types';
 import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
 import { setAlert } from './alert';
@@ -47,6 +48,14 @@ export const adminLogin = (email, password) => async dispatch => {
             type: ADMIN_LOGIN_FAIL
         });
     }
+};
+
+export const setAdminNavLinks = () => dispatch => {
+    dispatch({ type: SET_ADMIN_NAV_LINKS });
+};
+
+export const resetAdminNavLinks = () => dispatch => {
+    dispatch({ type: RESET_ADMIN_NAV_LINKS });
 };
 
 export const logout = () => dispatch => {

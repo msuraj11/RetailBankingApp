@@ -7,7 +7,7 @@ import { setAlert } from '../../actions/alert';
 import PropTypes from 'prop-types';
 import Timer from '../layouts/Timer';
 
-const TokenVerifier = ({setAlert, isAuthenticated, isAdminAuthenticated, history, showTimer, match: {params}}) => {
+const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdminAuthenticated, history, showTimer, match: {params}}) => {
     const [tokenData, setTokenData] = useState({
         token: '',
         resendData: {
@@ -58,8 +58,8 @@ const TokenVerifier = ({setAlert, isAuthenticated, isAdminAuthenticated, history
         console.log(resendData);
     };
 
-    return (isAuthenticated ? //TODO componentDidMount of Admin is stored in redux-state and can be used here for navigation
-        <Redirect to='/dashboard' /> : (isAdminAuthenticated ? <Redirect to='/adminDashboard' /> :
+    return (isAuthenticated && !activateAdminNavLinks ? //TODO componentDidMount of Admin is stored in redux-state and can be used here for navigation
+        <Redirect to='/dashboard' /> : (isAdminAuthenticated && activateAdminNavLinks ? <Redirect to='/adminDashboard' /> :
         <Fragment>
             <h1 className="large text-primary">Verify Token</h1>
             <p className="lead"><i className="fas fa-paper-plane"></i> Check for Token in your Inbox of E-Mail you provided</p>
@@ -137,6 +137,7 @@ const TokenVerifier = ({setAlert, isAuthenticated, isAdminAuthenticated, history
 TokenVerifier.prototypes = {
     setAlert: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
+    activateAdminNavLinks: PropTypes.bool,
     showTimer: PropTypes.bool,
     history: PropTypes.object
 }
@@ -144,6 +145,7 @@ TokenVerifier.prototypes = {
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
     isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
+    activateAdminNavLinks: state.authAdmin.activateAdminNavLinks,
     showTimer: state.auth.showTimer
 });
 

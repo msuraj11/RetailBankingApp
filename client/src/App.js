@@ -14,6 +14,7 @@ import AccountInfo from './Components/account-Info/AccountInfo';
 import Transaction from './Components/transaction/Transaction';
 import AdminRegister from './Components/auth/admin/AdminRegister';
 import AdminLogin from './Components/auth/admin/AdminLogin';
+import AdminLanding from './Components/layouts/AdminLanding';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -41,6 +42,7 @@ const App = () => {
         <Fragment>
           <Navbar />
           <Route exact path="/" component={Landing} />
+          <Route path="/adminLanding" component={AdminLanding} />
           <section className="container">
             <Alert />
             <Switch>

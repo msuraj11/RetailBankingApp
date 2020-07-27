@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import {isEmpty} from 'lodash';
@@ -7,8 +7,10 @@ import axios from 'axios';
 import {animateScroll as scroll} from 'react-scroll';
 import { setAlert } from '../../../actions/alert';
 import { setTimer } from '../../../actions/timer';
+import { setAdminNavLinks } from '../../../actions/authAdmin';
+import { resetAdminNavLinks } from '../../../actions/authAdmin';
 
-const AdminRegister = ({setAlert, isAdminAuthenticated, history, setTimer}) => {
+const AdminRegister = ({setAlert, isAdminAuthenticated, history, setTimer, setAdminNavLinks, resetAdminNavLinks}) => {
     const [formData, setFormData] = useState({
         fields:{
             firstName:'',
@@ -28,12 +30,12 @@ const AdminRegister = ({setAlert, isAdminAuthenticated, history, setTimer}) => {
     });
 
     // TODO Nav-links for guest admin is to be done using redux
-    // useEffect(() => {
-    //     setAdminNavLinks();
-    //     return () => {
-    //         removeAdminNavLinks();
-    //     }
-    // });
+    useEffect(() => {
+        setAdminNavLinks();
+        return () => {
+            resetAdminNavLinks();
+        }
+    });
 
     const {fields, isMobileNumValid, isPasswordMatch, isValidEmail, disableRegButton} = formData;
     const {firstName, lastName, mobileNumber, experienceInBanking, gender, adminBranch,
@@ -229,11 +231,12 @@ AdminRegister.propTypes = {
     setAlert: PropTypes.func.isRequired,
     history: PropTypes.object,
     isAdminAuthenticated: PropTypes.bool,
-    setTimer: PropTypes.func
+    setTimer: PropTypes.func,
+    setAdminNavLinks: PropTypes.func
 };
 
 const mapStateToProps = state => ({
     isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
-export default connect(mapStateToProps, {setAlert, setTimer})(AdminRegister);
+export default connect(mapStateToProps, {setAlert, setTimer, setAdminNavLinks, resetAdminNavLinks})(AdminRegister);

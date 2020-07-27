@@ -1,10 +1,12 @@
-import { ADMIN_LOADED, ADMIN_AUTH_ERROR, ADMIN_LOGIN_FAIL, ADMIN_LOGIN_SUCCESS, ADMIN_LOGOUT } from '../actions/types';
+import { ADMIN_LOADED, ADMIN_AUTH_ERROR, ADMIN_LOGIN_FAIL, ADMIN_LOGIN_SUCCESS,
+    ADMIN_LOGOUT, SET_ADMIN_NAV_LINKS, RESET_ADMIN_NAV_LINKS } from '../actions/types';
 
 const initialState = {
     adminToken: localStorage.getItem('adminToken'),
     isAdminAuthenticated: false,
     loading: true,
-    admin: null
+    admin: null,
+    activateAdminNavLinks: false
 };
 
 export default function(state = initialState, action) {
@@ -26,6 +28,18 @@ export default function(state = initialState, action) {
                 adminToken: payload.token,
                 isAdminAuthenticated:true,
                 loading: false
+            };
+
+        case SET_ADMIN_NAV_LINKS:
+            return {
+                ...state,
+                activateAdminNavLinks: true
+            };
+
+        case RESET_ADMIN_NAV_LINKS:
+            return {
+                ...state,
+                activateAdminNavLinks: false
             };
 
         case ADMIN_AUTH_ERROR:

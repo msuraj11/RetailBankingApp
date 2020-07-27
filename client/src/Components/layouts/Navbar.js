@@ -42,6 +42,7 @@ const Navbar = ({auth:{isAuthenticated, loading}, logout, profile}) => {
         <ul>
                 <li><Link to='/register'>Register</Link></li>
                 <li><Link to='/login'>Login</Link></li>
+                <li><Link to='/adminLanding'>Admin</Link></li>
         </ul>
     );
 
