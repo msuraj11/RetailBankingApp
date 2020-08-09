@@ -9,12 +9,14 @@ import TokenVerifier from './Components/auth/TokenVerifier';
 import Alert from './Components/layouts/Alert';
 import Dashboard from './Components/dashboard/Dashboard';
 import PrivateRoute from './Components/routing/PrivateRoute';
+import PrivateRouteAdmin from './Components/routing/PrivateRouteAdmin';
 import KYC from './Components/dashboard/profile/KYC';
 import AccountInfo from './Components/account-Info/AccountInfo';
 import Transaction from './Components/transaction/Transaction';
 import AdminRegister from './Components/auth/admin/AdminRegister';
 import AdminLogin from './Components/auth/admin/AdminLogin';
 import AdminLanding from './Components/layouts/AdminLanding';
+import AdminDashboard from './Components/dashboard/admin/AdminDashboard';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -55,6 +57,7 @@ const App = () => {
               <PrivateRoute path="/kyc" component={KYC} />
               <PrivateRoute path="/accountInformation" component={AccountInfo} />
               <PrivateRoute path="/transaction" component={Transaction} />
+              <PrivateRouteAdmin path="/adminDashboard" component={AdminDashboard} />
             </Switch>
           </section>
         </Fragment>

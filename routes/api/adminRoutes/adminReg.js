@@ -98,6 +98,7 @@ router.post('/', [
                 mobileNumber,
                 permissions,
                 avatar,
+                adminId: Number(Math.floor(10000000 + Math.random() * 90000000)),
                 password,
                 adminBranch
             });

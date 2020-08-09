@@ -58,6 +58,6 @@ export const resetAdminNavLinks = () => dispatch => {
     dispatch({ type: RESET_ADMIN_NAV_LINKS });
 };
 
-export const logout = () => dispatch => {
+export const adminLogout = () => dispatch => {
     dispatch({ type: ADMIN_LOGOUT });
 };

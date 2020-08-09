@@ -43,7 +43,6 @@ const AdminSchema = new mongoose.Schema({
     },
     adminId: {
         type: Number, // TODO adminId concat with branch and bank-name
-        default: Number(Math.floor(10000000 + Math.random() * 90000000)),
         unique: true
     },
     avatar: {

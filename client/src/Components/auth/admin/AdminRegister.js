@@ -85,17 +85,18 @@ const AdminRegister = ({setAlert, isAdminAuthenticated, history, setTimer, setAd
             }, 4000);
         } catch (err) {
             console.error(err.response.data);
-            const errors = err.response.data.errors;
+            const errors = err.response.data.errors || ['Something went wrong please try again later!'];
             if (errors) {
                 errors.forEach(error => setAlert(error.msg, 'danger', 10000));
             }
+            scroll.scrollToTop();
         }
     };
 
     return (isAdminAuthenticated ?
         <Redirect to='/adminDashboard' /> :
         <Fragment>
-            <h1 className="large text-primary">Sign Up Admin</h1>
+            <h1 className="large text-primary">Admin Sign Up</h1>
             <p className="lead"><i className="fas fa-user"></i> Create Your Account</p>
             <form className="form" onSubmit={e => onSubmitForm(e)}>
                 <div className="form-group">
@@ -232,7 +233,8 @@ AdminRegister.propTypes = {
     history: PropTypes.object,
     isAdminAuthenticated: PropTypes.bool,
     setTimer: PropTypes.func,
-    setAdminNavLinks: PropTypes.func
+    setAdminNavLinks: PropTypes.func,
+    resetAdminNavLinks: PropTypes.func
 };
 
 const mapStateToProps = state => ({

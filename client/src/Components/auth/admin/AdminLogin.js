@@ -1,17 +1,25 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { adminLogin } from '../../../actions/authAdmin';
+import { setAdminNavLinks, resetAdminNavLinks } from '../../../actions/authAdmin';
 
-const AdminLogin = ({adminLogin, isAdminAuthenticated}) => {
+const AdminLogin = ({adminLogin, isAdminAuthenticated, setAdminNavLinks, resetAdminNavLinks}) => {
     const [formData, setFormData] = useState({
         fields:{
             emailId:'',
             password: ''
         },
         isValidEmailId: true
+    });
+
+    useEffect(() => {
+        setAdminNavLinks();
+        return () => {
+            resetAdminNavLinks();
+        }
     });
 
     const {fields, isValidEmailId} = formData;
@@ -35,7 +43,7 @@ const AdminLogin = ({adminLogin, isAdminAuthenticated}) => {
     return (isAdminAuthenticated ?
         <Redirect to='/adminDashboard' /> :
         <Fragment>
-            <h1 className="large text-primary">Sign In</h1>
+            <h1 className="large text-primary">Admin Sign In</h1>
             <p className="lead"><i className="fas fa-user"></i> Sign Into Your Account</p>
             <form className="form" onSubmit={e => onSubmitForm(e)}>
                 <div className="form-group">
@@ -80,11 +88,13 @@ const AdminLogin = ({adminLogin, isAdminAuthenticated}) => {
 
 AdminLogin.prototypes = {
     adminLogin: PropTypes.func.isRequired,
-    isAdminAuthenticated: PropTypes.bool
+    isAdminAuthenticated: PropTypes.bool,
+    setAdminNavLinks: PropTypes.func,
+    resetAdminNavLinks: PropTypes.func
 }
 
 const mapStateToProps = state => ({
     isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
-export default connect(mapStateToProps, {adminLogin})(AdminLogin);
+export default connect(mapStateToProps, {adminLogin, setAdminNavLinks, resetAdminNavLinks})(AdminLogin);
