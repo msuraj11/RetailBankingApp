@@ -43,6 +43,12 @@ export default function(state = initialState, action) {
             };
 
         case ADMIN_AUTH_ERROR:
+            localStorage.removeItem('adminToken');
+            return {
+                ...state,
+                adminToken: null
+            };
+
         case ADMIN_LOGIN_FAIL:
         case ADMIN_LOGOUT:
             localStorage.removeItem('adminToken');

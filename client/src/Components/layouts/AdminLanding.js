@@ -18,28 +18,33 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, history, setAdminNavLinks
         setLocalState({...localState, adminCode: e.target.value});
     };
 
-    const onBlurField = e => {
+    const onSubmitForm = e => {
+        e.preventDefault();
         if (adminCode !== '1413914') {
             setAlert('Access denied', 'danger', 6000);
             setTimeout(() => history.push('/'), 6000);
+        } else {
+            setLocalState({...localState, isAuthorised: true});
+            setAdminNavLinks();
         }
     };
 
     const renderInputField = (<Fragment>
         <h1 className="x-large">Admin access point</h1>
         <p className="lead">Type admin access code to enter</p>
-        <div className="form">
-            <input
-                type="password"
-                placeholder="Access Code"
-                name="adminCode"
-                value={adminCode}
-                onChange={e => onFieldChange(e)}
-                onBlur={e => onBlurField(e)}
-            />
-        </div>
-    </Fragment>);
-        
+            <form className="form statement-dates"  onSubmit={e => onSubmitForm(e)}>
+                <input
+                    type="password"
+                    placeholder="Access Code"
+                    name="adminCode"
+                    value={adminCode}
+                    onChange={e => onFieldChange(e)}
+                />
+                <button type='submit' className='btn btn-primary'>
+                    <i className="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </Fragment>);
 
     const renderMainLanding = (isAdminAuthenticated ? <Redirect to='/adminDashboard' /> :
         <Fragment>
@@ -51,11 +56,6 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, history, setAdminNavLinks
             </div>
         </Fragment>     
     );
-
-    if (adminCode === '1413914' && !isAuthorised) {
-        setLocalState({...localState, isAuthorised: true});
-        setAdminNavLinks();
-    }
 
     return (isAdminAuthenticated ? <Redirect to='/adminDashboard' /> :
         <section className="landing-admin">

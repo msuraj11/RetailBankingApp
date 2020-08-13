@@ -59,8 +59,20 @@ const Navbar = ({auth:{isAuthenticated, loading}, logout, profile, adminLogout,
         <ul>
             <li>
                 <Link to='/adminDashboard'>
-                    <i className='fas fa-user'></i>
+                    <i className='fas fa-user-shield'></i>
                     <span className='hide-sm'> Dashboard</span>
+                </Link>
+            </li>
+            <li>
+                <Link to='/allUsers'>
+                    <i className='fas fa-user'></i>
+                    <span className='hide-sm'> Users</span>
+                </Link>
+            </li>
+            <li>
+                <Link to='/logs'>
+                    <i className='fas fa-info'></i>
+                    <span className='hide-sm'> Logs</span>
                 </Link>
             </li>
             <li>

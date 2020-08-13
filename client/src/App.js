@@ -17,6 +17,7 @@ import AdminRegister from './Components/auth/admin/AdminRegister';
 import AdminLogin from './Components/auth/admin/AdminLogin';
 import AdminLanding from './Components/layouts/AdminLanding';
 import AdminDashboard from './Components/dashboard/admin/AdminDashboard';
+import PageNotFound from './Components/routing/PageNotFound';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -58,6 +59,7 @@ const App = () => {
               <PrivateRoute path="/accountInformation" component={AccountInfo} />
               <PrivateRoute path="/transaction" component={Transaction} />
               <PrivateRouteAdmin path="/adminDashboard" component={AdminDashboard} />
+              <Route component={PageNotFound} />
             </Switch>
           </section>
         </Fragment>
