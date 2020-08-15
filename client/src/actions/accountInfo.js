@@ -11,7 +11,7 @@ export const getAccountInfo = () => async dispatch => {
             payload: res.data
         });
     } catch (err) {
-        const errors = err.response.data.errors;
+        const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
         dispatch({
             type: ACCOUNT_INFO_ERROR
         });

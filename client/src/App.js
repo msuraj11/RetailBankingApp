@@ -18,6 +18,7 @@ import AdminLogin from './Components/auth/admin/AdminLogin';
 import AdminLanding from './Components/layouts/AdminLanding';
 import AdminDashboard from './Components/dashboard/admin/AdminDashboard';
 import PageNotFound from './Components/routing/PageNotFound';
+import Logs from './Components/admin-tabs/Logs';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -44,24 +45,27 @@ const App = () => {
       <BrowserRouter>
         <Fragment>
           <Navbar />
-          <Route exact path="/" component={Landing} />
-          <Route path="/adminLanding" component={AdminLanding} />
-          <section className="container">
-            <Alert />
-            <Switch>
-              <Route path="/register" component={Register} />
-              <Route path="/adminRegister" component={AdminRegister} />
-              <Route path="/login" component={Login} />
-              <Route path="/adminLogin" component={AdminLogin} />
-              <Route path="/tokenVerifier/:fromScreen" component={TokenVerifier} />
-              <PrivateRoute path="/dashboard" component={Dashboard} />
-              <PrivateRoute path="/kyc" component={KYC} />
-              <PrivateRoute path="/accountInformation" component={AccountInfo} />
-              <PrivateRoute path="/transaction" component={Transaction} />
-              <PrivateRouteAdmin path="/adminDashboard" component={AdminDashboard} />
-              <Route component={PageNotFound} />
-            </Switch>
-          </section>
+          <Switch>
+            <Route exact path="/" component={Landing} />
+            <Route exact path="/adminLanding" component={AdminLanding} />
+            <section className="container">
+              <Alert />
+              <Switch>
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/adminRegister" component={AdminRegister} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/adminLogin" component={AdminLogin} />
+                <Route exact path="/tokenVerifier/:fromScreen" component={TokenVerifier} />
+                <PrivateRoute exact path="/dashboard" component={Dashboard} />
+                <PrivateRoute exact path="/kyc" component={KYC} />
+                <PrivateRoute exact path="/accountInformation" component={AccountInfo} />
+                <PrivateRoute exact path="/transaction" component={Transaction} />
+                <PrivateRouteAdmin exact path="/adminDashboard" component={AdminDashboard} />
+                <PrivateRouteAdmin exact path="/logs" component={Logs} />
+                <Route component={PageNotFound} />
+              </Switch>
+            </section>
+          </Switch>
         </Fragment>
       </BrowserRouter>
     </Provider>

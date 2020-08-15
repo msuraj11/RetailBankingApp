@@ -68,7 +68,7 @@ const Register = ({setAlert, isAuthenticated, history, setTimer}) => {
             }, 4000);
         } catch (err) {
             console.error(err.response.data);
-            const errors = err.response.data.errors || ['Something went wrong please try again later!'];
+            const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
             if (errors) {
                 errors.forEach(error => setAlert(error.msg, 'danger', 10000));
             }

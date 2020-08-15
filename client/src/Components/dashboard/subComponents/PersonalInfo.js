@@ -2,8 +2,8 @@ import React, { Fragment } from 'react';
 import moment from 'moment';
 
 const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) => {
-    const {isEditEnabled, dateOfBirth, gender, fatherName, motherName, spouseName, dateDiff, spouse,
-        alternateContactNumber, occupation, sourceOfIncome, company, accountType, accBranch, IFSC_Code,
+    const {isEditEnabled, dateOfBirth, gender, familyDetails: {fatherName, motherName}, spouseName: fieldSouseName,
+        dateDiff, spouseName, alternateContactNumber, occupation, sourceOfIncome, company, accountType, accBranch, IFSC_Code,
         fieldAltContNum, isValidAltCont, fieldOccupation, fieldSOI, fieldCompany} = profile;
     return (
         <Fragment>
@@ -26,7 +26,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
                                     type="text"
                                     placeholder="Spouse"
                                     name="spouseName"
-                                    value={spouseName}
+                                    value={fieldSouseName}
                                     onChange={e => onFieldChange(e)}
                                     disabled={dateDiff}
                                 />
@@ -50,7 +50,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
                             </div>
                         </Fragment> :
                         <Fragment>
-                            <p><strong>Spouse: </strong>{spouse || '--'}</p>
+                            <p><strong>Spouse: </strong>{spouseName || '--'}</p>
                             <p><strong>Alternate Contact: </strong>{alternateContactNumber}</p>
                         </Fragment>
                     }

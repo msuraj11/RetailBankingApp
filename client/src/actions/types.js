@@ -23,3 +23,7 @@ export const ADMIN_LOGIN_FAIL = 'ADMIN_LOGIN_FAIL';
 export const ADMIN_LOGOUT = 'ADMIN_LOGOUT';
 export const SET_ADMIN_NAV_LINKS = 'SET_ADMIN_NAV_LINKS';
 export const RESET_ADMIN_NAV_LINKS = 'RESET_ADMIN_NAV_LINKS';
+export const SET_ADMIN_LOGS = 'SET_ADMIN_LOGS';
+export const SET_USER_DATA = 'SET_USER_DATA';
+export const LOGS_ERROR = 'LOGS_ERROR';
+export const CLEAR_LOGS = 'CLEAR_LOGS';

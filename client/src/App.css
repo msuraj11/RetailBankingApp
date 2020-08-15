@@ -499,9 +499,8 @@ button {
 
 .post {
   display: grid;
-  grid-template-columns: 1fr 4fr;
-  grid-gap: 2rem;
-  align-items: center;
+  grid-template-columns: 1fr 3fr 0.6fr;
+  grid-gap: 1rem;
 }
 
 .post > div:first-child {
@@ -529,6 +528,27 @@ button {
 .statement-dates {
   display: flex;
   align-items: stretch;
+}
+
+.log-type-UPDATE {
+  background-color: blue;
+  color: antiquewhite;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 0.5rem;
+}
+
+.log-type-DELETE {
+  background-color: red;
+  color: antiquewhite;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 0.5rem;
+}
+
+.user-details {
+  display: flex;
+  align-items: center;
 }
 
 /* Mobile Styles */

@@ -53,7 +53,7 @@ router.post('/', [auth, [
             familyDetails: {
                 fatherName,
                 motherName,
-                spouse
+                spouseName: spouse
             },
             user: req.user.id,
             accBranch,

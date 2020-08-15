@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { animateScroll as scroll } from 'react-scroll';
 import { setAlert } from '../../../actions/alert';
 
 const KYC = ({setAlert, history}) => {
@@ -107,7 +108,6 @@ const KYC = ({setAlert, history}) => {
 
     const onSubmitForm = async e => {
         e.preventDefault();
-        console.log(formData);
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -115,16 +115,15 @@ const KYC = ({setAlert, history}) => {
         };
         const updatedForm = {...formData, alternateContactNumber: `+91${alternateContactNumber}`};
         try {
-            const res = await axios.post('/api/profile', updatedForm, config);
-            console.log(res.data);
+            await axios.post('/api/profile', updatedForm, config);
+            scroll.scrollToTop();
             setAlert('Congratulations your KYC is done!!', 'success');
             setErrorMsgs({...errorMsgs, disableSubmitButton: true});
             setTimeout(() => {
                 history.push('/dashboard');
             }, 4000);
         } catch (err) {
-            console.error(err.response.data);
-            const errors = err.response.data.errors || ['Something went wrong please try again later!'];
+            const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
             if (errors) {
                 errors.forEach(error => setAlert(error.msg, 'danger', 10000));
             }

@@ -48,8 +48,8 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, history, setAdminNavLinks
 
     const renderMainLanding = (isAdminAuthenticated ? <Redirect to='/adminDashboard' /> :
         <Fragment>
-            <h1 className="x-large">Customer Connect</h1>
-            <p className="lead">Register or Login to handle Customer data</p>
+            <h1 className="x-large">Welcome to Admin portal of Customer Connect</h1>
+            <p className="lead">Sign-up or Login to handle Customer data</p>
             <div className="buttons">
                 <Link to='/adminRegister' className="btn btn-primary">Sign Up</Link>
                 <Link to='/adminLogin' className="btn btn-light">Login</Link>

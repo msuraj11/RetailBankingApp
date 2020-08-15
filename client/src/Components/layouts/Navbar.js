@@ -6,7 +6,7 @@ import { logout } from '../../actions/auth';
 import { adminLogout } from '../../actions/authAdmin';
 
 const Navbar = ({auth:{isAuthenticated, loading}, logout, profile, adminLogout,
-    authAdmin: {activateAdminNavLinks, isAdminAuthenticated}}) => {
+    authAdmin: {activateAdminNavLinks, isAdminAuthenticated, admin}}) => {
     const authLinks = (
         <ul>
             <li>
@@ -69,12 +69,14 @@ const Navbar = ({auth:{isAuthenticated, loading}, logout, profile, adminLogout,
                     <span className='hide-sm'> Users</span>
                 </Link>
             </li>
-            <li>
-                <Link to='/logs'>
-                    <i className='fas fa-info'></i>
-                    <span className='hide-sm'> Logs</span>
-                </Link>
-            </li>
+            {admin && admin.permissions && admin.permissions.length > 1 &&
+                <li>
+                    <Link to='/logs'>
+                        <i className='fas fa-info'></i>
+                        <span className='hide-sm'> Logs</span>
+                    </Link>
+                </li>
+            }
             <li>
                 <Link to='/adminLanding' onClick={adminLogout}>
                     <i className='fas fa-sign-out-alt'></i>

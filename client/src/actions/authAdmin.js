@@ -1,5 +1,5 @@
 import { ADMIN_LOADED, ADMIN_AUTH_ERROR, ADMIN_LOGIN_FAIL, ADMIN_LOGIN_SUCCESS, ADMIN_LOGOUT,
-    SET_ADMIN_NAV_LINKS, RESET_ADMIN_NAV_LINKS } from './types';
+    SET_ADMIN_NAV_LINKS, RESET_ADMIN_NAV_LINKS, CLEAR_LOGS } from './types';
 import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
 import { setAlert } from './alert';
@@ -40,13 +40,14 @@ export const adminLogin = (email, password) => async dispatch => {
         dispatch(setAlert('Login Success', 'success', 2000));
     } catch (err) {
         console.error(err.response.data);
-        const errors = err.response.data.errors;
+        const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
         if (errors) {
             errors.forEach(error => dispatch(setAlert(error.msg, 'danger', 10000)));
         }
         dispatch({
             type: ADMIN_LOGIN_FAIL
         });
+        dispatch(setAdminNavLinks());
     }
 };
 
@@ -60,4 +61,5 @@ export const resetAdminNavLinks = () => dispatch => {
 
 export const adminLogout = () => dispatch => {
     dispatch({ type: ADMIN_LOGOUT });
+    dispatch({ type: CLEAR_LOGS });
 };

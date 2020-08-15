@@ -12,7 +12,7 @@ import PersonalInfo from '../subComponents/PersonalInfo';
 
 const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
     const {currentAddress, permanentAddress, alternateContactNumber, occupation, sourceOfIncome, company,
-        familyDetails: {spouse}, date, user: {mobileNumber}} = profile;
+        familyDetails: {spouseName: spouse}, date, user: {mobileNumber}} = profile;
 
     const dateObj = date[date.length - 1];
     const lastUpdatedDate = moment(dateObj.lastUpdated).format('DD-MM-YYYY');
@@ -64,7 +64,7 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
             getCurrentProfile();
         } catch (err) {
             console.error(err.response.data);
-            const errors = err.response.data.errors;
+            const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
             if (errors) {
                 errors.forEach(error => setAlert(error.msg, 'danger', 10000));
             }

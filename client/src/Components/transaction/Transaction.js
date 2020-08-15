@@ -47,7 +47,7 @@ const Transaction = ({setAlert, getAccountInfo}) => {
             getAccountInfo();
         } catch (err) {
             console.error(err.response.data);
-            const errors = err.response.data.errors;
+            const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
             if (errors) {
                 errors.forEach(error => setAlert(error.msg, 'danger', 10000));
             }

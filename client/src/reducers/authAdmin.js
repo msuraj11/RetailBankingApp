@@ -46,7 +46,9 @@ export default function(state = initialState, action) {
             localStorage.removeItem('adminToken');
             return {
                 ...state,
-                adminToken: null
+                adminToken: null,
+                isAdminAuthenticated: false,
+                admin: null
             };
 
         case ADMIN_LOGIN_FAIL:
