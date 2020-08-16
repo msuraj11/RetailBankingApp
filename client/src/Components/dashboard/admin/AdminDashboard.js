@@ -23,7 +23,7 @@ const AdminDashboard = ({setAdminNavLinks, resetAdminNavLinks, authAdmin: {loadi
                     />
                     <div>
                         <h2>{`${admin.firstName} ${admin.lastName}`}</h2>
-                        <p>A/ID: {admin.adminId}</p>
+                        <p><strong>A/ID: </strong>{admin.adminId}</p>
                         <p>{admin.adminBranch}</p>
                     </div>
                     <ul>

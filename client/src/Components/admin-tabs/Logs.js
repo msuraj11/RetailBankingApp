@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {isEmpty} from 'lodash';
+import moment from 'moment';
 import { getLogs } from '../../actions/adminLogs';
 import { setAdminNavLinks, resetAdminNavLinks } from '../../actions/authAdmin'
 import Spinner from '../layouts/Spinner';
@@ -30,8 +31,8 @@ const Logs = ({getLogs, logs, setAdminNavLinks, resetAdminNavLinks, loading}) =>
                                 <p className="post-date">{log.userDetails.accNumber}</p>
                             </div>
                             <div>
-                                <p className="my-1"><strong>Changes :</strong>{log.updatedChanges}</p>
-                                <p className="post-date">{log.updatedOn}</p>
+                                <p className="my-1"><strong>Changes: </strong>{log.updatedChanges}</p>
+                                <p className="post-date">Updated on: {moment(log.updatedOn).format('DD-MM-YYYY HH:mm:ss')}</p>
                                 <div className='user-details'>
                                     <div className="p-1">
                                         <i className={log.userDetails.userBranch === 'Not generated' ? 'fas fa-times' : 'fa fa-check'}></i>

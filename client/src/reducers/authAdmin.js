@@ -48,7 +48,8 @@ export default function(state = initialState, action) {
                 ...state,
                 adminToken: null,
                 isAdminAuthenticated: false,
-                admin: null
+                admin: null,
+                loading: false
             };
 
         case ADMIN_LOGIN_FAIL:

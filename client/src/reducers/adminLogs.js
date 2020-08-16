@@ -1,4 +1,4 @@
-import {SET_ADMIN_LOGS, CLEAR_LOGS, LOGS_ERROR} from '../actions/types';
+import {SET_ADMIN_LOGS, CLEAR_LOGS, LOGS_ERROR, SET_USERS, SET_LOADER, USERS_DATA_ERROR} from '../actions/types';
 
 const initialState = {
     logs: null,
@@ -14,6 +14,26 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 logs: payload,
+                loading: false
+            };
+
+        case SET_LOADER:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case SET_USERS:
+            return {
+                ...state,
+                allUsers: payload,
+                loading: false
+            };
+
+        case USERS_DATA_ERROR:
+            return {
+                ...state,
+                allUsers: null,
                 loading: false
             };
 

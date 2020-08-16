@@ -14,26 +14,21 @@ const AdminActionLogs = require('../../../models/adminModels/AdminActionLogs');
 router.get('/getAllUsers', adminAuth, async (req, res) => {
     try {
         // Get all users from data-base
-        const users = await User.find().select('-password');
-        if (!users) {
-            res.send(400).json({errors: [{msg: 'There are no users'}]});
+        const profiles = await Profile.find().populate('user', ['mobileNumber', 'avatar']);
+        if (!profiles) {
+            return res.send(400).json({errors: [{msg: 'There are no users'}]});
         }
 
         const isAdminLogs = await AdminActionLogs.findOne({ admin:  req.admin.id });
         if (!isAdminLogs) {
             const adminLogs = new AdminActionLogs({
                 admin: req.admin.id,
-                updationLogs: []
+                logs: []
             });
             await adminLogs.save();
         }
 
-        const admin = await Admin.findById(req.admin.id).select('-password');
-        const resJson = {
-            users,
-            permissions: admin.permissions
-        };
-        res.json(resJson);
+        return res.json(profiles);
     } catch (err) {
         console.log(err.message);
         res.status(500).send('Server Error');
@@ -44,14 +39,16 @@ router.get('/getAllUsers', adminAuth, async (req, res) => {
 // @desc    Update user info via admin
 // @access  Private
 router.put('/updateUserInfo', adminAuth, async (req, res) => {
-    const {userId, mobileNumber, currentAddress, permanentAddress} = req.body;
+    const {userId, mobileNumber, permanentAddress, spouseName, alternateContactNumber,
+        occupation, sourceOfIncome, company} = req.body;
 
-    if (!(mobileNumber || currentAddress || permanentAddress)) {
+    if (!(mobileNumber || permanentAddress || spouseName || alternateContactNumber
+            || occupation || sourceOfIncome || company)) {
         return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});
     }
 
     const mobRegX = /^((\+){1}91){1}[1-9]{1}[0-9]{9}$/ ;
-    if (mobileNumber && !mobRegX.test(mobileNumber)) {
+    if ((mobileNumber && !mobRegX.test(mobileNumber)) || (alternateContactNumber && !mobRegX.test(alternateContactNumber))) {
         return res.status(400).json({errors: [{msg: 'Please provide a valid mobile number.'}]});
     }
 
@@ -76,14 +73,19 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
                 {msg: 'Profile not found'} ]});
         }
 
-        if (mobileNumber === getProfile.alternateContactNumber) {
+        if (mobileNumber === getProfile.alternateContactNumber ||
+            alternateContactNumber === getProfile.user.mobileNumber) {
             return res.status(400).json({errors: [
                 {msg: 'Mobile number and alternate contact number cannot be same'} ]});
         }
 
         if (mobileNumber === getProfile.user.mobileNumber ||
-            currentAddress === getProfile.currentAddress ||
-            permanentAddress === getProfile.permanentAddress) {
+            spouseName === getProfile.familyDetails.spouseName ||
+            permanentAddress === getProfile.permanentAddress ||
+            alternateContactNumber === getProfile.alternateContactNumber ||
+            occupation === getProfile.occupation ||
+            sourceOfIncome === getProfile.sourceOfIncome ||
+            company === getProfile.company) {
             return res.status(400).json({errors: [{
                 msg:'Mobile-number/Current-address/Permanent-address is already up to date'}]
             });
@@ -120,21 +122,21 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
             await adminLogs.save();
         }
 
-        if (currentAddress) {
+        if (spouseName) {
             const profile = await Profile.findOneAndUpdate(
                 { user: userId },
-                { currentAddress },
+                { spouseName },
                 { new: true }
             );
             profile.date.push({
                 lastUpdated: moment(),
-                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Current Address`
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Spouse name`
             });
             await profile.save();
 
             adminLogs.logs.unshift({
                 actionType: 'UPDATE',
-                updatedChanges: `Current Address changed from ${getProfile.currentAddress} to ${currentAddress}`,
+                updatedChanges: `Spouse name changed from ${getProfile.familyDetails.spouseName} to ${spouseName}`,
                 userDetails,
                 updatedOn: moment()
             })
@@ -156,6 +158,90 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
             adminLogs.logs.unshift({
                 actionType: 'UPDATE',
                 updatedChanges: `Permanent Address changed from ${getProfile.permanentAddress} to ${permanentAddress}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
+        }
+
+        if (alternateContactNumber) {
+            const profile = await Profile.findOneAndUpdate(
+                { user: userId },
+                { alternateContactNumber },
+                { new: true }
+            );
+            profile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
+            });
+            await profile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Alternate Contact Number changed from ${getProfile.alternateContactNumber} to ${alternateContactNumber}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
+        }
+
+        if (occupation) {
+            const profile = await Profile.findOneAndUpdate(
+                { user: userId },
+                { occupation },
+                { new: true }
+            );
+            profile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
+            });
+            await profile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Occupation changed from ${getProfile.occupation} to ${occupation}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
+        }
+
+        if (sourceOfIncome) {
+            const profile = await Profile.findOneAndUpdate(
+                { user: userId },
+                { sourceOfIncome },
+                { new: true }
+            );
+            profile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
+            });
+            await profile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Source of Income changed from ${getProfile.sourceOfIncome} to ${sourceOfIncome}`,
+                userDetails,
+                updatedOn: moment()
+            })
+            await adminLogs.save();
+        }
+
+        if (company) {
+            const profile = await Profile.findOneAndUpdate(
+                { user: userId },
+                { company },
+                { new: true }
+            );
+            profile.date.push({
+                lastUpdated: moment(),
+                updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
+            });
+            await profile.save();
+
+            adminLogs.logs.unshift({
+                actionType: 'UPDATE',
+                updatedChanges: `Company changed from ${getProfile.company} to ${company}`,
                 userDetails,
                 updatedOn: moment()
             })

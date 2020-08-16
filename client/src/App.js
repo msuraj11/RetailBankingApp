@@ -19,6 +19,7 @@ import AdminLanding from './Components/layouts/AdminLanding';
 import AdminDashboard from './Components/dashboard/admin/AdminDashboard';
 import PageNotFound from './Components/routing/PageNotFound';
 import Logs from './Components/admin-tabs/Logs';
+import AllUsers from './Components/admin-tabs/AllUsers';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -62,6 +63,7 @@ const App = () => {
                 <PrivateRoute exact path="/transaction" component={Transaction} />
                 <PrivateRouteAdmin exact path="/adminDashboard" component={AdminDashboard} />
                 <PrivateRouteAdmin exact path="/logs" component={Logs} />
+                <PrivateRouteAdmin exact path="/allUsers" component={AllUsers} />
                 <Route component={PageNotFound} />
               </Switch>
             </section>

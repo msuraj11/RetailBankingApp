@@ -7,14 +7,16 @@ import { setAlert } from './alert';
 export const loadAdmin = () => async dispatch => {
     if (localStorage.adminToken) {
         setAuthToken(localStorage.adminToken, false);
-    }
-    try {
-        const res = await axios.get('/api/authAdmin');
-        dispatch({
-            type: ADMIN_LOADED,
-            payload: res.data
-        });
-    } catch (err) {
+        try {
+            const res = await axios.get('/api/authAdmin');
+            dispatch({
+                type: ADMIN_LOADED,
+                payload: res.data
+            });
+        } catch (err) {
+            dispatch({ type: ADMIN_AUTH_ERROR });
+        }
+    } else {
         dispatch({ type: ADMIN_AUTH_ERROR });
     }
 };
