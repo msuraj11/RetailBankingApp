@@ -32,11 +32,11 @@ router.post('/', [
 
         // Create an admin email using fName, lName
         const emailTypes = [
-            `${firstName.trim().toLowerCase()}.${lastName.toLowerCase()}@BOS.com`,
-            `${firstName.trim().toLowerCase()}_${lastName.toLowerCase()}@BOS.com`,
-            `${firstName.trim().toLowerCase()}.${lastName.substr(0,1).toLowerCase()}@BOS.com`,
-            `${lastName.toLowerCase()}${firstName.trim().toLowerCase()}@BOS.com`,
-            `${lastName.toLowerCase()}.${firstName.trim().toLowerCase()}@BOS.com`
+            `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName.trim().toLowerCase().split(' ').join('')}@BOS.com`,
+            `${firstName.trim().toLowerCase().split(' ').join('')}_${lastName.trim().toLowerCase().split(' ').join('')}@BOS.com`,
+            `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName.substr(0,1).toLowerCase()}@BOS.com`,
+            `${lastName.trim().toLowerCase().split(' ').join('')}${firstName.trim().toLowerCase().split(' ').join('')}@BOS.com`,
+            `${lastName.trim().toLowerCase().split(' ').join('')}.${firstName.trim().toLowerCase().split(' ').join('')}@BOS.com`
         ];
 
         // Deciding permissions for admin

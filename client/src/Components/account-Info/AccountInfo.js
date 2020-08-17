@@ -19,7 +19,7 @@ const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loadi
 
 
     const [dateItems, setDates] = useState({
-        from: moment(profile.date[0].lastUpdated).format('YYYY-MM-DD'),
+        from: profile ? moment(profile.date[0].lastUpdated).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD'),
         isValidDate: true
     });

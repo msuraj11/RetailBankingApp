@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, Fragment, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -17,6 +17,44 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
             resetAdminNavLinks();
         }
     }, [users, getUsers, setAdminNavLinks, resetAdminNavLinks]);
+
+    const [componentState, setTheState] = useState({
+        isEditEnabled: false,
+        id: null,
+        fieldMobileNumber: null,
+        fieldPermanentAddress: null,
+        fieldSpouseName: null,
+        fieldAltContact: null,
+        fieldSOI: null,
+        fieldOcc: null,
+        fieldCompany: null
+    });
+
+    const {isEditEnabled, id} = componentState;
+
+    const editInfo = (user) => {
+        const { _id, user: {mobileNumber}, permanentAddress, familyDetails: {spouseName},
+            alternateContactNumber, sourceOfIncome, occupation, company } = user;
+        setTheState({...componentState,
+            isEditEnabled: !isEditEnabled,
+            id: _id,
+            fieldMobileNumber: mobileNumber,
+            fieldPermanentAddress: permanentAddress,
+            fieldSpouseName: spouseName,
+            fieldAltContact: alternateContactNumber,
+            fieldSOI: sourceOfIncome,
+            fieldOcc: occupation,
+            fieldCompany: company
+        });
+    };
+
+    const submitHandler = () => {
+
+    };
+
+    const deleteUserHandler = () => {
+
+    };
 
     return (
         <Fragment>
@@ -43,26 +81,52 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
                                         {' '}{user.IFSC_Code}
                                     </div>
                                 </div>
-                                <div>
-                                    <p className="my-1"><strong>Mobile-Number: </strong>{user.user.mobileNumber}</p>
-                                    {user.permanentAddress &&
-                                        <p className="my-1"><strong>Permanent Address: </strong>{user.permanentAddress}</p>
-                                    }
-                                    {user.familyDetails.spouseName &&
-                                        <p className="my-1"><strong>Spouse: </strong>{user.familyDetails.spouseName}</p>
-                                    }
-                                    <p className="my-1"><strong>Alternate contact: </strong>{user.alternateContactNumber}</p>
-                                    <p className="my-1"><strong>Source of Income: </strong>{user.sourceOfIncome}</p>
-                                    <p className="my-1"><strong>Occupation: </strong>{user.occupation}</p>
-                                    <p className="my-1"><strong>Company: </strong>{user.company}</p>
-                                    
-                                    <p className="post-date">
-                                        Updated on: {moment(user.date[user.date.length - 1].lastUpdated).format('DD-MM-YYYY HH:mm:ss')} by: {user.date[user.date.length - 1].updatedBy}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h3>Actions here!!</h3>
-                                </div>
+                                {isEditEnabled && id === user._id ?
+                                    <div>Here all fields come!!</div> :
+                                    <div>
+                                        <p className="my-1"><strong>Mobile-Number: </strong>{user.user.mobileNumber}</p>
+                                        {user.permanentAddress &&
+                                            <p className="my-1"><strong>Permanent Address: </strong>{user.permanentAddress}</p>
+                                        }
+                                        {user.familyDetails.spouseName &&
+                                            <p className="my-1"><strong>Spouse: </strong>{user.familyDetails.spouseName || '--'}</p>
+                                        }
+                                        <p className="my-1"><strong>Alternate contact: </strong>{user.alternateContactNumber}</p>
+                                        <p className="my-1"><strong>Source of Income: </strong>{user.sourceOfIncome}</p>
+                                        <p className="my-1"><strong>Occupation: </strong>{user.occupation}</p>
+                                        <p className="my-1"><strong>Company: </strong>{user.company}</p>
+                                        
+                                        <p className="post-date">
+                                            Updated on: {moment(user.date[user.date.length - 1].lastUpdated).format('DD-MM-YYYY HH:mm:ss')} by: {user.date[user.date.length - 1].updatedBy}
+                                        </p>
+                                    </div>
+                                }
+                                <ul className={permissions.length > 1 ? 'admin-actions' : 'read-permission-only'}>
+                                    <li>
+                                        <i
+                                            className={isEditEnabled && id === user._id ? 'fas fa-times' : 'fas fa-edit'}
+                                            onClick={permissions.length > 1 ? () => editInfo(user) : null}
+                                        ></i>
+                                    </li>
+                                    <li>
+                                        <button
+                                            className='btn btn-primary btn-curved'
+                                            onClick={submitHandler}
+                                            disabled={permissions.length < 2}
+                                        >
+                                            Update
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            className='btn btn-danger btn-curved'
+                                            onClick={deleteUserHandler}
+                                            disabled={permissions.length < 2}
+                                        >
+                                            <i className='fas fa-times'></i>
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
                         </Element>
                     )) : (loading ? <Spinner /> : <h1>Oops..!! Something went wrong!</h1>)
