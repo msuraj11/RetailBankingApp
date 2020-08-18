@@ -80,8 +80,8 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
         }
 
         if (mobileNumber === getProfile.user.mobileNumber ||
-            spouseName === getProfile.familyDetails.spouseName ||
-            permanentAddress === getProfile.permanentAddress ||
+            (spouseName && spouseName === getProfile.familyDetails.spouseName) ||
+            (permanentAddress && permanentAddress === getProfile.permanentAddress) ||
             alternateContactNumber === getProfile.alternateContactNumber ||
             occupation === getProfile.occupation ||
             sourceOfIncome === getProfile.sourceOfIncome ||
@@ -125,7 +125,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
         if (spouseName) {
             const profile = await Profile.findOneAndUpdate(
                 { user: userId },
-                { spouseName },
+                { 'familyDetails.spouseName': spouseName },
                 { new: true }
             );
             profile.date.push({

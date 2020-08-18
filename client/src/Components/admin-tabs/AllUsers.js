@@ -1,13 +1,16 @@
 import React, { useEffect, Fragment, useState } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, omitBy } from 'lodash';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import {Element} from 'react-scroll';
+import {Element, animateScroll as scroll} from 'react-scroll';
 import { setAdminNavLinks, resetAdminNavLinks } from '../../actions/authAdmin';
 import Spinner from '../layouts/Spinner';
 import { getUsers } from '../../actions/adminLogs';
+import RenderInputFields from './sub-components/RenderInputFields';
+import { setAlert } from '../../actions/alert';
+import axios from 'axios';
 
-const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions}) => {
+const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions, setAlert}) => {
     useEffect(() => {
         setAdminNavLinks();
         if (isEmpty(users)) {
@@ -20,6 +23,8 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
 
     const [componentState, setTheState] = useState({
         isEditEnabled: false,
+        isValidMobNumb: true,
+        isValidAltMobNumb: true,
         id: null,
         fieldMobileNumber: null,
         fieldPermanentAddress: null,
@@ -30,13 +35,15 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
         fieldCompany: null
     });
 
-    const {isEditEnabled, id} = componentState;
+    const {isEditEnabled, id, isValidMobNumb, isValidAltMobNumb} = componentState;
 
     const editInfo = (user) => {
         const { _id, user: {mobileNumber}, permanentAddress, familyDetails: {spouseName},
             alternateContactNumber, sourceOfIncome, occupation, company } = user;
         setTheState({...componentState,
             isEditEnabled: !isEditEnabled,
+            isValidMobNumb: !isEditEnabled,  //Idea is to reset the previous state's error bool if any
+            isValidAltMobNumb: !isEditEnabled,
             id: _id,
             fieldMobileNumber: mobileNumber,
             fieldPermanentAddress: permanentAddress,
@@ -48,8 +55,60 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
         });
     };
 
-    const submitHandler = () => {
+    const onFieldChange = e => {
+        setTheState({...componentState, [e.target.name]: e.target.value});
+    };
 
+    const onBlurFields = e => {
+        const mobNum = (e.target.value).substring(0, 3) === '+91' ? e.target.value : `+91${e.target.value}`
+        const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
+        if (e.target.name === 'fieldMobileNumber') {
+            setTheState({...componentState, isValidMobNumb: mobRegX.test(mobNum)});
+        } else {
+            setTheState({...componentState, isValidAltMobNumb: mobRegX.test(mobNum)});
+        }
+    };
+
+    const submitHandler = async (user) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        //Object.fromEntries(Object.entries(obj).filter(([key, value]) => value !== ''));
+        const payload = {
+            userId: user.user._id,
+            mobileNumber: (componentState.fieldMobileNumber).substring(0, 3) === '+91' ?
+                componentState.fieldMobileNumber : `+91${componentState.fieldMobileNumber}`,
+            permanentAddress: componentState.fieldPermanentAddress,
+            spouseName: componentState.fieldSpouseName,
+            alternateContactNumber: (componentState.fieldAltContact).substring(0, 3) === '+91' ?
+                componentState.fieldAltContact : `+91${componentState.fieldAltContact}`,
+            sourceOfIncome: componentState.fieldSOI,
+            occupation: componentState.fieldOcc,
+            company: componentState.fieldCompany
+        }
+        const updatedPayload = omitBy(payload, (value, key) => isEmpty(value) || value === user[key] || value === user.user[key]);
+        console.log(updatedPayload);
+
+        const body = JSON.stringify(updatedPayload);
+
+        try {
+            const res = await axios.put('/api/adminAction/updateUserInfo', body, config);
+            console.log(res.data);
+            setAlert(`Updated ${user.firstName}'s data Successfully!!`, 'success');
+            scroll.scrollToTop();
+            setTimeout(() => {
+                getUsers();
+            }, 2000);
+        } catch (err) {
+            const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
+            if (errors) {
+                errors.forEach(error => setAlert(error.msg, 'danger', 10000));
+            }
+            scroll.scrollToTop();
+        }
     };
 
     const deleteUserHandler = () => {
@@ -82,7 +141,12 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
                                     </div>
                                 </div>
                                 {isEditEnabled && id === user._id ?
-                                    <div>Here all fields come!!</div> :
+                                    <RenderInputFields
+                                        state={componentState}
+                                        onFieldChange={onFieldChange}
+                                        onBlurFields={onBlurFields}
+                                        submitHandler={submitHandler}
+                                    /> :
                                     <div>
                                         <p className="my-1"><strong>Mobile-Number: </strong>{user.user.mobileNumber}</p>
                                         {user.permanentAddress &&
@@ -111,8 +175,9 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
                                     <li>
                                         <button
                                             className='btn btn-primary btn-curved'
-                                            onClick={submitHandler}
-                                            disabled={permissions.length < 2}
+                                            onClick={() => submitHandler(user)}
+                                            disabled={id !== user._id || permissions.length < 2 || !isEditEnabled ||
+                                                !isValidMobNumb || !isValidAltMobNumb}
                                         >
                                             Update
                                         </button>
@@ -141,4 +206,4 @@ const mapStateToProps = state => ({
     permissions: state.authAdmin.admin && state.authAdmin.admin.permissions
 });
 
-export default connect(mapStateToProps, {getUsers, setAdminNavLinks, resetAdminNavLinks})(AllUsers);
+export default connect(mapStateToProps, {getUsers, setAdminNavLinks, resetAdminNavLinks, setAlert})(AllUsers);
