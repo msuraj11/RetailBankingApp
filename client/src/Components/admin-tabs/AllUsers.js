@@ -8,9 +8,10 @@ import Spinner from '../layouts/Spinner';
 import { getUsers } from '../../actions/adminLogs';
 import RenderInputFields from './sub-components/RenderInputFields';
 import { setAlert } from '../../actions/alert';
+import Modal from '../layouts/Modal';
 import axios from 'axios';
 
-const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions, setAlert}) => {
+const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions, setAlert, history}) => {
     useEffect(() => {
         setAdminNavLinks();
         if (isEmpty(users)) {
@@ -25,6 +26,8 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
         isEditEnabled: false,
         isValidMobNumb: true,
         isValidAltMobNumb: true,
+        isModalVisible: false,
+        userId: null,
         id: null,
         fieldMobileNumber: null,
         fieldPermanentAddress: null,
@@ -35,7 +38,7 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
         fieldCompany: null
     });
 
-    const {isEditEnabled, id, isValidMobNumb, isValidAltMobNumb} = componentState;
+    const {isEditEnabled, id, isValidMobNumb, isValidAltMobNumb, userId, isModalVisible} = componentState;
 
     const editInfo = (user) => {
         const { _id, user: {mobileNumber}, permanentAddress, familyDetails: {spouseName},
@@ -89,7 +92,10 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
             occupation: componentState.fieldOcc,
             company: componentState.fieldCompany
         }
-        const updatedPayload = omitBy(payload, (value, key) => isEmpty(value) || value === user[key] || value === user.user[key]);
+        const updatedPayload = omitBy(payload, (value, key) => 
+            isEmpty(value) ||
+            (key ==='spouseName' ? value === user.familyDetails[key] : value === user[key]) ||
+            value === user.user[key]);
         console.log(updatedPayload);
 
         const body = JSON.stringify(updatedPayload);
@@ -97,11 +103,12 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
         try {
             const res = await axios.put('/api/adminAction/updateUserInfo', body, config);
             console.log(res.data);
-            setAlert(`Updated ${user.firstName}'s data Successfully!!`, 'success');
+            res && res.data && setAlert(res.data.success, 'success');
             scroll.scrollToTop();
             setTimeout(() => {
+                history.push('/logs');
                 getUsers();
-            }, 2000);
+            }, 3000);
         } catch (err) {
             const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
             if (errors) {
@@ -111,12 +118,37 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
         }
     };
 
-    const deleteUserHandler = () => {
+    const deleteUserHandler = async (userId) => {
+        try {
+            const res = await axios.delete(`api/adminAction/deleteUser/${userId}`);
+            res && res.data && setAlert(res.data.success, 'success');
+            setTheState({...componentState, isModalVisible: false, userId: null})
+            scroll.scrollToTop();
+            setTimeout(() => {
+                history.push('/logs');
+                getUsers();
+            }, 3000);
+        } catch (err) {
+            const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
+            if (errors) {
+                errors.forEach(error => setAlert(error.msg, 'danger', 10000));
+            }
+            scroll.scrollToTop();
+        }
+    };
 
+    const onDeleClick = (id) => {
+        setTheState({...componentState, isModalVisible: true, userId: id});
     };
 
     return (
         <Fragment>
+            {isModalVisible &&
+                <Modal
+                    handleClose={() => setTheState({...componentState, isModalVisible: false, userId: null})}
+                    handleSubmit={() => deleteUserHandler(userId)}
+                />
+            }
             {
                 !isEmpty(users) && users.length > 0 ? 
                     users.map(user => (
@@ -185,7 +217,7 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
                                     <li>
                                         <button
                                             className='btn btn-danger btn-curved'
-                                            onClick={deleteUserHandler}
+                                            onClick={() => onDeleClick(user.user._id)}
                                             disabled={permissions.length < 2}
                                         >
                                             <i className='fas fa-times'></i>

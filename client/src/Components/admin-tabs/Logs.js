@@ -20,7 +20,7 @@ const Logs = ({getLogs, logs, setAdminNavLinks, resetAdminNavLinks, loading}) =>
         <Fragment>
             {logs && Array.isArray(logs) && logs.length > 0 ?
                 logs.map(log => (
-                        <div className="post bg-white p-1 my-1">
+                        <div className="post bg-white p-1 my-1" key={log._id}>
                             <div>
                                 <img
                                     className="round-img"
