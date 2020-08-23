@@ -4,6 +4,7 @@ const moment = require('moment');
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const UpdateRequests = require('../../models/UpdateRequests');
 const {check, validationResult} = require('express-validator');
 
 // @route   GET api/profile/me
@@ -131,6 +132,46 @@ router.post('/', [auth, [
             console.log(err.message);
             res.status(500).send('Server Error');
         }
+});
+
+// @route   POST api/profile/request-update
+// @desc    Request for Update of user profile
+// @access  Private
+router.post('/request-update', auth, async (req, res) => {
+    const {profileId, mobileNumber, permanentAddress, spouseName, alternateContactNumber,
+        occupation, sourceOfIncome, company} = req.body;
+
+    try {
+        const profile = await Profile.findById(profileId);
+
+        if(!profile) {
+            return res.status(400).json({errors: [{msg: 'Profile not found or Invalid'}]});
+        }
+
+        if (!(mobileNumber || permanentAddress || spouseName || alternateContactNumber
+            || occupation || sourceOfIncome || company)) {
+            return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});
+        }
+
+        const newRequest = new UpdateRequests({
+            profileId,
+            mobileNumber,
+            permanentAddress,
+            spouseName,
+            alternateContactNumber,
+            occupation,
+            sourceOfIncome,
+            company,
+            submittedOn: moment()
+        });
+
+        await newRequest.save();
+
+        return res.json({success: 'Request submitted successfully..!!,Your data will be verified and will be updated by admin with-in 48 hours'});
+    } catch(err) {
+        console.log(err.message);
+        res.status(500).send('Server Error');
+    }
 });
 
 module.exports = router;
