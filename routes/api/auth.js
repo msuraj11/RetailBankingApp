@@ -5,7 +5,6 @@ const {check, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
-const nodemailer = require('nodemailer');
 const sendEmail = require('../utils/emailTemplate');
 
 const router = express.Router();

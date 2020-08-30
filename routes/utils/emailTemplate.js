@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const config = require('config');
 
 const sendEmail = (toEmail, name, dynamicValue) => {
     const fromMail = 'vaishnavimatchings.mamidi77@gmail.com';
@@ -16,7 +17,7 @@ BOS`;
         service: 'gmail',
         auth: {
             user: fromMail ,
-            pass: 'jaibhavani'
+            pass: config.get('password')
         }
     });
 
