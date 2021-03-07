@@ -18,7 +18,7 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
     const dateObj = date[date.length - 1];
     const lastUpdatedDate = moment(dateObj.lastUpdated).format('DD-MM-YYYY');
     const currentDate = moment().format('DD-MM-YYYY');
-    const dateDiff = moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') > 15;
+    const dateDiff = moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') < 15;
 
     const [componentState, setComponentState] = useState({
         isAboutEditEnabled: false,
