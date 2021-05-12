@@ -22,7 +22,7 @@
     "moment": "^2.26.0",
     "mongoose": "^5.9.14",
     "mquery": "^3.2.4",
-    "nodemailer": "^6.4.8",
+    "nodemailer": "^6.4.16",
     "request": "^2.88.2",
     "yargs-parser": "^20.2.6"
   },
