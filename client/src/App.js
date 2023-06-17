@@ -1,5 +1,7 @@
 import React, {Fragment, useEffect} from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import {connect} from 'react-redux';
+import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
+import PropTypes from 'prop-types';
 import './App.css';
 import Navbar from './Components/layouts/Navbar';
 import Landing from './Components/layouts/Landing';
@@ -8,8 +10,6 @@ import Login from './Components/auth/Login';
 import TokenVerifier from './Components/auth/TokenVerifier';
 import Alert from './Components/layouts/Alert';
 import Dashboard from './Components/dashboard/Dashboard';
-import PrivateRoute from './Components/routing/PrivateRoute';
-import PrivateRouteAdmin from './Components/routing/PrivateRouteAdmin';
 import KYC from './Components/dashboard/profile/KYC';
 import AccountInfo from './Components/account-Info/AccountInfo';
 import Transaction from './Components/transaction/Transaction';
@@ -21,11 +21,9 @@ import PageNotFound from './Components/routing/PageNotFound';
 import Logs from './Components/admin-tabs/Logs';
 import AllUsers from './Components/admin-tabs/AllUsers';
 // Redux
-import { Provider } from 'react-redux';
-import store from './store';
-import { loadUser } from './actions/auth';
+import {loadUser} from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
-import { loadAdmin } from './actions/authAdmin';
+import {loadAdmin} from './actions/authAdmin';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -35,43 +33,53 @@ if (localStorage.adminToken) {
   setAuthToken(localStorage.adminToken, false);
 }
 
-const App = () => {
+const App = ({isAuthenticated, isAdminAuthenticated, loadingUser, loadingAdmin, dispatch}) => {
   useEffect(() => {
-    store.dispatch(loadUser());
-    store.dispatch(loadAdmin());
-  }, []);
+    dispatch(loadUser());
+    dispatch(loadAdmin());
+  }, [dispatch]);
 
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Fragment>
-          <Navbar />
-          <Switch>
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/adminLanding" component={AdminLanding} />
-            <section className="container">
-              <Alert />
-              <Switch>
-                <Route exact path="/register" component={Register} />
-                <Route exact path="/adminRegister" component={AdminRegister} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/adminLogin" component={AdminLogin} />
-                <Route exact path="/tokenVerifier/:fromScreen" component={TokenVerifier} />
-                <PrivateRoute exact path="/dashboard" component={Dashboard} />
-                <PrivateRoute exact path="/kyc" component={KYC} />
-                <PrivateRoute exact path="/accountInformation" component={AccountInfo} />
-                <PrivateRoute exact path="/transaction" component={Transaction} />
-                <PrivateRouteAdmin exact path="/adminDashboard" component={AdminDashboard} />
-                <PrivateRouteAdmin exact path="/logs" component={Logs} />
-                <PrivateRouteAdmin exact path="/allUsers" component={AllUsers} />
-                <Route component={PageNotFound} />
-              </Switch>
-            </section>
-          </Switch>
-        </Fragment>
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <Fragment>
+        <Navbar />
+        <Alert />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/adminLanding" element={<AdminLanding />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/adminRegister" element={<AdminRegister />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/adminLogin" element={<AdminLogin />} />
+          <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
+          {/* USER PRIVATE ROUTES */}
+          <Route path="/dashboard" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <Dashboard />} />
+          <Route path="/kyc" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <KYC />} />
+          <Route path="/accountInformation" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <AccountInfo />} />
+          <Route path="/transaction" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <Transaction />} />
+          {/* ADMIN PRIVATE ROUTES */}
+          <Route path="/adminDashboard" element={!isAdminAuthenticated && !loadingAdmin ? <Navigate to="/adminLanding" /> : <AdminDashboard />} />
+          <Route path="/logs" element={!isAdminAuthenticated && !loadingAdmin ? <Navigate to="/adminLanding" /> : <Logs />} />
+          <Route path="/allUsers" element={!isAdminAuthenticated && !loadingAdmin ? <Navigate to="/adminLanding" /> : <AllUsers />} />
+          <Route element={<PageNotFound />} />
+        </Routes>
+      </Fragment>
+    </BrowserRouter>
   );
-}
+};
 
-export default App;
+App.propTypes = {
+  isAuthenticated: PropTypes.bool,
+  isAdminAuthenticated: PropTypes.bool,
+  loadingUser: PropTypes.bool,
+  loadingAdmin: PropTypes.bool
+};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
+  loadingUser: state.auth.loading,
+  loadingAdmin: state.authAdmin.loading
+});
+
+export default connect(mapStateToProps)(App);
