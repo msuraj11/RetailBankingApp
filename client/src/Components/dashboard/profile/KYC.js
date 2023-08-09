@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import moment from 'moment';
 import {omit, includes, isEmpty} from 'lodash';
 import {Link, useNavigate} from 'react-router-dom';
@@ -9,8 +9,14 @@ import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const KYC = ({setAlert}) => {
+const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
   const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated && !loadingUser) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, loadingUser]);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -344,7 +350,13 @@ const KYC = ({setAlert}) => {
 
 KYC.propTypes = {
   setAlert: PropTypes.func.isRequired,
-  history: PropTypes.object
+  isAuthenticated: PropTypes.bool,
+  loadingUser: PropTypes.bool
 };
 
-export default connect(null, {setAlert})(KYC);
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  loadingUser: state.auth.loading
+});
+
+export default connect(mapStateToProps, {setAlert})(KYC);

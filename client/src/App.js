@@ -1,14 +1,11 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
-import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
-import PropTypes from 'prop-types';
+import {RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate} from 'react-router-dom';
 import './App.css';
-import Navbar from './Components/layouts/Navbar';
 import Landing from './Components/layouts/Landing';
 import Register from './Components/auth/Register';
 import Login from './Components/auth/Login';
 import TokenVerifier from './Components/auth/TokenVerifier';
-import Alert from './Components/layouts/Alert';
 import Dashboard from './Components/dashboard/Dashboard';
 import KYC from './Components/dashboard/profile/KYC';
 import AccountInfo from './Components/account-Info/AccountInfo';
@@ -20,6 +17,7 @@ import AdminDashboard from './Components/dashboard/admin/AdminDashboard';
 import PageNotFound from './Components/routing/PageNotFound';
 import Logs from './Components/admin-tabs/Logs';
 import AllUsers from './Components/admin-tabs/AllUsers';
+import RootLayout from './Components/layouts/RootLayout';
 // Redux
 import {loadUser} from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
@@ -33,53 +31,37 @@ if (localStorage.adminToken) {
   setAuthToken(localStorage.adminToken, false);
 }
 
-const App = ({isAuthenticated, isAdminAuthenticated, loadingUser, loadingAdmin, dispatch}) => {
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<RootLayout />}>
+      <Route index element={<Landing />} />
+      <Route path="/adminLanding" element={<AdminLanding />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/adminRegister" element={<AdminRegister />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/adminLogin" element={<AdminLogin />} />
+      <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
+      {/* USER PRIVATE ROUTES */}
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/kyc" element={<KYC />} />
+      <Route path="/accountInformation" element={<AccountInfo />} />
+      <Route path="/transaction" element={<Transaction />} />
+      {/* ADMIN PRIVATE ROUTES */}
+      <Route path="/adminDashboard" element={<AdminDashboard />} />
+      <Route path="/logs" element={<Logs />} />
+      <Route path="/allUsers" element={<AllUsers />} />
+      <Route element={<PageNotFound />} />
+    </Route>
+  )
+);
+
+const App = ({dispatch}) => {
   useEffect(() => {
     dispatch(loadUser());
     dispatch(loadAdmin());
-  }, [dispatch]);
+  }, []);
 
-  return (
-    <BrowserRouter>
-      <Fragment>
-        <Navbar />
-        <Alert />
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/adminLanding" element={<AdminLanding />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/adminRegister" element={<AdminRegister />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/adminLogin" element={<AdminLogin />} />
-          <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
-          {/* USER PRIVATE ROUTES */}
-          <Route path="/dashboard" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <Dashboard />} />
-          <Route path="/kyc" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <KYC />} />
-          <Route path="/accountInformation" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <AccountInfo />} />
-          <Route path="/transaction" element={!isAuthenticated && !loadingUser ? <Navigate to="/login" /> : <Transaction />} />
-          {/* ADMIN PRIVATE ROUTES */}
-          <Route path="/adminDashboard" element={!isAdminAuthenticated && !loadingAdmin ? <Navigate to="/adminLanding" /> : <AdminDashboard />} />
-          <Route path="/logs" element={!isAdminAuthenticated && !loadingAdmin ? <Navigate to="/adminLanding" /> : <Logs />} />
-          <Route path="/allUsers" element={!isAdminAuthenticated && !loadingAdmin ? <Navigate to="/adminLanding" /> : <AllUsers />} />
-          <Route element={<PageNotFound />} />
-        </Routes>
-      </Fragment>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 };
 
-App.propTypes = {
-  isAuthenticated: PropTypes.bool,
-  isAdminAuthenticated: PropTypes.bool,
-  loadingUser: PropTypes.bool,
-  loadingAdmin: PropTypes.bool
-};
-
-const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated,
-  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
-  loadingUser: state.auth.loading,
-  loadingAdmin: state.authAdmin.loading
-});
-
-export default connect(mapStateToProps)(App);
+export default connect()(App);

@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {isEmpty, omitBy} from 'lodash';
 import {connect} from 'react-redux';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import {Element, animateScroll as scroll} from 'react-scroll';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../actions/authAdmin';
 import Spinner from '../layouts/Spinner';
@@ -13,7 +14,15 @@ import Modal from '../layouts/Modal';
 import axios from 'axios';
 import ContainerLayout from '../layouts/ContainerLayout';
 
-const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions, setAlert}) => {
+const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions, setAlert, isAdminAuthenticated}) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAdminAuthenticated && !loading) {
+      navigate('/adminLanding');
+    }
+  }, [isAdminAuthenticated, loading]);
+
   useEffect(() => {
     setAdminNavLinks();
     if (isEmpty(users)) {
@@ -23,8 +32,6 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
       resetAdminNavLinks();
     };
   }, [users, getUsers, setAdminNavLinks, resetAdminNavLinks]);
-
-  const navigate = useNavigate();
 
   const [componentState, setTheState] = useState({
     isEditEnabled: false,
@@ -261,10 +268,18 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
   );
 };
 
+AllUsers.propTypes = {
+  users: PropTypes.array,
+  loading: PropTypes.bool,
+  permissions: PropTypes.array,
+  isAdminAuthenticated: PropTypes.bool
+};
+
 const mapStateToProps = (state) => ({
   users: state.adminLogs.allUsers,
   loading: state.adminLogs.loading,
-  permissions: state.authAdmin.admin && state.authAdmin.admin.permissions
+  permissions: state.authAdmin.admin && state.authAdmin.admin.permissions,
+  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
 export default connect(mapStateToProps, {

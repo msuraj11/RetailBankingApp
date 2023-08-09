@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import {isEmpty} from 'lodash';
 import {Element} from 'react-scroll';
@@ -9,7 +11,23 @@ import {setAlert} from '../../actions/alert';
 import StatementTable from './StatementTable';
 import ContainerLayout from '../layouts/ContainerLayout';
 
-const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loading, statement}, profile: {profile}, setAlert, removeStatement}) => {
+const AccountInfo = ({
+  isAuthenticated,
+  loadingUser,
+  getAccountInfo,
+  getStatement,
+  accountInfo: {accInfo, loading, statement},
+  profile: {profile},
+  setAlert,
+  removeStatement
+}) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated && !loadingUser) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, loadingUser]);
+
   useEffect(() => {
     removeStatement();
     if (!accInfo) {
@@ -125,9 +143,22 @@ const AccountInfo = ({getAccountInfo, getStatement, accountInfo: {accInfo, loadi
   );
 };
 
+AccountInfo.propTypes = {
+  accountInfo: PropTypes.object,
+  profile: PropTypes.object,
+  isAuthenticated: PropTypes.bool,
+  loadingUser: PropTypes.bool,
+  getAccountInfo: PropTypes.func,
+  setAlert: PropTypes.func,
+  getStatement: PropTypes.func,
+  removeStatement: PropTypes.func
+};
+
 const mapStateToProps = (state) => ({
   accountInfo: state.accountInfo,
-  profile: state.profile
+  profile: state.profile,
+  isAuthenticated: state.auth.isAuthenticated,
+  loadingUser: state.auth.loading
 });
 
 export default connect(mapStateToProps, {getAccountInfo, setAlert, getStatement, removeStatement})(AccountInfo);

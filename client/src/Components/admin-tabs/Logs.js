@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {getLogs} from '../../actions/adminLogs';
@@ -7,7 +8,14 @@ import {setAdminNavLinks, resetAdminNavLinks} from '../../actions/authAdmin';
 import Spinner from '../layouts/Spinner';
 import ContainerLayout from '../layouts/ContainerLayout';
 
-const Logs = ({getLogs, logs, setAdminNavLinks, resetAdminNavLinks, loading}) => {
+const Logs = ({getLogs, logs, setAdminNavLinks, resetAdminNavLinks, loading, isAdminAuthenticated}) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAdminAuthenticated && !loading) {
+      navigate('/adminLanding');
+    }
+  }, [isAdminAuthenticated, loading]);
+
   useEffect(() => {
     setAdminNavLinks();
     if (isEmpty(logs)) {
@@ -58,7 +66,8 @@ const Logs = ({getLogs, logs, setAdminNavLinks, resetAdminNavLinks, loading}) =>
 
 const mapStateToProps = (state) => ({
   logs: state.adminLogs.logs,
-  loading: state.adminLogs.loading
+  loading: state.adminLogs.loading,
+  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
 export default connect(mapStateToProps, {getLogs, setAdminNavLinks, resetAdminNavLinks})(Logs);

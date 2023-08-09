@@ -1,10 +1,18 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
 import Spinner from '../../layouts/Spinner';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const AdminDashboard = ({setAdminNavLinks, resetAdminNavLinks, authAdmin: {loading, admin}}) => {
+const AdminDashboard = ({setAdminNavLinks, resetAdminNavLinks, authAdmin: {loading, admin, isAdminAuthenticated}}) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAdminAuthenticated && !loading) {
+      navigate('/adminLanding');
+    }
+  }, [isAdminAuthenticated, loading]);
+
   useEffect(() => {
     setAdminNavLinks();
     return () => {

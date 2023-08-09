@@ -1,13 +1,20 @@
 import React, {useEffect, Fragment} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import {Link, useNavigate} from 'react-router-dom';
 import {getCurrentProfile} from '../../actions/profile';
 import Spinner from '../layouts/Spinner';
-import {Link} from 'react-router-dom';
 import ShowProfile from './profile/ShowProfile';
 import ContainerLayout from '../layouts/ContainerLayout';
 
-const Dashboard = ({getCurrentProfile, auth: {user}, profile: {profile, loading}}) => {
+const Dashboard = ({getCurrentProfile, auth: {user, isAuthenticated, loadingUser}, profile: {profile, loading}}) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated && !loadingUser) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, loadingUser]);
+
   useEffect(() => {
     if (!profile) {
       getCurrentProfile();
