@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useLayoutEffect} from 'react';
 import {connect} from 'react-redux';
-import {RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate} from 'react-router-dom';
+import {RouterProvider, createBrowserRouter, createRoutesFromElements, Route} from 'react-router-dom';
 import './App.css';
 import Landing from './Components/layouts/Landing';
 import Register from './Components/auth/Register';
@@ -56,7 +56,7 @@ const router = createBrowserRouter(
 );
 
 const App = ({dispatch}) => {
-  useEffect(() => {
+  useLayoutEffect(() => {
     dispatch(loadUser());
     dispatch(loadAdmin());
   }, []);
