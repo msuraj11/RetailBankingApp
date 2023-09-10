@@ -23,7 +23,6 @@
     "mongoose": "^7.5.0",
     "mquery": "^3.2.4",
     "nodemailer": "^6.6.1",
-    "request": "^2.88.2",
     "yargs-parser": "^20.2.6"
   },
   "devDependencies": {
