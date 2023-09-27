@@ -15,7 +15,7 @@ const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
     if (!isAuthenticated && !loadingUser) {
       navigate('/login');
     }
-  }, [isAuthenticated, loadingUser]);
+  }, [isAuthenticated, loadingUser, navigate]);
 
   const [formData, setFormData] = useState({
     firstName: '',

@@ -11,7 +11,7 @@ import {setAdminNavLinks} from '../../../actions/authAdmin';
 import {resetAdminNavLinks} from '../../../actions/authAdmin';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const AdminRegister = ({setAlert, isAdminAuthenticated, setTimer, setAdminNavLinks, resetAdminNavLinks}) => {
+const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
   const [formData, setFormData] = useState({
     fields: {
       firstName: '',
@@ -32,11 +32,11 @@ const AdminRegister = ({setAlert, isAdminAuthenticated, setTimer, setAdminNavLin
 
   // TODO Nav-links for guest admin is to be done using redux
   useEffect(() => {
-    setAdminNavLinks();
+    dispatch(setAdminNavLinks());
     return () => {
-      resetAdminNavLinks();
+      dispatch(resetAdminNavLinks());
     };
-  });
+  }, [dispatch]);
 
   const navigate = useNavigate();
 
@@ -84,19 +84,19 @@ const AdminRegister = ({setAlert, isAdminAuthenticated, setTimer, setAdminNavLin
     try {
       const res = await axios.post('/api/admin', body, config);
       console.log(res.data);
-      setAlert('Registered Successfully!!', 'success');
+      dispatch(setAlert('Registered Successfully!!', 'success'));
       scroll.scrollToTop();
       setFormData({...formData, disableRegButton: true});
       setTimeout(() => {
         navigate('/tokenVerifier/admin');
-        setTimer();
+        dispatch(setTimer());
       }, 4000);
     } catch (err) {
       console.error(err.response.data);
-      setAdminNavLinks();
+      dispatch(setAdminNavLinks());
       const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
       if (errors) {
-        errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
+        errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
       }
       scroll.scrollToTop();
     }
@@ -222,21 +222,12 @@ const AdminRegister = ({setAlert, isAdminAuthenticated, setTimer, setAdminNavLin
 };
 
 AdminRegister.propTypes = {
-  setAlert: PropTypes.func.isRequired,
-  history: PropTypes.object,
-  isAdminAuthenticated: PropTypes.bool,
-  setTimer: PropTypes.func,
-  setAdminNavLinks: PropTypes.func,
-  resetAdminNavLinks: PropTypes.func
+  dispatch: PropTypes.func.isRequired,
+  isAdminAuthenticated: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
   isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
-export default connect(mapStateToProps, {
-  setAlert,
-  setTimer,
-  setAdminNavLinks,
-  resetAdminNavLinks
-})(AdminRegister);
+export default connect(mapStateToProps)(AdminRegister);

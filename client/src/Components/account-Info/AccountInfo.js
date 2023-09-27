@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {isEmpty} from 'lodash';
 import {Element} from 'react-scroll';
 import Spinner from '../layouts/Spinner';
-import {getAccountInfo, getStatement, removeStatement} from '../../actions/accountInfo';
+import {getAccountInfo, getStatement, removeStatement as removeStatementAction} from '../../actions/accountInfo';
 import {setAlert} from '../../actions/alert';
 import StatementTable from './StatementTable';
 import ContainerLayout from '../layouts/ContainerLayout';
+import {getCurrentProfile} from '../../actions/profile';
 
 const AccountInfo = ({
   isAuthenticated,
   loadingUser,
-  getAccountInfo,
+  dispatch,
   getStatement,
   accountInfo: {accInfo, loading, statement},
   profile: {profile},
@@ -26,14 +28,19 @@ const AccountInfo = ({
     if (!isAuthenticated && !loadingUser) {
       navigate('/login');
     }
-  }, [isAuthenticated, loadingUser]);
+  }, [isAuthenticated, loadingUser, navigate]);
 
   useEffect(() => {
-    removeStatement();
-    if (!accInfo) {
-      getAccountInfo();
+    if (!profile) {
+      dispatch(getCurrentProfile());
     }
-  }, [getAccountInfo, accInfo, removeStatement]);
+    if (!accInfo) {
+      dispatch(getAccountInfo());
+    }
+    return () => {
+      dispatch(removeStatementAction());
+    };
+  }, [dispatch, accInfo, profile]);
 
   const [dateItems, setDates] = useState({
     from: profile ? moment(profile.date[0].lastUpdated).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'),
@@ -148,7 +155,7 @@ AccountInfo.propTypes = {
   profile: PropTypes.object,
   isAuthenticated: PropTypes.bool,
   loadingUser: PropTypes.bool,
-  getAccountInfo: PropTypes.func,
+  dispatch: PropTypes.func,
   setAlert: PropTypes.func,
   getStatement: PropTypes.func,
   removeStatement: PropTypes.func
@@ -161,4 +168,9 @@ const mapStateToProps = (state) => ({
   loadingUser: state.auth.loading
 });
 
-export default connect(mapStateToProps, {getAccountInfo, setAlert, getStatement, removeStatement})(AccountInfo);
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+  ...bindActionCreators({setAlert, getStatement, removeStatement: removeStatementAction}, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountInfo);

@@ -59,7 +59,7 @@ const App = ({dispatch}) => {
   useLayoutEffect(() => {
     dispatch(loadUser());
     dispatch(loadAdmin());
-  }, []);
+  }, [dispatch]);
 
   return <RouterProvider router={router} />;
 };

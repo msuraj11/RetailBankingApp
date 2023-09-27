@@ -14,7 +14,7 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
     if (!isAuthenticated && !loadingUser) {
       navigate('/login');
     }
-  }, [isAuthenticated, loadingUser]);
+  }, [isAuthenticated, loadingUser, navigate]);
 
   const [txState, setTx] = useState({
     txAmount: '',

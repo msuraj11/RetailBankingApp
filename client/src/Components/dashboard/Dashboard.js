@@ -7,19 +7,19 @@ import Spinner from '../layouts/Spinner';
 import ShowProfile from './profile/ShowProfile';
 import ContainerLayout from '../layouts/ContainerLayout';
 
-const Dashboard = ({getCurrentProfile, auth: {user, isAuthenticated, loadingUser}, profile: {profile, loading}}) => {
+const Dashboard = ({dispatch, auth: {user, isAuthenticated, loadingUser}, profile: {profile, loading}}) => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuthenticated && !loadingUser) {
       navigate('/login');
     }
-  }, [isAuthenticated, loadingUser]);
+  }, [isAuthenticated, loadingUser, navigate]);
 
   useEffect(() => {
     if (!profile) {
-      getCurrentProfile();
+      dispatch(getCurrentProfile());
     }
-  }, [getCurrentProfile, profile]);
+  }, [dispatch, profile]);
 
   return loading && profile === null ? (
     <Spinner />
@@ -30,7 +30,7 @@ const Dashboard = ({getCurrentProfile, auth: {user, isAuthenticated, loadingUser
         <i className="fas fa-user"></i> Welcome {user && user.name}
       </p>
       {profile !== null ? (
-        <ShowProfile profile={profile} getCurrentProfile={getCurrentProfile} />
+        <ShowProfile profile={profile} />
       ) : (
         <Fragment>
           <p>You have not yet done KYC, Please provide details by clicking below</p>
@@ -44,7 +44,7 @@ const Dashboard = ({getCurrentProfile, auth: {user, isAuthenticated, loadingUser
 };
 
 Dashboard.propTypes = {
-  getCurrentProfile: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
 };
@@ -54,4 +54,4 @@ const mapStateToProps = (state) => ({
   profile: state.profile
 });
 
-export default connect(mapStateToProps, {getCurrentProfile})(Dashboard);
+export default connect(mapStateToProps)(Dashboard);

@@ -5,20 +5,20 @@ import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
 import Spinner from '../../layouts/Spinner';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const AdminDashboard = ({setAdminNavLinks, resetAdminNavLinks, authAdmin: {loading, admin, isAdminAuthenticated}}) => {
+const AdminDashboard = ({dispatch, authAdmin: {loading, admin, isAdminAuthenticated}}) => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAdminAuthenticated && !loading) {
       navigate('/adminLanding');
     }
-  }, [isAdminAuthenticated, loading]);
+  }, [isAdminAuthenticated, loading, navigate]);
 
   useEffect(() => {
-    setAdminNavLinks();
+    dispatch(setAdminNavLinks());
     return () => {
-      resetAdminNavLinks();
+      dispatch(resetAdminNavLinks());
     };
-  }, [setAdminNavLinks, resetAdminNavLinks]);
+  }, [dispatch]);
 
   return admin === null || loading ? (
     <Spinner />
@@ -54,4 +54,4 @@ const mapStateToProps = (state) => ({
   authAdmin: state.authAdmin
 });
 
-export default connect(mapStateToProps, {setAdminNavLinks, resetAdminNavLinks})(AdminDashboard);
+export default connect(mapStateToProps)(AdminDashboard);

@@ -7,7 +7,7 @@ import {adminLogin} from '../../../actions/authAdmin';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const AdminLogin = ({adminLogin, isAdminAuthenticated, setAdminNavLinks, resetAdminNavLinks}) => {
+const AdminLogin = ({isAdminAuthenticated, dispatch}) => {
   const [formData, setFormData] = useState({
     fields: {
       emailId: '',
@@ -17,11 +17,11 @@ const AdminLogin = ({adminLogin, isAdminAuthenticated, setAdminNavLinks, resetAd
   });
 
   useEffect(() => {
-    setAdminNavLinks();
+    dispatch(setAdminNavLinks());
     return () => {
-      resetAdminNavLinks();
+      dispatch(resetAdminNavLinks());
     };
-  });
+  }, [dispatch]);
 
   const {fields, isValidEmailId} = formData;
   const {emailId, password} = fields;
@@ -41,7 +41,7 @@ const AdminLogin = ({adminLogin, isAdminAuthenticated, setAdminNavLinks, resetAd
   const onSubmitForm = (e) => {
     e.preventDefault();
     console.log(formData);
-    adminLogin(emailId, password);
+    dispatch(adminLogin(emailId, password));
   };
 
   return isAdminAuthenticated ? (
@@ -79,18 +79,12 @@ const AdminLogin = ({adminLogin, isAdminAuthenticated, setAdminNavLinks, resetAd
 };
 
 AdminLogin.prototypes = {
-  adminLogin: PropTypes.func.isRequired,
-  isAdminAuthenticated: PropTypes.bool,
-  setAdminNavLinks: PropTypes.func,
-  resetAdminNavLinks: PropTypes.func
+  dispatch: PropTypes.func.isRequired,
+  isAdminAuthenticated: PropTypes.boolß
 };
 
 const mapStateToProps = (state) => ({
   isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
-export default connect(mapStateToProps, {
-  adminLogin,
-  setAdminNavLinks,
-  resetAdminNavLinks
-})(AdminLogin);
+export default connect(mapStateToProps)(AdminLogin);

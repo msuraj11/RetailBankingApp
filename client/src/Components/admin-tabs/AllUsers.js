@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {isEmpty, omitBy} from 'lodash';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import {Element, animateScroll as scroll} from 'react-scroll';
@@ -14,24 +15,24 @@ import Modal from '../layouts/Modal';
 import axios from 'axios';
 import ContainerLayout from '../layouts/ContainerLayout';
 
-const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loading, permissions, setAlert, isAdminAuthenticated}) => {
+const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthenticated}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAdminAuthenticated && !loading) {
       navigate('/adminLanding');
     }
-  }, [isAdminAuthenticated, loading]);
+  }, [isAdminAuthenticated, loading, navigate]);
 
   useEffect(() => {
-    setAdminNavLinks();
+    dispatch(setAdminNavLinks());
     if (isEmpty(users)) {
-      getUsers();
+      dispatch(getUsers());
     }
     return () => {
-      resetAdminNavLinks();
+      dispatch(resetAdminNavLinks());
     };
-  }, [users, getUsers, setAdminNavLinks, resetAdminNavLinks]);
+  }, [users, dispatch]);
 
   const [componentState, setTheState] = useState({
     isEditEnabled: false,
@@ -127,7 +128,7 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
       scroll.scrollToTop();
       setTimeout(() => {
         navigate('/logs');
-        getUsers();
+        dispatch(getUsers());
       }, 3000);
     } catch (err) {
       const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
@@ -146,7 +147,7 @@ const AllUsers = ({users, getUsers, setAdminNavLinks, resetAdminNavLinks, loadin
       scroll.scrollToTop();
       setTimeout(() => {
         navigate('/logs');
-        getUsers();
+        dispatch(getUsers());
       }, 3000);
     } catch (err) {
       const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
@@ -272,7 +273,9 @@ AllUsers.propTypes = {
   users: PropTypes.array,
   loading: PropTypes.bool,
   permissions: PropTypes.array,
-  isAdminAuthenticated: PropTypes.bool
+  isAdminAuthenticated: PropTypes.bool,
+  dispatch: PropTypes.func,
+  setAlert: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -282,9 +285,7 @@ const mapStateToProps = (state) => ({
   isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
 });
 
-export default connect(mapStateToProps, {
-  getUsers,
-  setAdminNavLinks,
-  resetAdminNavLinks,
-  setAlert
-})(AllUsers);
+export default connect(mapStateToProps, (dispatch) => ({
+  dispatch,
+  ...bindActionCreators({setAlert}, dispatch)
+}))(AllUsers);
