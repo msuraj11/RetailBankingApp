@@ -67,7 +67,8 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
       name,
       email,
       mobileNumber: `+91${mobileNumber}`,
-      password
+      // password: Buffer.from(password).toString('base64')
+      password: btoa(password)
     });
 
     try {

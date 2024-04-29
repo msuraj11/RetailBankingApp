@@ -59,7 +59,7 @@ router.post(
 
       // Password Encyption
       const salt = await bcrypt.genSalt(10);
-      newUser.password = await bcrypt.hash(password, salt);
+      newUser.password = await bcrypt.hash(Buffer.from(password, 'base64').toString('ascii'), salt);
 
       //Save to Data-base
       await newUser.save();
