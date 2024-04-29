@@ -51,7 +51,6 @@ const AccountInfo = ({
   const {from, to, isValidDate} = dateItems;
 
   const onFieldChange = (e) => {
-    console.log(e.target.value);
     setDates({...dateItems, [e.target.name]: e.target.value});
   };
 
@@ -66,7 +65,6 @@ const AccountInfo = ({
         []
       );
     const validCombination = validDate && moment(from).isSameOrBefore(to);
-    console.log(validDate, validDateRange, validCombination);
     if (!validDate) {
       setAlert('Invalid date format', 'danger', 7000);
       removeStatement();

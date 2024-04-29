@@ -40,7 +40,6 @@ const AdminLogin = ({isAdminAuthenticated, dispatch}) => {
 
   const onSubmitForm = (e) => {
     e.preventDefault();
-    console.log(formData);
     dispatch(adminLogin(emailId, password));
   };
 

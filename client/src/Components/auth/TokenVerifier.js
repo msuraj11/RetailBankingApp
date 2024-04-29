@@ -48,7 +48,6 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
 
     try {
       const res = await axios.get(fromScreen === 'user' ? '/api/auth/verifyToken' : '/api/authAdmin/verifyToken', config);
-      console.log(res.data);
       setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.', 'success', 12000);
       setTokenData({...tokenData, token: ''});
       setTimeout(() => navigate(fromScreen === 'user' ? '/login' : '/adminLogin'), 12000);
@@ -60,7 +59,6 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
 
   const onSubmitResendForm = (e) => {
     e.preventDefault();
-    console.log(resendData);
   };
 
   return isAuthenticated && !activateAdminNavLinks ? ( //TODO componentDidMount of Admin is stored in redux-state and can be used here for navigation

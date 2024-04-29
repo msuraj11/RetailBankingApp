@@ -56,7 +56,6 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
 
   const onSubmitForm = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const config = {
       headers: {
         'Content-Type': 'application/json'
@@ -73,7 +72,6 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
 
     try {
       const res = await axios.post('/api/users', body, config);
-      console.log(res.data);
       setAlert('Registered Successfully!!', 'success');
       setFormData({...formData, disableRegButton: true});
       setTimeout(() => {

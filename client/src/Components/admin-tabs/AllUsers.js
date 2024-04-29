@@ -117,13 +117,11 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
       payload,
       (value, key) => isEmpty(value) || (key === 'spouseName' ? value === user.familyDetails[key] : value === user[key]) || value === user.user[key]
     );
-    console.log(updatedPayload);
 
     const body = JSON.stringify(updatedPayload);
 
     try {
       const res = await axios.put('/api/adminAction/updateUserInfo', body, config);
-      console.log(res.data);
       res && res.data && setAlert(res.data.success, 'success');
       scroll.scrollToTop();
       setTimeout(() => {

@@ -42,7 +42,6 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
 
   const onSubmitForm = async (e) => {
     e.preventDefault();
-    console.log(txState);
     const config = {
       headers: {
         'Content-Type': 'application/json'
@@ -51,7 +50,6 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
 
     try {
       const res = await axios.post('/api/transactions', {txAmount, txType, txBy}, config);
-      console.log(res.data);
       setAlert(`Your account is ${txType} with amount: ${txAmount} Rupees`, 'success');
       setTx({txAmount: '', txBy: '', txType: '', isValidAmount: true});
       getAccountInfo();

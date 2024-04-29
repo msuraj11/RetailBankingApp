@@ -37,7 +37,6 @@ const Login = ({login, isAuthenticated}) => {
 
   const onSubmitForm = (e) => {
     e.preventDefault();
-    console.log(formData);
     // const pwd = Buffer.from(password).toString('base64'); // buf.toString('base64')
     const pwd = btoa(password);
     login(customerId, pwd);

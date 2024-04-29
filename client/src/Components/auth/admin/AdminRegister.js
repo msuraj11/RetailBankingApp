@@ -69,7 +69,6 @@ const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
 
   const onSubmitForm = async (e) => {
     e.preventDefault();
-    console.log(formData);
     const config = {
       headers: {
         'Content-Type': 'application/json'
@@ -83,7 +82,6 @@ const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
 
     try {
       const res = await axios.post('/api/admin', body, config);
-      console.log(res.data);
       dispatch(setAlert('Registered Successfully!!', 'success'));
       scroll.scrollToTop();
       setFormData({...formData, disableRegButton: true});
