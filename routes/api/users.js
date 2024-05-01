@@ -70,21 +70,18 @@ router.post(
           id: newUser.id
         }
       };
-      let token;
 
       jsonWebToken.sign(
         payload,
         config.get('jwtSecret'),
         {expiresIn: 300}, // basically prefered 3600 in prod mode
-        (err, generatedToken) => {
+        async (err, token) => {
           if (err) throw err;
-          token = generatedToken;
+          //Send token to E-Mail
+          res.json({token});
+          await sendEmail(email, name, `token: ${token}`);
         }
       );
-
-      //Send token to E-Mail
-      res.json({token});
-      await sendEmail(email, name, `token: ${token}`);
     } catch (err) {
       console.log(err.message);
       res.status(500).send('Server error');

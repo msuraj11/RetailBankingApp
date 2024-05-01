@@ -48,11 +48,17 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
 
     try {
       const res = await axios.get(fromScreen === 'user' ? '/api/auth/verifyToken' : '/api/authAdmin/verifyToken', config);
-      setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.', 'success', 12000);
-      setTokenData({...tokenData, token: ''});
-      setTimeout(() => navigate(fromScreen === 'user' ? '/login' : '/adminLogin'), 12000);
+      if (!isEmpty(res)) {
+        setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.', 'success', 12000);
+        setTokenData({...tokenData, token: ''});
+        setTimeout(() => navigate(fromScreen === 'user' ? '/login' : '/adminLogin'), 12000);
+      } else {
+        throw new Error('Something went wrong!!');
+      }
     } catch (error) {
-      console.error(error.response.data);
+      const errorMsg = error.response.data || error;
+      console.error(errorMsg);
+      setAlert((errorMsg || 'There was an error in verifying your token.') + 'Please contact support');
       setTokenData({...tokenData, isValidToken: false});
     }
   };

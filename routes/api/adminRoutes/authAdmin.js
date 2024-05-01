@@ -29,7 +29,7 @@ router.get('/verifyToken', adminAuth, async (req, res) => {
   try {
     const admin = await Admin.findById(req.admin.id).select('-password');
 
-    sendEmail(admin.personalEmail, admin.firstName, `Login Email-ID: ${admin.email}`);
+    await sendEmail(admin.personalEmail, admin.firstName, `Login Email-ID: ${admin.email}`);
 
     res.json(admin);
   } catch (err) {

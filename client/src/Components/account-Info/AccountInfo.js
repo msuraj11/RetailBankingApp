@@ -87,7 +87,7 @@ const AccountInfo = ({
     getStatement(from, to);
   };
 
-  return loading && (accInfo === null || profile === null) ? (
+  return loading || accInfo === null || profile === null ? (
     <Spinner />
   ) : (
     <ContainerLayout>

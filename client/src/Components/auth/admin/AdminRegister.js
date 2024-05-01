@@ -82,17 +82,21 @@ const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
 
     try {
       const res = await axios.post('/api/admin', body, config);
-      dispatch(setAlert('Registered Successfully!!', 'success'));
-      scroll.scrollToTop();
-      setFormData({...formData, disableRegButton: true});
-      setTimeout(() => {
-        navigate('/tokenVerifier/admin');
-        dispatch(setTimer());
-      }, 4000);
+      if (!!res.token) {
+        dispatch(setAlert('Registered Successfully!!', 'success'));
+        scroll.scrollToTop();
+        setFormData({...formData, disableRegButton: true});
+        setTimeout(() => {
+          navigate('/tokenVerifier/admin');
+          dispatch(setTimer());
+        }, 4000);
+      } else {
+        throw new Error('You are now registered successfully. There might be issue in receiving an email, Please contact support');
+      }
     } catch (err) {
       console.error(err.response.data);
       dispatch(setAdminNavLinks());
-      const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
+      const errors = err.response.data.errors || [{msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}];
       if (errors) {
         errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
       }

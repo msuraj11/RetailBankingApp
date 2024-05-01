@@ -49,7 +49,7 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
     };
 
     try {
-      const res = await axios.post('/api/transactions', {txAmount, txType, txBy}, config);
+      await axios.post('/api/transactions', {txAmount, txType, txBy}, config);
       setAlert(`Your account is ${txType} with amount: ${txAmount} Rupees`, 'success');
       setTx({txAmount: '', txBy: '', txType: '', isValidAmount: true});
       getAccountInfo();

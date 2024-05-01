@@ -121,13 +121,11 @@ router.post(
         payload,
         config.get('jwtSecretAdmin'),
         {expiresIn: 3600}, // basically prefered 3600 in prod mode
-        (err, token) => {
+        async (err, token) => {
           if (err) throw err;
-
           //Send token to E-Mail
-          sendEmail(personalEmail, firstName, `token: ${token}`);
-
           res.json({token});
+          await sendEmail(personalEmail, firstName, `token: ${token}`);
         }
       );
     } catch (err) {
