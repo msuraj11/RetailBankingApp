@@ -167,7 +167,7 @@ router.post('/request-update', auth, async (req, res) => {
   const {profileId, mobileNumber, permanentAddress, spouseName, alternateContactNumber, occupation, sourceOfIncome, company} = req.body;
 
   try {
-    const profile = await Profile.findById({$eq: profileId});
+    const profile = await Profile.findById({$eq: req.body.profileId});
 
     if (!profile) {
       return res.status(400).json({errors: [{msg: 'Profile not found or Invalid'}]});
