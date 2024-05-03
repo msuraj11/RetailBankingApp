@@ -29,13 +29,13 @@ router.post(
 
     try {
       // Check if user already exists
-      let user = await User.findOne({mobileNumber});
+      let user = await User.findOne({mobileNumber: {$eq: mobileNumber}});
       if (user) {
         return res.status(400).json({errors: [{msg: 'User already exist, Please try with new Number.'}]});
       }
 
       // Checking E-mail already registered or not
-      user = await User.findOne({email});
+      user = await User.findOne({email: {$eq: email}});
       if (user) {
         return res.status(400).json({errors: [{msg: 'E-mail already registered, Please try with new one'}]});
       }

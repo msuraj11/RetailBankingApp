@@ -63,12 +63,12 @@ router.post(
 
     try {
       // Check if admin already exists
-      let admin = await Admin.findOne({mobileNumber});
+      let admin = await Admin.findOne({mobileNumber: {$eq: mobileNumber}});
       if (admin) {
         return res.status(400).json({errors: [{msg: 'User already exist, Please try with new Number.'}]});
       }
 
-      const adminEmail = await Admin.findOne({personalEmail});
+      const adminEmail = await Admin.findOne({personalEmail: {$eq: personalEmail}});
       if (adminEmail) {
         return res.status(400).json({errors: [{msg: 'E-mail already registered, Please try with new one'}]});
       }

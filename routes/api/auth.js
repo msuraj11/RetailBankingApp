@@ -14,7 +14,7 @@ const router = express.Router();
 // @access  Public
 router.get('/', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById({$eq: req.user.id}).select('-password');
     res.json(user);
   } catch (err) {
     console.log(err.message);
@@ -27,7 +27,7 @@ router.get('/', auth, async (req, res) => {
 // @access  Public
 router.get('/verifyToken', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById({$eq: req.user.id}).select('-password');
 
     await sendEmail(user.email, user.name, `Customer-ID: ${user.customerId}`);
 
@@ -54,7 +54,7 @@ router.post(
 
     try {
       // Check if user exists
-      let user = await User.findOne({customerId});
+      let user = await User.findOne({customerId: {$eq: customerId}});
       if (!user) {
         return res.status(400).json({errors: [{msg: 'Invalid Credentials'}]});
       }

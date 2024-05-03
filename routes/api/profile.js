@@ -12,7 +12,7 @@ const {check, validationResult} = require('express-validator');
 // @access  Private
 router.get('/me', auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({user: req.user.id}).populate('user', ['name', 'avatar', 'customerId', 'mobileNumber']);
+    const profile = await Profile.findOne({user: {$eq: req.user.id}}).populate('user', ['name', 'avatar', 'customerId', 'mobileNumber']);
 
     if (!profile) {
       return res.status(400).json({msg: 'There is no profile for this user'});
@@ -101,11 +101,11 @@ router.post(
     try {
       // Check if Profile is already built for user, then only we can update
       // the current address and add some amount to the account
-      let profiler = await Profile.findOne({user: req.user.id});
+      let profiler = await Profile.findOne({user: {$eq: req.user.id}});
 
       if (profiler) {
         if (currentAddress && profiler.currentAddress !== currentAddress) {
-          profiler = await Profile.findOneAndUpdate({user: req.user.id}, {currentAddress}, {new: true});
+          profiler = await Profile.findOneAndUpdate({user: {$eq: req.user.id}}, {currentAddress}, {new: true});
           profiler.date.push({
             lastUpdated: moment(),
             updatedBy: `User: ${profiler.firstName}`
@@ -126,19 +126,19 @@ router.post(
       }
 
       // Check for unique PAN card number in the whole database
-      profiler = await Profile.findOne({PANCardNo});
+      profiler = await Profile.findOne({PANCardNo: {$eq: PANCardNo}});
       if (profiler) {
         return res.status(400).json({errors: [{msg: 'PAN card number already exist by some user. Please enter a valid one'}]});
       }
 
       // Check for unique Aadhar number in the whole database
-      profiler = await Profile.findOne({AadharNo});
+      profiler = await Profile.findOne({AadharNo: {$eq: AadharNo}});
       if (profiler) {
         return res.status(400).json({errors: [{msg: 'Aadhar card number already exist by some user. Please enter a valid one'}]});
       }
 
       // Check if user mobile number and alternate contact are same
-      const user = await User.findById(req.user.id).select('-password');
+      const user = await User.findById({$eq: req.user.id}).select('-password');
       if (user.mobileNumber === profileFields.alternateContactNumber) {
         return res.status(400).json({errors: [{msg: 'Mobile number and alternate contact number cannot be same'}]});
       }
@@ -167,7 +167,7 @@ router.post('/request-update', auth, async (req, res) => {
   const {profileId, mobileNumber, permanentAddress, spouseName, alternateContactNumber, occupation, sourceOfIncome, company} = req.body;
 
   try {
-    const profile = await Profile.findById(profileId);
+    const profile = await Profile.findById({$eq: profileId});
 
     if (!profile) {
       return res.status(400).json({errors: [{msg: 'Profile not found or Invalid'}]});

@@ -14,7 +14,7 @@ const router = express.Router();
 // @access  Private
 router.get('/', adminAuth, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.id).select('-password');
+    const admin = await Admin.findById({$eq: req.admin.id}).select('-password');
     res.json(admin);
   } catch (err) {
     console.log(err.message);
@@ -27,7 +27,7 @@ router.get('/', adminAuth, async (req, res) => {
 // @access  Public
 router.get('/verifyToken', adminAuth, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.id).select('-password');
+    const admin = await Admin.findById({$eq: req.admin.id}).select('-password');
 
     await sendEmail(admin.personalEmail, admin.firstName, `Login Email-ID: ${admin.email}`);
 
@@ -54,7 +54,7 @@ router.post(
 
     try {
       // Check if admin exists
-      let admin = await Admin.findOne({email});
+      let admin = await Admin.findOne({email: {$eq: email}});
       if (!admin) {
         return res.status(400).json({errors: [{msg: 'Invalid Credentials'}]});
       }

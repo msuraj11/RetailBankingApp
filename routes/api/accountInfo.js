@@ -11,9 +11,9 @@ const router = express.Router();
 // @access  Private
 router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
   try {
-    const transactions = await Transactions.findOne({user: req.user.id});
+    const transactions = await Transactions.findOne({user: {$eq: req.user.id}});
     if (!transactions) {
-      return res.status(400).json({msg: 'There are no transsactions'});
+      return res.status(400).json({msg: 'There are no transactions'});
     }
     const {txDetails} = transactions;
     const {start_date, end_date} = req.params;
@@ -26,7 +26,7 @@ router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
       return moment(moment(item.txDates).format('YYYY-MM-DD')).isBetween(start_date, end_date, undefined, []);
     });
     if (filteredTxDetails.length === 0) {
-      return res.status(400).json({msg: 'There are no transsactions in these dates'});
+      return res.status(400).json({msg: 'There are no transactions in these dates'});
     }
     return res.json(filteredTxDetails);
   } catch (err) {
@@ -40,8 +40,8 @@ router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({user: req.user.id});
-    const transactions = await Transactions.findOne({user: req.user.id});
+    const profile = await Profile.findOne({user: {$eq: req.user.id}});
+    const transactions = await Transactions.findOne({user: {$eq: req.user.id}});
 
     // Here profile is mandatory to show User's data
     if (!profile) {

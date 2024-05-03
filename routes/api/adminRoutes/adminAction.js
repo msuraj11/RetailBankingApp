@@ -19,7 +19,7 @@ router.get('/getAllUsers', adminAuth, async (req, res) => {
       return res.send(400).json({errors: [{msg: 'There are no users'}]});
     }
 
-    const isAdminLogs = await AdminActionLogs.findOne({admin: req.admin.id});
+    const isAdminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
     if (!isAdminLogs) {
       const adminLogs = new AdminActionLogs({
         admin: req.admin.id,
@@ -51,7 +51,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
   }
 
   try {
-    const admin = await Admin.findById(req.admin.id);
+    const admin = await Admin.findById({$eq: req.admin.id});
     if (admin.permissions.length < 2) {
       return res.status(400).json({msg: 'Permission denied'});
     }
@@ -65,7 +65,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     // If valid then update the information
-    const getProfile = await Profile.findOne({user: userId}).populate('user', ['mobileNumber', 'avatar']);
+    const getProfile = await Profile.findOne({user: {$eq: userId}}).populate('user', ['mobileNumber', 'avatar']);
     if (!getProfile) {
       return res.status(400).json({errors: [{msg: 'Profile not found'}]});
     }
@@ -100,10 +100,10 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
       userIFSC: getProfile.IFSC_Code
     };
 
-    const adminLogs = await AdminActionLogs.findOne({admin: req.admin.id});
+    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
 
     if (mobileNumber) {
-      await User.findOneAndUpdate({_id: userId}, {mobileNumber}, {new: true});
+      await User.findOneAndUpdate({_id: {$eq: userId}}, {mobileNumber}, {new: true});
       getProfile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Mobile-number`
@@ -120,7 +120,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (spouseName) {
-      const profile = await Profile.findOneAndUpdate({user: userId}, {'familyDetails.spouseName': spouseName}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {'familyDetails.spouseName': spouseName}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Spouse name`
@@ -137,7 +137,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (permanentAddress) {
-      const profile = await Profile.findOneAndUpdate({user: userId}, {permanentAddress}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {permanentAddress}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -154,7 +154,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (alternateContactNumber) {
-      const profile = await Profile.findOneAndUpdate({user: userId}, {alternateContactNumber}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {alternateContactNumber}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -171,7 +171,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (occupation) {
-      const profile = await Profile.findOneAndUpdate({user: userId}, {occupation}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {occupation}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -188,7 +188,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (sourceOfIncome) {
-      const profile = await Profile.findOneAndUpdate({user: userId}, {sourceOfIncome}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {sourceOfIncome}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -205,7 +205,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (company) {
-      const profile = await Profile.findOneAndUpdate({user: userId}, {company}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {company}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -232,27 +232,27 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
 // @access  Private
 router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.id);
+    const admin = await Admin.findById({$eq: req.admin.id});
     if (admin.permissions.length < 3) {
       return res.status(400).json({msg: 'Permission denied'});
     }
 
     const {user_id} = req.params;
-    const user = await User.findById(user_id);
-    const profile = await Profile.findOne({user: user_id});
-    const transactions = await Transactions.findOne({user: user_id});
-    const adminLogs = await AdminActionLogs.findOne({admin: req.admin.id});
+    const user = await User.findById({$eq: user_id});
+    const profile = await Profile.findOne({user: {$eq: user_id}});
+    const transactions = await Transactions.findOne({user: {$eq: user_id}});
+    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
 
     if (!user) {
       return res.status(400).json({msg: 'User not found'});
     }
-    await User.findOneAndRemove({_id: user_id});
+    await User.findOneAndRemove({_id: {$eq: user_id}});
 
     if (profile) {
-      await Profile.findOneAndRemove({user: user_id});
+      await Profile.findOneAndRemove({user: {$eq: user_id}});
     }
     if (transactions) {
-      await Transactions.findOneAndRemove({user: user_id});
+      await Transactions.findOneAndRemove({user: {$eq: user_id}});
     }
 
     adminLogs.logs.unshift({
@@ -284,14 +284,14 @@ router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
 //access    Private
 router.get('/logs', adminAuth, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.id);
+    const admin = await Admin.findById({$eq: req.admin.id});
     if (!admin) {
       return res.status(400).json({msg: 'User not found'});
     }
     if (admin.permissions.length < 2) {
       return res.status(401).json({msg: 'Permission Denied'});
     }
-    const adminLogs = await AdminActionLogs.findOne({admin: req.admin.id});
+    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
     if (!adminLogs || adminLogs.logs.length === 0) {
       return res.status(400).json({msg: 'There are no logs yet.'});
     }
