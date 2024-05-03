@@ -105,7 +105,7 @@ router.post(
 
       if (profiler) {
         if (currentAddress && profiler.currentAddress !== currentAddress) {
-          profiler = await Profile.findOneAndUpdate({user: {$eq: req.user.id}}, {currentAddress}, {new: true});
+          profiler = await Profile.findOneAndUpdate({user: {$eq: req.user.id}}, {currentAddress: {$eq: currentAddress}}, {new: true});
           profiler.date.push({
             lastUpdated: moment(),
             updatedBy: `User: ${profiler.firstName}`
