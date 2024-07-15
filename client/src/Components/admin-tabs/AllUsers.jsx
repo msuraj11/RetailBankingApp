@@ -15,6 +15,22 @@ import Modal from '../layouts/Modal';
 import axios from 'axios';
 import ContainerLayout from '../layouts/ContainerLayout';
 
+const INIT_STATE = {
+  isEditEnabled: false,
+  isValidMobNumb: true,
+  isValidAltMobNumb: true,
+  isModalVisible: false,
+  userId: null,
+  id: null,
+  fieldMobileNumber: null,
+  fieldPermanentAddress: null,
+  fieldSpouseName: null,
+  fieldAltContact: null,
+  fieldSOI: null,
+  fieldOcc: null,
+  fieldCompany: null
+};
+
 const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthenticated}) => {
   const navigate = useNavigate();
 
@@ -34,21 +50,7 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
     };
   }, [users, dispatch]);
 
-  const [componentState, setTheState] = useState({
-    isEditEnabled: false,
-    isValidMobNumb: true,
-    isValidAltMobNumb: true,
-    isModalVisible: false,
-    userId: null,
-    id: null,
-    fieldMobileNumber: null,
-    fieldPermanentAddress: null,
-    fieldSpouseName: null,
-    fieldAltContact: null,
-    fieldSOI: null,
-    fieldOcc: null,
-    fieldCompany: null
-  });
+  const [componentState, setTheState] = useState(INIT_STATE);
 
   const {isEditEnabled, id, isValidMobNumb, isValidAltMobNumb, userId, isModalVisible} = componentState;
 
@@ -123,7 +125,6 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
     try {
       const res = await axios.put('/api/adminAction/updateUserInfo', body, config);
       res && res.data && setAlert(res.data.success, 'success');
-      scroll.scrollToTop();
       setTimeout(() => {
         navigate('/logs');
         dispatch(getUsers());
@@ -133,8 +134,8 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
-      scroll.scrollToTop();
     }
+    scroll.scrollToTop();
   };
 
   const deleteUserHandler = async (userId) => {
@@ -142,7 +143,6 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
       const res = await axios.delete(`api/adminAction/deleteUser/${userId}`);
       res && res.data && setAlert(res.data.success, 'success');
       setTheState({...componentState, isModalVisible: false, userId: null});
-      scroll.scrollToTop();
       setTimeout(() => {
         navigate('/logs');
         dispatch(getUsers());
@@ -152,8 +152,8 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
-      scroll.scrollToTop();
     }
+    scroll.scrollToTop();
   };
 
   const onDeleClick = (id) => {

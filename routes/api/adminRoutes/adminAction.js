@@ -154,7 +154,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (alternateContactNumber) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {alternateContactNumber: {$eq: alternateContactNumber}}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {alternateContactNumber: alternateContactNumber}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
