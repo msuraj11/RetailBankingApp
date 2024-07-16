@@ -109,7 +109,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
 
     if (mobileNumber) {
-      await User.findOneAndUpdate({_id: {$eq: userId}}, {mobileNumber}, {new: true});
+      await User.findOneAndUpdate({_id: {$eq: userId}}, {$set: {mobileNumber}}, {new: true});
       getProfile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Mobile-number`
@@ -126,7 +126,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (spouseName) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {'familyDetails.spouseName': spouseName}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {'familyDetails.spouseName': spouseName}}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Spouse name`
@@ -143,7 +143,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (permanentAddress) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {permanentAddress}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {permanentAddress}}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -160,7 +160,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (alternateContactNumber) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {alternateContactNumber}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {alternateContactNumber}}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -177,7 +177,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (occupation) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {occupation}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {occupation}}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -194,7 +194,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (sourceOfIncome) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {sourceOfIncome}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {sourceOfIncome}}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -211,7 +211,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (company) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {company}, {new: true});
+      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {company}}, {new: true});
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
