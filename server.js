@@ -36,6 +36,6 @@ app.use('/api/admin', require('./routes/api/adminRoutes/adminReg'));
 app.use('/api/authAdmin', require('./routes/api/adminRoutes/authAdmin'));
 app.use('/api/adminAction', require('./routes/api/adminRoutes/adminAction'));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001; //5000 port is for Mac Airplay receiver
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

@@ -235,7 +235,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
 
 // @route   DELETE api/adminAction/deleteUser/:user_id
 // @desc    Delete the user and it's data
-// @access  Private
+// @access  Private http://localhost:3000/api/adminAction/deleteUser/60966a80fdbb661dc853e393
 router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
   try {
     const admin = await Admin.findById({$eq: req.admin.id});
