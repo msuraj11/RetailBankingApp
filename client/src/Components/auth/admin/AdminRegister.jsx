@@ -11,7 +11,8 @@ import {setAdminNavLinks} from '../../../actions/authAdmin';
 import {resetAdminNavLinks} from '../../../actions/authAdmin';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
+const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fields: {
       firstName: '',
@@ -32,13 +33,15 @@ const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
 
   // TODO Nav-links for guest admin is to be done using redux
   useEffect(() => {
-    dispatch(setAdminNavLinks());
+    if (!activateAdminNavLinks) {
+      navigate('/adminLanding');
+    } else {
+      dispatch(setAdminNavLinks());
+    }
     return () => {
       dispatch(resetAdminNavLinks());
     };
   }, [dispatch]);
-
-  const navigate = useNavigate();
 
   const {fields, isMobileNumValid, isPasswordMatch, isValidEmail, disableRegButton} = formData;
   const {firstName, lastName, mobileNumber, experienceInBanking, gender, adminBranch, personalEmail, password, confirmPassword} = fields;
@@ -225,11 +228,13 @@ const AdminRegister = ({dispatch, isAdminAuthenticated}) => {
 
 AdminRegister.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isAdminAuthenticated: PropTypes.bool
+  isAdminAuthenticated: PropTypes.bool,
+  activateAdminNavLinks: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
-  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
+  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
+  activateAdminNavLinks: state.authAdmin.activateAdminNavLinks
 });
 
 export default connect(mapStateToProps)(AdminRegister);

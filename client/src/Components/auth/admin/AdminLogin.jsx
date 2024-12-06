@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Link, Navigate} from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
@@ -7,7 +7,8 @@ import {adminLogin} from '../../../actions/authAdmin';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
 import ContainerLayout from '../../layouts/ContainerLayout';
 
-const AdminLogin = ({isAdminAuthenticated, dispatch}) => {
+const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fields: {
       emailId: '',
@@ -17,11 +18,15 @@ const AdminLogin = ({isAdminAuthenticated, dispatch}) => {
   });
 
   useEffect(() => {
-    dispatch(setAdminNavLinks());
+    if (!activateAdminNavLinks) {
+      navigate('/adminLanding');
+    } else {
+      dispatch(setAdminNavLinks());
+    }
     return () => {
       dispatch(resetAdminNavLinks());
     };
-  }, [dispatch]);
+  }, [dispatch, activateAdminNavLinks, navigate]);
 
   const {fields, isValidEmailId} = formData;
   const {emailId, password} = fields;
@@ -79,11 +84,13 @@ const AdminLogin = ({isAdminAuthenticated, dispatch}) => {
 
 AdminLogin.prototypes = {
   dispatch: PropTypes.func.isRequired,
-  isAdminAuthenticated: PropTypes.boolß
+  isAdminAuthenticated: PropTypes.bool,
+  activateAdminNavLinks: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
-  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
+  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
+  activateAdminNavLinks: state.authAdmin.activateAdminNavLinks
 });
 
 export default connect(mapStateToProps)(AdminLogin);

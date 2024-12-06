@@ -13,7 +13,7 @@ const initialState = {
   isAdminAuthenticated: false,
   loading: true,
   admin: null,
-  activateAdminNavLinks: false
+  activateAdminNavLinks: localStorage.getItem('adminNav')
 };
 
 function authAdminReducer(state = initialState, action) {
@@ -40,13 +40,13 @@ function authAdminReducer(state = initialState, action) {
     case SET_ADMIN_NAV_LINKS:
       return {
         ...state,
-        activateAdminNavLinks: true
+        activateAdminNavLinks: localStorage.getItem('adminNav')
       };
 
     case RESET_ADMIN_NAV_LINKS:
       return {
         ...state,
-        activateAdminNavLinks: false
+        activateAdminNavLinks: localStorage.getItem('adminNav')
       };
 
     case ADMIN_AUTH_ERROR:

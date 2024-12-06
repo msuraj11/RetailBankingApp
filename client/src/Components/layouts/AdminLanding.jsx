@@ -5,18 +5,12 @@ import PropTypes from 'prop-types';
 import {setAlert} from '../../actions/alert';
 import {setAdminNavLinks} from '../../actions/authAdmin';
 
-const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks}) => {
-  const [localState, setLocalState] = useState({
-    adminCode: '',
-    isAuthorised: false
-  });
-
+const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activateAdminNavLinks}) => {
+  const [adminCode, setAdminCode] = useState('');
   const navigate = useNavigate();
 
-  const {adminCode, isAuthorised} = localState;
-
   const onFieldChange = (e) => {
-    setLocalState({...localState, adminCode: e.target.value});
+    setAdminCode(e.target.value);
   };
 
   const onSubmitForm = (e) => {
@@ -25,7 +19,6 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks}) => {
       setAlert('Access denied', 'danger', 6000);
       setTimeout(() => navigate('/'), 6000);
     } else {
-      setLocalState({...localState, isAuthorised: true});
       setAdminNavLinks();
     }
   };
@@ -65,7 +58,7 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks}) => {
   ) : (
     <section className="landing-admin">
       <div className="dark-overlay">
-        <div className="landing-inner">{isAuthorised ? renderMainLanding : renderInputField}</div>
+        <div className="landing-inner">{activateAdminNavLinks ? renderMainLanding : renderInputField}</div>
       </div>
     </section>
   );
@@ -73,11 +66,13 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks}) => {
 
 AdminLanding.propTypes = {
   isAdminAuthenticated: PropTypes.bool,
+  activateAdminNavLinks: PropTypes.string,
   setAlert: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
-  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
+  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated,
+  activateAdminNavLinks: state.authAdmin.activateAdminNavLinks
 });
 
 export default connect(mapStateToProps, {setAlert, setAdminNavLinks})(AdminLanding);
