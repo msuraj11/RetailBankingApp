@@ -13,7 +13,6 @@ import RenderInputFields from './sub-components/RenderInputFields';
 import {setAlert} from '../../actions/alert';
 import Modal from '../layouts/Modal';
 import axios from 'axios';
-import ContainerLayout from '../layouts/ContainerLayout';
 
 const INIT_STATE = {
   isEditEnabled: false,
@@ -161,7 +160,7 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
   };
 
   return (
-    <ContainerLayout>
+    <React.Fragment>
       {isModalVisible && (
         <Modal
           handleClose={() =>
@@ -263,7 +262,7 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthe
       ) : (
         <h1>Oops..!! Something went wrong!</h1>
       )}
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

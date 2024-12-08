@@ -6,9 +6,8 @@ import {connect} from 'react-redux';
 import {setAlert} from '../../actions/alert';
 import PropTypes from 'prop-types';
 import Timer from '../layouts/Timer';
-import ContainerLayout from '../layouts/ContainerLayout';
 
-const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdminAuthenticated, history, showTimer}) => {
+const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdminAuthenticated, showTimer}) => {
   const [tokenData, setTokenData] = useState({
     token: '',
     resendData: {
@@ -72,7 +71,7 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
   ) : isAdminAuthenticated && activateAdminNavLinks ? (
     <Navigate to="/adminDashboard" />
   ) : (
-    <ContainerLayout>
+    <Fragment>
       <h1 className="large text-primary">Verify Token</h1>
       <p className="lead">
         <i className="fas fa-paper-plane"></i> Check for Token in your Inbox of E-Mail you provided
@@ -115,7 +114,7 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
           </form>
         </Fragment>
       )}
-    </ContainerLayout>
+    </Fragment>
   );
 };
 
@@ -123,8 +122,7 @@ TokenVerifier.prototypes = {
   setAlert: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
   activateAdminNavLinks: PropTypes.bool,
-  showTimer: PropTypes.bool,
-  history: PropTypes.object
+  showTimer: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

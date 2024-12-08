@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
-import ContainerLayout from '../../layouts/ContainerLayout';
 
 const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
   const navigate = useNavigate();
@@ -177,7 +176,7 @@ const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
   };
 
   return (
-    <ContainerLayout>
+    <Fragment>
       <h1 className="large text-primary">KYC Profile</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Complete your KYC to get started your transactions
@@ -344,7 +343,7 @@ const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
           </Fragment>
         )}
       </form>
-    </ContainerLayout>
+    </Fragment>
   );
 };
 

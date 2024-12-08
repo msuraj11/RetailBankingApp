@@ -1,6 +1,7 @@
-import React, {useLayoutEffect} from 'react';
+import {useLayoutEffect} from 'react';
 import {connect} from 'react-redux';
 import {RouterProvider, createBrowserRouter, createRoutesFromElements, Route} from 'react-router-dom';
+import PropTypes from 'prop-types';
 import './App.css';
 import Landing from './Components/layouts/Landing';
 import Register from './Components/auth/Register';
@@ -18,6 +19,7 @@ import PageNotFound from './Components/routing/PageNotFound';
 import Logs from './Components/admin-tabs/Logs';
 import AllUsers from './Components/admin-tabs/AllUsers';
 import RootLayout from './Components/layouts/RootLayout';
+import ContainerLayout from './Components/layouts/ContainerLayout';
 // Redux
 import {loadUser} from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
@@ -36,20 +38,22 @@ const router = createBrowserRouter(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Landing />} />
       <Route path="/adminLanding" element={<AdminLanding />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/adminRegister" element={<AdminRegister />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/adminLogin" element={<AdminLogin />} />
-      <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
-      {/* USER PRIVATE ROUTES */}
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/kyc" element={<KYC />} />
-      <Route path="/accountInformation" element={<AccountInfo />} />
-      <Route path="/transaction" element={<Transaction />} />
-      {/* ADMIN PRIVATE ROUTES */}
-      <Route path="/adminDashboard" element={<AdminDashboard />} />
-      <Route path="/logs" element={<Logs />} />
-      <Route path="/allUsers" element={<AllUsers />} />
+      <Route element={<ContainerLayout />}>
+        <Route path="/register" element={<Register />} />
+        <Route path="/adminRegister" element={<AdminRegister />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/adminLogin" element={<AdminLogin />} />
+        <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
+        {/* USER PRIVATE ROUTES */} {/* TODO - Add one more path /user/<*> */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/kyc" element={<KYC />} />
+        <Route path="/accountInformation" element={<AccountInfo />} />
+        <Route path="/transaction" element={<Transaction />} />
+        {/* ADMIN PRIVATE ROUTES */} {/* TODO - Add one more path /admin/<*> */}
+        <Route path="/adminDashboard" element={<AdminDashboard />} />
+        <Route path="/logs" element={<Logs />} />
+        <Route path="/allUsers" element={<AllUsers />} />
+      </Route>
       <Route element={<PageNotFound />} />
     </Route>
   )
@@ -62,6 +66,10 @@ const App = ({dispatch}) => {
   }, [dispatch]);
 
   return <RouterProvider router={router} />;
+};
+
+App.propTypes = {
+  dispatch: PropTypes.func
 };
 
 export default connect()(App);

@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {adminLogin} from '../../../actions/authAdmin';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
-import ContainerLayout from '../../layouts/ContainerLayout';
 
 const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => {
   const navigate = useNavigate();
@@ -51,7 +50,7 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
   return isAdminAuthenticated ? (
     <Navigate to="/adminDashboard" />
   ) : (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Admin Sign In</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Sign Into Your Account
@@ -78,7 +77,7 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
       <p className="my-1">
         Don't have an account? <Link to="/adminRegister">Sign Up</Link>
       </p>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

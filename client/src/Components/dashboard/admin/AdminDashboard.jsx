@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
 import Spinner from '../../layouts/Spinner';
-import ContainerLayout from '../../layouts/ContainerLayout';
 
 const AdminDashboard = ({dispatch, authAdmin: {loading, admin, isAdminAuthenticated}}) => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const AdminDashboard = ({dispatch, authAdmin: {loading, admin, isAdminAuthentica
   return admin === null || loading ? (
     <Spinner />
   ) : (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Admin Info</h1>
       <div className="profiles">
         <div className="profile bg-light">
@@ -46,7 +45,7 @@ const AdminDashboard = ({dispatch, authAdmin: {loading, admin, isAdminAuthentica
           </ul>
         </div>
       </div>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

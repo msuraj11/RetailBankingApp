@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {logout} from '../../actions/auth';
@@ -12,6 +12,7 @@ const Navbar = ({
   adminLogout,
   authAdmin: {activateAdminNavLinks, isAdminAuthenticated, admin}
 }) => {
+  const location = useLocation();
   const authLinks = (
     <ul>
       <li>
@@ -107,11 +108,16 @@ const Navbar = ({
     </ul>
   );
 
-  let logoLink;
+  let logoLink, navFragment;
   if (activateAdminNavLinks) {
     logoLink = isAdminAuthenticated ? '/adminDashboard' : '/adminLanding';
-  } else {
+    navFragment = isAdminAuthenticated ? adminAuthLinks : adminLandingLinks;
+  } else if (!location.pathname.includes('admin')) {
     logoLink = isAuthenticated ? '/dashboard' : '/';
+    navFragment = isAuthenticated ? authLinks : guestLinks;
+  } else {
+    logoLink = '/adminLanding';
+    navFragment = null;
   }
 
   return (
@@ -121,11 +127,7 @@ const Navbar = ({
           <i className="fas fa-landmark"></i> BOS
         </Link>
       </h1>
-      {!loading && (
-        <Fragment>
-          {activateAdminNavLinks ? (isAdminAuthenticated ? adminAuthLinks : adminLandingLinks) : isAuthenticated ? authLinks : guestLinks}
-        </Fragment>
-      )}
+      {!loading && <Fragment>{navFragment}</Fragment>}
     </nav>
   );
 };

@@ -10,7 +10,6 @@ import Spinner from '../layouts/Spinner';
 import {getAccountInfo, getStatement, removeStatement as removeStatementAction} from '../../actions/accountInfo';
 import {setAlert} from '../../actions/alert';
 import StatementTable from './StatementTable';
-import ContainerLayout from '../layouts/ContainerLayout';
 import {getCurrentProfile} from '../../actions/profile';
 
 const AccountInfo = ({
@@ -90,7 +89,7 @@ const AccountInfo = ({
   return loading || accInfo === null || profile === null ? (
     <Spinner />
   ) : (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Account Info</h1>
       <div className="profiles">
         <div className="profile bg-light">
@@ -144,7 +143,7 @@ const AccountInfo = ({
         </button>
       </div>
       <Element name="table">{statement && isValidDate && <StatementTable data={statement} />}</Element>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

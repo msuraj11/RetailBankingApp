@@ -6,7 +6,6 @@ import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {setAlert} from '../../actions/alert';
 import {getAccountInfo} from '../../actions/accountInfo';
-import ContainerLayout from '../layouts/ContainerLayout';
 
 const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) => {
   const navigate = useNavigate();
@@ -63,7 +62,7 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
   };
 
   return (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Transaction</h1>
       <p className="lead">
         <i className="fas fa-coins"></i> Perform Credit/Debit transactions
@@ -98,7 +97,7 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
           Submit
         </button>
       </form>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

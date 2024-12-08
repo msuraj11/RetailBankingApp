@@ -4,7 +4,6 @@ import {isEmpty} from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {login} from '../../actions/auth';
-import ContainerLayout from '../layouts/ContainerLayout';
 
 const Login = ({login, isAuthenticated}) => {
   const [formData, setFormData] = useState({
@@ -45,7 +44,7 @@ const Login = ({login, isAuthenticated}) => {
   return isAuthenticated ? (
     <Navigate to="/dashboard" />
   ) : (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Sign In</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Sign Into Your Account
@@ -76,7 +75,7 @@ const Login = ({login, isAuthenticated}) => {
       <p className="my-1">
         Don't have an account? <Link to="/register">Sign Up</Link>
       </p>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

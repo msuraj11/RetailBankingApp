@@ -9,7 +9,6 @@ import {setAlert} from '../../../actions/alert';
 import {setTimer} from '../../../actions/timer';
 import {setAdminNavLinks} from '../../../actions/authAdmin';
 import {resetAdminNavLinks} from '../../../actions/authAdmin';
-import ContainerLayout from '../../layouts/ContainerLayout';
 
 const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) => {
   const navigate = useNavigate();
@@ -110,7 +109,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
   return isAdminAuthenticated ? (
     <Navigate to="/adminDashboard" />
   ) : (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Admin Sign Up</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Create Your Account
@@ -222,7 +221,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
       <p className="my-1">
         Already have an account? <Link to="/adminLogin">Sign In</Link>
       </p>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

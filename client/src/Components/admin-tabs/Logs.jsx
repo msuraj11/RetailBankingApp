@@ -6,7 +6,6 @@ import moment from 'moment';
 import {getLogs} from '../../actions/adminLogs';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../actions/authAdmin';
 import Spinner from '../layouts/Spinner';
-import ContainerLayout from '../layouts/ContainerLayout';
 
 const Logs = ({logs, dispatch, loading, isAdminAuthenticated}) => {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ const Logs = ({logs, dispatch, loading, isAdminAuthenticated}) => {
     };
   }, [logs, dispatch]);
   return (
-    <ContainerLayout>
+    <React.Fragment>
       {logs && Array.isArray(logs) && logs.length > 0 ? (
         logs.map((log) => (
           <div className="post bg-white p-1 my-1" key={log._id}>
@@ -60,7 +59,7 @@ const Logs = ({logs, dispatch, loading, isAdminAuthenticated}) => {
       ) : (
         <h1>Looks like you don't have any logs..!!</h1>
       )}
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 

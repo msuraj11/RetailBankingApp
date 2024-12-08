@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import ContainerLayout from './ContainerLayout';
 
 class Timer extends Component {
   state = {
@@ -41,7 +40,7 @@ class Timer extends Component {
     const {minutes, seconds} = this.state;
     const {startTimer} = this.props;
     return (
-      <ContainerLayout>
+      <React.Fragment>
         <div className="form">
           {startTimer ? (
             <h3 className="form-danger">
@@ -51,7 +50,7 @@ class Timer extends Component {
             <h3 className="form-danger">Token Expired!</h3>
           )}
         </div>
-      </ContainerLayout>
+      </React.Fragment>
     );
   }
 }

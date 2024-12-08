@@ -5,7 +5,6 @@ import {Link, useNavigate} from 'react-router-dom';
 import {getCurrentProfile} from '../../actions/profile';
 import Spinner from '../layouts/Spinner';
 import ShowProfile from './profile/ShowProfile';
-import ContainerLayout from '../layouts/ContainerLayout';
 
 const Dashboard = ({dispatch, auth: {user, isAuthenticated, loadingUser}, profile: {profile, loading}}) => {
   const navigate = useNavigate();
@@ -24,7 +23,7 @@ const Dashboard = ({dispatch, auth: {user, isAuthenticated, loadingUser}, profil
   return loading && profile === null ? (
     <Spinner />
   ) : (
-    <ContainerLayout>
+    <Fragment>
       <h1 className="large text-primary">Dashboard</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Welcome {user && user.name}
@@ -39,7 +38,7 @@ const Dashboard = ({dispatch, auth: {user, isAuthenticated, loadingUser}, profil
           </Link>
         </Fragment>
       )}
-    </ContainerLayout>
+    </Fragment>
   );
 };
 

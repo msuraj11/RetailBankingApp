@@ -6,7 +6,6 @@ import {setAlert} from '../../actions/alert';
 import {setTimer} from '../../actions/timer';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import ContainerLayout from '../layouts/ContainerLayout';
 
 const Register = ({setAlert, isAuthenticated, setTimer}) => {
   const navigate = useNavigate();
@@ -94,7 +93,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
   return isAuthenticated ? (
     <Navigate to="/dashboard" />
   ) : (
-    <ContainerLayout>
+    <React.Fragment>
       <h1 className="large text-primary">Sign Up</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Create Your Account
@@ -174,7 +173,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
       <p className="my-1">
         Already have an account? <Link to="/login">Sign In</Link>
       </p>
-    </ContainerLayout>
+    </React.Fragment>
   );
 };
 
