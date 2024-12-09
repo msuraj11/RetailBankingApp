@@ -60,16 +60,15 @@ export const adminLogin = (email, password) => async (dispatch) => {
 };
 
 export const setAdminNavLinks = () => (dispatch) => {
-  localStorage.setItem('adminNav', true);
   dispatch({type: SET_ADMIN_NAV_LINKS});
 };
 
 export const resetAdminNavLinks = () => (dispatch) => {
-  localStorage.removeItem('adminNav');
   dispatch({type: RESET_ADMIN_NAV_LINKS});
 };
 
 export const adminLogout = () => (dispatch) => {
   dispatch({type: ADMIN_LOGOUT});
   dispatch({type: CLEAR_LOGS});
+  dispatch({type: RESET_ADMIN_NAV_LINKS});
 };

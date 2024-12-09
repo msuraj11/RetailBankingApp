@@ -38,15 +38,17 @@ function authAdminReducer(state = initialState, action) {
       };
 
     case SET_ADMIN_NAV_LINKS:
+      sessionStorage.setItem('adminNav', true);
       return {
         ...state,
-        activateAdminNavLinks: localStorage.getItem('adminNav')
+        activateAdminNavLinks: sessionStorage.getItem('adminNav')
       };
 
     case RESET_ADMIN_NAV_LINKS:
+      sessionStorage.removeItem('adminNav');
       return {
         ...state,
-        activateAdminNavLinks: localStorage.getItem('adminNav')
+        activateAdminNavLinks: sessionStorage.getItem('adminNav')
       };
 
     case ADMIN_AUTH_ERROR:

@@ -108,16 +108,14 @@ const Navbar = ({
     </ul>
   );
 
-  let logoLink, navFragment;
+  let logoLink = '/',
+    navFragment = null;
   if (activateAdminNavLinks) {
     logoLink = isAdminAuthenticated ? '/adminDashboard' : '/adminLanding';
     navFragment = isAdminAuthenticated ? adminAuthLinks : adminLandingLinks;
   } else if (!location.pathname.includes('admin')) {
     logoLink = isAuthenticated ? '/dashboard' : '/';
     navFragment = isAuthenticated ? authLinks : guestLinks;
-  } else {
-    logoLink = '/adminLanding';
-    navFragment = null;
   }
 
   return (
