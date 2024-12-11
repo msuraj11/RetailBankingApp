@@ -6,6 +6,7 @@ const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 const UpdateRequests = require('../../models/UpdateRequests');
 const {check, validationResult} = require('express-validator');
+const {getStringifiedObject} = require('../utils/helpers');
 
 // @route   GET api/profile/me
 // @desc    Get current user's profile
@@ -49,6 +50,10 @@ router.post(
     ]
   ],
   async (req, res) => {
+    // NoSQL operations should not be vulnerable to injection attacks
+    // jssecurity:S5147, CWE fix
+    const reqObj = getStringifiedObject(req.body);
+
     const {
       firstName,
       lastName,
@@ -68,7 +73,7 @@ router.post(
       spouse,
       accBranch,
       IFSC_Code
-    } = req.body;
+    } = reqObj;
 
     const profileFields = {
       firstName,

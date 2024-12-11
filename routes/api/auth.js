@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const sendEmail = require('../utils/emailTemplate');
+const {getStringifiedObject} = require('../utils/helpers');
 
 const router = express.Router();
 
@@ -50,7 +51,11 @@ router.post(
       return res.status(400).json({errors: errors.array()});
     }
 
-    const {customerId, password} = req.body;
+    // NoSQL operations should not be vulnerable to injection attacks
+    // jssecurity:S5147, CWE fix
+    const reqObj = getStringifiedObject(req.body);
+
+    const {customerId, password} = reqObj;
 
     try {
       // Check if user exists
