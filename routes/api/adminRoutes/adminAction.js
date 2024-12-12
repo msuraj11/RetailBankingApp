@@ -7,6 +7,7 @@ const Transactions = require('../../../models/Transactions');
 const adminAuth = require('../../../middleware/adminAuth');
 const Admin = require('../../../models/adminModels/Admin');
 const AdminActionLogs = require('../../../models/adminModels/AdminActionLogs');
+const {getCleanRequestBody} = require('../../utils/helpers');
 
 // @route   GET api/adminAction/getAllUsers
 // @desc    Getting all the users data
@@ -39,7 +40,9 @@ router.get('/getAllUsers', adminAuth, async (req, res) => {
 // @desc    Update user info via admin
 // @access  Private
 router.put('/updateUserInfo', adminAuth, async (req, res) => {
-  const {userId, mobileNumber, permanentAddress, spouseName, alternateContactNumber, occupation, sourceOfIncome, company} = req.body;
+  const {userId, mobileNumber, permanentAddress, spouseName, alternateContactNumber, occupation, sourceOfIncome, company} = getCleanRequestBody(
+    req.body
+  );
 
   if (!(mobileNumber || permanentAddress || spouseName || alternateContactNumber || occupation || sourceOfIncome || company)) {
     return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});

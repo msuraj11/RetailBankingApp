@@ -7,6 +7,7 @@ const User = require('../../models/User');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const sendEmail = require('../utils/emailTemplate');
+const {getCleanRequestBody} = require('../utils/helpers');
 
 // @route   POST api/users
 // @desc    Register User
@@ -25,7 +26,7 @@ router.post(
       return res.status(400).json({errors: errors.array()});
     }
 
-    const {name, email, mobileNumber, password} = req.body;
+    const {name, email, mobileNumber, password} = getCleanRequestBody(req.body);
 
     try {
       // Check if user already exists

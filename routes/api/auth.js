@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const sendEmail = require('../utils/emailTemplate');
-const {getStringifiedObject} = require('../utils/helpers');
+const {getCleanRequestBody} = require('../utils/helpers');
 
 const router = express.Router();
 
@@ -53,7 +53,7 @@ router.post(
 
     // NoSQL operations should not be vulnerable to injection attacks
     // jssecurity:S5147, CWE fix
-    const reqObj = getStringifiedObject(req.body);
+    const reqObj = getCleanRequestBody(req.body);
 
     const {customerId, password} = reqObj;
 

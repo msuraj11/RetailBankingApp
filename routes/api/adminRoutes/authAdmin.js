@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const sendEmail = require('../../utils/emailTemplate');
+const {getCleanRequestBody} = require('../../utils/helpers');
 
 const router = express.Router();
 
@@ -50,7 +51,7 @@ router.post(
       return res.status(400).json({errors: errors.array()});
     }
 
-    const {email, password} = req.body;
+    const {email, password} = getCleanRequestBody(req.body);
 
     try {
       // Check if admin exists

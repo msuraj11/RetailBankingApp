@@ -7,7 +7,7 @@ const jsonWebToken = require('jsonwebtoken');
 const config = require('config');
 const Admin = require('../../../models/adminModels/Admin');
 const sendEmail = require('../../utils/emailTemplate');
-const {getStringifiedObject} = require('../../utils/helpers');
+const {getCleanRequestBody} = require('../../utils/helpers');
 
 // @route   POST api/admin
 // @desc    Register Admin
@@ -33,7 +33,7 @@ router.post(
 
     // NoSQL operations should not be vulnerable to injection attacks
     // jssecurity:S5147, CWE fix
-    const reqObj = getStringifiedObject(req.body);
+    const reqObj = getCleanRequestBody(req.body);
 
     const {firstName, lastName, mobileNumber, experienceInBanking, adminBranch, gender, personalEmail, password, confirmPassword} = reqObj;
 
