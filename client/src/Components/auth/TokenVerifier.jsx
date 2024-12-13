@@ -17,7 +17,10 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
     if (isAdminAuthenticated && activateAdminNavLinks) {
       navigate('/adminDashboard');
     }
-  }, [isAuthenticated, activateAdminNavLinks, isAdminAuthenticated]);
+    if (!showTimer) {
+      navigate('/');
+    }
+  }, [isAuthenticated, activateAdminNavLinks, isAdminAuthenticated, showTimer]);
 
   const [tokenData, setTokenData] = useState({
     token: '',

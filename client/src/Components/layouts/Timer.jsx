@@ -1,57 +1,52 @@
-import React, {Component} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
-class Timer extends Component {
-  state = {
+const Timer = ({startTimer}) => {
+  const [time, setTime] = useState({
     minutes: 5,
     seconds: 0
-  };
+  });
 
-  componentDidMount() {
-    if (this.props.startTimer) {
-      this.myInterval = setInterval(() => {
-        const {seconds, minutes} = this.state;
-
-        if (seconds > 0) {
-          this.setState(({seconds}) => ({
-            seconds: seconds - 1
+  const {seconds, minutes} = time;
+  let timeInterval;
+  useEffect(() => {
+    timeInterval = setInterval(() => {
+      if (seconds > 0) {
+        setTime((prevState) => ({
+          ...prevState,
+          seconds: prevState.seconds - 1
+        }));
+      }
+      if (seconds === 0) {
+        if (minutes === 0) {
+          clearInterval(timeInterval);
+        } else {
+          setTime((prevState) => ({
+            minutes: prevState.minutes - 1,
+            seconds: 59
           }));
         }
-        if (seconds === 0) {
-          if (minutes === 0) {
-            clearInterval(this.myInterval);
-          } else {
-            this.setState(({minutes}) => ({
-              minutes: minutes - 1,
-              seconds: 59
-            }));
-          }
-        }
-      }, 1000);
-    }
-  }
+      }
+    }, 1000);
 
-  componentWillUnmount() {
-    clearInterval(this.myInterval);
-  }
+    return () => {
+      clearInterval(timeInterval);
+    };
+  }, [startTimer, seconds, minutes]);
 
-  render() {
-    const {minutes, seconds} = this.state;
-    const {startTimer} = this.props;
-    return (
-      <div className="form">
-        {startTimer ? (
-          <h3 className="form-danger">
-            Token expires in: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-          </h3>
-        ) : (
-          <h3 className="form-danger">Token Expired!</h3>
-        )}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="form">
+      {startTimer ? (
+        <h3 className="form-danger">
+          Token expires in: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+        </h3>
+      ) : (
+        <h3 className="form-danger">Token Expired!</h3>
+      )}
+    </div>
+  );
+};
 
 Timer.propTypes = {
   startTimer: PropTypes.bool.isRequired

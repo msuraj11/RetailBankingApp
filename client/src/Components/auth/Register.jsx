@@ -71,7 +71,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
 
     try {
       const res = await axios.post('/api/users', body, config);
-      if (res.token) {
+      if (res?.data?.token) {
         setAlert('Registered Successfully!!', 'success');
         setFormData({...formData, disableRegButton: true});
         setTimeout(() => {
@@ -82,8 +82,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
         throw new Error('You are now registered successfully. There might be issue in receiving an email, Please contact support');
       }
     } catch (err) {
-      console.error(err.response.data);
-      const errors = err.response.data.errors || [{msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}];
+      const errors = err?.response?.data?.errors || [{msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}];
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
