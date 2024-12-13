@@ -40,17 +40,15 @@ class Timer extends Component {
     const {minutes, seconds} = this.state;
     const {startTimer} = this.props;
     return (
-      <React.Fragment>
-        <div className="form">
-          {startTimer ? (
-            <h3 className="form-danger">
-              Token expires in: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-            </h3>
-          ) : (
-            <h3 className="form-danger">Token Expired!</h3>
-          )}
-        </div>
-      </React.Fragment>
+      <div className="form">
+        {startTimer ? (
+          <h3 className="form-danger">
+            Token expires in: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+          </h3>
+        ) : (
+          <h3 className="form-danger">Token Expired!</h3>
+        )}
+      </div>
     );
   }
 }
