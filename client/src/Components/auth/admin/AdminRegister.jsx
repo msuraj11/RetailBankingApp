@@ -7,8 +7,7 @@ import axios from 'axios';
 import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
 import {setTimer} from '../../../actions/timer';
-import {setAdminNavLinks} from '../../../actions/authAdmin';
-import {resetAdminNavLinks} from '../../../actions/authAdmin';
+import {resetAdminNavLinks, setAdminNavLinks} from '../../../actions/authAdmin';
 
 const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) => {
   const navigate = useNavigate();
@@ -30,7 +29,6 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     disableRegButton: false
   });
 
-  // TODO Nav-links for guest admin is to be done using redux
   useEffect(() => {
     if (!activateAdminNavLinks) {
       navigate('/adminLanding');
@@ -40,7 +38,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     return () => {
       dispatch(resetAdminNavLinks());
     };
-  }, [dispatch]);
+  }, [dispatch, activateAdminNavLinks]);
 
   const {fields, isMobileNumValid, isPasswordMatch, isValidEmail, disableRegButton} = formData;
   const {firstName, lastName, mobileNumber, experienceInBanking, gender, adminBranch, personalEmail, password, confirmPassword} = fields;
@@ -60,7 +58,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     }
     if (e.target.name === 'mobileNumber') {
       const mobNum = `+91${e.target.value}`;
-      const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
+      const mobRegX = /^\+91[6-9]\d{9}$/;
       setFormData({...formData, isMobileNumValid: mobRegX.test(mobNum)});
     }
     if (e.target.name === 'personalEmail') {
@@ -84,7 +82,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
 
     try {
       const res = await axios.post('/api/admin', body, config);
-      if (!!res.token) {
+      if (res.token) {
         dispatch(setAlert('Registered Successfully!!', 'success'));
         scroll.scrollToTop();
         setFormData({...formData, disableRegButton: true});

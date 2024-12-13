@@ -36,12 +36,11 @@ const AdminDashboard = ({dispatch, authAdmin: {loading, admin, isAdminAuthentica
             <p>{admin.adminBranch}</p>
           </div>
           <ul>
-            {admin.permissions &&
-              admin.permissions.map((item, index) => (
-                <li key={index} className="text-primary">
-                  <i className="fas fa-check"></i> {`${item} Access`}
-                </li>
-              ))}
+            {admin?.permissions?.map((item, index) => (
+              <li key={index + item} className="text-primary">
+                <i className="fas fa-check"></i> {`${item} Access`}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

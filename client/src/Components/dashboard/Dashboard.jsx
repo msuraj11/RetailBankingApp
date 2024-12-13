@@ -26,7 +26,7 @@ const Dashboard = ({dispatch, auth: {user, isAuthenticated, loadingUser}, profil
     <Fragment>
       <h1 className="large text-primary">Dashboard</h1>
       <p className="lead">
-        <i className="fas fa-user"></i> Welcome {user && user.name}
+        <i className="fas fa-user"></i> Welcome {user?.name}
       </p>
       {profile !== null ? (
         <ShowProfile profile={profile} />

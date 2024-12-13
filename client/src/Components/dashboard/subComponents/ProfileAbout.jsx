@@ -1,6 +1,8 @@
 import React, {Fragment} from 'react';
 import {isEmpty} from 'lodash';
 
+const getClassString = (boolVal) => `fas fa-${boolVal ? 'times' : 'edit'}`;
+
 const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFields, submitAddress}) => {
   const {
     isAboutEditEnabled,
@@ -17,11 +19,18 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
     user: {mobileNumber}
   } = profile;
 
+  const getEditIconJsx = (isAbout = true) => (
+    <i
+      className={getClassString(isAbout ? isAboutEditEnabled : isEditEnabled)}
+      role="button"
+      onClick={isAbout ? editAddress : editInfo}
+      onKeyDown={isAbout ? editAddress : editInfo}
+    ></i>
+  );
+
   return (
     <div className="profile-about bg-light p-2">
-      <div className="edit-icon">
-        <i className={isAboutEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editAddress}></i>
-      </div>
+      <div className="edit-icon">{getEditIconJsx()}</div>
       <h2 className="text-primary">You live here</h2>
       {isAboutEditEnabled ? (
         <div className="form">
@@ -43,9 +52,7 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
       <div className="line" />
       {permanentAddress && (
         <Fragment>
-          <div className="edit-icon">
-            <i className={isEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editInfo}></i>
-          </div>
+          <div className="edit-icon">{getEditIconJsx(false)}</div>
           <h2 className="text-primary">Your Home town/City</h2>
           {isEditEnabled ? (
             <div className="form">

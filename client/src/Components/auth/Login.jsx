@@ -26,7 +26,7 @@ const Login = ({login, isAuthenticated}) => {
 
   const onBlurField = (e) => {
     if (e.target.name === 'customerId') {
-      const numbersOnlyRegx = /^[0-9]{9}$/;
+      const numbersOnlyRegx = /^\d{9}$/;
       setFormData({
         ...formData,
         isErrorCustomerId: !numbersOnlyRegx.test(customerId)

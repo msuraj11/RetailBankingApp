@@ -41,7 +41,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
     }
     if (e.target.name === 'mobileNumber') {
       const mobNum = `+91${e.target.value}`;
-      const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
+      const mobRegX = /^\+91[6-9]\d{9}$/;
       setFormData({
         ...formData,
         isErrorMessageOnMobNumb: !mobRegX.test(mobNum)
@@ -71,7 +71,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
 
     try {
       const res = await axios.post('/api/users', body, config);
-      if (!!res.token) {
+      if (res.token) {
         setAlert('Registered Successfully!!', 'success');
         setFormData({...formData, disableRegButton: true});
         setTimeout(() => {

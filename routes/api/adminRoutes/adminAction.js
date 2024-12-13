@@ -54,7 +54,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     return res.status(422).json({errors: [{msg: 'Invalid input type, please provide correct data input.'}]});
   }
 
-  const mobRegX = /^((\+){1}91){1}[1-9]{1}[0-9]{9}$/;
+  const mobRegX = /^\+91[6-9]\d{9}$/;
   if ((mobileNumber && !mobRegX.test(mobileNumber)) || (alternateContactNumber && !mobRegX.test(alternateContactNumber))) {
     return res.status(400).json({errors: [{msg: 'Please provide a valid mobile number.'}]});
   }

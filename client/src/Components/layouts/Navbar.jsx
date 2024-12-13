@@ -91,7 +91,7 @@ const Navbar = ({
           <span className="hide-sm"> Users</span>
         </Link>
       </li>
-      {admin && admin.permissions && admin.permissions.length > 1 && (
+      {admin?.permissions?.length > 1 && (
         <li>
           <Link to="/logs">
             <i className="fas fa-info"></i>

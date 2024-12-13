@@ -8,7 +8,7 @@ import axios from 'axios';
 import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
 
-const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
+const Kyc = ({setAlert, isAuthenticated, loadingUser}) => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuthenticated && !loadingUser) {
@@ -102,7 +102,7 @@ const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
   const onBlurFields = (e) => {
     if (e.target.name === 'alternateContactNumber') {
       const mobNum = `+91${e.target.value}`;
-      const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
+      const mobRegX = /^\+91[6-9]\d{9}$/;
       setErrorMsgs({...errorMsgs, isValidMobNumb: mobRegX.test(mobNum)});
     }
     if (e.target.name === 'dateOfBirth') {
@@ -114,11 +114,11 @@ const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
       });
     }
     if (e.target.name === 'PANCardNo') {
-      const panRegX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      const panRegX = /^[A-Z]{5}\d{4}[A-Z]$/;
       setErrorMsgs({...errorMsgs, isValidPAN: panRegX.test(e.target.value)});
     }
     if (e.target.name === 'AadharNo') {
-      const aadharRegX = /^[2-9]{1}[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
+      const aadharRegX = /^[2-9]\d{3}-\d{4}-\d{4}$/;
       setErrorMsgs({
         ...errorMsgs,
         isValidAadhar: aadharRegX.test(e.target.value)
@@ -347,7 +347,7 @@ const KYC = ({setAlert, isAuthenticated, loadingUser}) => {
   );
 };
 
-KYC.propTypes = {
+Kyc.propTypes = {
   setAlert: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
   loadingUser: PropTypes.bool
@@ -358,4 +358,4 @@ const mapStateToProps = (state) => ({
   loadingUser: state.auth.loading
 });
 
-export default connect(mapStateToProps, {setAlert})(KYC);
+export default connect(mapStateToProps, {setAlert})(Kyc);

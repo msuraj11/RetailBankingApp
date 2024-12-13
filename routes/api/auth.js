@@ -35,7 +35,7 @@ router.get('/verifyToken', auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     console.log(err?.code);
-    res.status(500).send(`Failed due to code: ${err?.code}, reason: ${err?.response}` || 'Server Error');
+    res.status(500).send(`Failed due to code: ${err?.code}, reason: ${err?.response}`);
   }
 });
 

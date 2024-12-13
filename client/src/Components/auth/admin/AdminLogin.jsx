@@ -3,8 +3,7 @@ import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {adminLogin} from '../../../actions/authAdmin';
-import {setAdminNavLinks, resetAdminNavLinks} from '../../../actions/authAdmin';
+import {setAdminNavLinks, resetAdminNavLinks, adminLogin} from '../../../actions/authAdmin';
 
 const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => {
   const navigate = useNavigate();

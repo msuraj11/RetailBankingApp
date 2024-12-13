@@ -8,7 +8,7 @@ import Register from './Components/auth/Register';
 import Login from './Components/auth/Login';
 import TokenVerifier from './Components/auth/TokenVerifier';
 import Dashboard from './Components/dashboard/Dashboard';
-import KYC from './Components/dashboard/profile/KYC';
+import Kyc from './Components/dashboard/profile/KYC';
 import AccountInfo from './Components/account-Info/AccountInfo';
 import Transaction from './Components/transaction/Transaction';
 import AdminRegister from './Components/auth/admin/AdminRegister';
@@ -46,7 +46,7 @@ const router = createBrowserRouter(
         <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
         {/* USER PRIVATE ROUTES */} {/* TODO - Add one more path /user/<*> */}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/kyc" element={<KYC />} />
+        <Route path="/kyc" element={<Kyc />} />
         <Route path="/accountInformation" element={<AccountInfo />} />
         <Route path="/transaction" element={<Transaction />} />
         {/* ADMIN PRIVATE ROUTES */} {/* TODO - Add one more path /admin/<*> */}

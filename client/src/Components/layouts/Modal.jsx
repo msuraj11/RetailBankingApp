@@ -4,7 +4,7 @@ const Modal = ({handleSubmit, handleClose, childJSX}) => {
   return (
     <div id="modal">
       <div className="modal-content">
-        <span className="close" onClick={handleClose}>
+        <span className="close" onClick={handleClose} onKeyDown={handleClose} role="button">
           &times;
         </span>
         <div className="modal-container">
@@ -12,7 +12,7 @@ const Modal = ({handleSubmit, handleClose, childJSX}) => {
             <i className="fas fa-exclamation-triangle"></i> Warning!
           </h2>
           <div className="content">
-            {childJSX ? childJSX : null}
+            {childJSX}
             <p className="py-1">Are you sure you want to continue?</p>
             <button className="btn btn-primary" onClick={handleSubmit}>
               Submit

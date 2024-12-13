@@ -19,17 +19,16 @@ class StatementTable extends PureComponent {
             </tr>
           </thead>
           <tbody>
-            {data &&
-              data.map((item, key) => (
-                <tr key={item._id}>
-                  <td>{key + 1}</td>
-                  <td className="hide-sm">{item.txType}</td>
-                  <td className="hide-sm">{item.txAmount}</td>
-                  <td className="hide-sm">{moment(item.txDates).format('DD-MM-YYYY HH:mm:ss')}</td>
-                  <td className="hide-sm">{item.txBy}</td>
-                  <td>{item.currentBalance}</td>
-                </tr>
-              ))}
+            {data?.map((item, key) => (
+              <tr key={item._id}>
+                <td>{key + 1}</td>
+                <td className="hide-sm">{item.txType}</td>
+                <td className="hide-sm">{item.txAmount}</td>
+                <td className="hide-sm">{moment(item.txDates).format('DD-MM-YYYY HH:mm:ss')}</td>
+                <td className="hide-sm">{item.txBy}</td>
+                <td>{item.currentBalance}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </Fragment>

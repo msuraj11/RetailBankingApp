@@ -1,5 +1,5 @@
-import React, {Fragment, useState} from 'react';
-import {Link, Navigate, useNavigate, useParams} from 'react-router-dom';
+import React, {Fragment, useEffect, useState} from 'react';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import axios from 'axios';
 import {connect} from 'react-redux';
@@ -8,6 +8,17 @@ import PropTypes from 'prop-types';
 import Timer from '../layouts/Timer';
 
 const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdminAuthenticated, showTimer}) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated && !activateAdminNavLinks) {
+      navigate('/dashboard');
+    }
+    if (isAdminAuthenticated && activateAdminNavLinks) {
+      navigate('/adminDashboard');
+    }
+  }, [isAuthenticated, activateAdminNavLinks, isAdminAuthenticated]);
+
   const [tokenData, setTokenData] = useState({
     token: '',
     resendData: {
@@ -20,7 +31,6 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
   });
 
   const params = useParams();
-  const navigate = useNavigate();
 
   const {token, resendData, isValidToken, displayResendFields, isValidUser} = tokenData;
   const {email, password} = resendData;
@@ -66,11 +76,7 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
     e.preventDefault();
   };
 
-  return isAuthenticated && !activateAdminNavLinks ? ( //TODO componentDidMount of Admin is stored in redux-state and can be used here for navigation
-    <Navigate to="/dashboard" />
-  ) : isAdminAuthenticated && activateAdminNavLinks ? (
-    <Navigate to="/adminDashboard" />
-  ) : (
+  return (
     <Fragment>
       <h1 className="large text-primary">Verify Token</h1>
       <p className="lead">

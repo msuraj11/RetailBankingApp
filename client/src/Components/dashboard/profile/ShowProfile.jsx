@@ -93,7 +93,7 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
       }
     } else {
       const mobNum = e.target.value;
-      const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
+      const mobRegX = /^\+91[6-9]\d{9}$/;
       setComponentState({...componentState, isValidMobNumb: mobRegX.test(mobNum)});
     }
   };
@@ -107,7 +107,7 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
       }
     } else {
       const mobNum = e.target.value;
-      const mobRegX = /^((\+){1}91){1}[6-9]{1}[0-9]{9}$/;
+      const mobRegX = /^\+91[6-9]\d{9}$/;
       setComponentState({...componentState, isValidAltCont: mobRegX.test(mobNum)});
     }
   };

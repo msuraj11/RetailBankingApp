@@ -23,12 +23,13 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
     fieldSOI,
     fieldCompany
   } = profile;
+
+  const editIconJsx = <i className={`fas fa-${isEditEnabled ? 'times' : 'edit'}`} role="button" onClick={editInfo} onKeyDown={editInfo}></i>;
+
   return (
     <Fragment>
       <div className="profile-exp bg-white p-2">
-        <div className="edit-icon">
-          <i className={isEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editInfo}></i>
-        </div>
+        <div className="edit-icon">{editIconJsx}</div>
         <h2 className="text-primary">Personal Information</h2>
         <div>
           <h3 className="text-dark">Self and Family Details</h3>
@@ -91,9 +92,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
       </div>
 
       <div className="profile-edu bg-white p-2">
-        <div className="edit-icon">
-          <i className={isEditEnabled ? 'fas fa-times' : 'fas fa-edit'} onClick={editInfo}></i>
-        </div>
+        <div className="edit-icon">{editIconJsx}</div>
         <h2 className="text-primary">Professional Information</h2>
         <div>
           <h3>Work and branch Details</h3>
