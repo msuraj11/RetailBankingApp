@@ -9,9 +9,9 @@ const Timer = ({startTimer}) => {
   });
 
   const {seconds, minutes} = time;
-  let timeInterval;
+
   useEffect(() => {
-    timeInterval = setInterval(() => {
+    const timeInterval = setInterval(() => {
       if (seconds > 0) {
         setTime((prevState) => ({
           ...prevState,
