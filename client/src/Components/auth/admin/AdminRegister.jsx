@@ -11,6 +11,24 @@ import {resetAdminNavLinks, setAdminNavLinks} from '../../../actions/authAdmin';
 
 const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAdminAuthenticated) {
+      navigate('/adminDashboard');
+    }
+  }, [isAdminAuthenticated]);
+  
+  useEffect(() => {
+    if (!activateAdminNavLinks) {
+      navigate('/adminLanding');
+    } else {
+      dispatch(setAdminNavLinks());
+    }
+    return () => {
+      dispatch(resetAdminNavLinks());
+    };
+  }, [dispatch, activateAdminNavLinks]);
+
   const [formData, setFormData] = useState({
     fields: {
       firstName: '',
@@ -29,16 +47,6 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     disableRegButton: false
   });
 
-  useEffect(() => {
-    if (!activateAdminNavLinks) {
-      navigate('/adminLanding');
-    } else {
-      dispatch(setAdminNavLinks());
-    }
-    return () => {
-      dispatch(resetAdminNavLinks());
-    };
-  }, [dispatch, activateAdminNavLinks]);
 
   const {fields, isMobileNumValid, isPasswordMatch, isValidEmail, disableRegButton} = formData;
   const {firstName, lastName, mobileNumber, experienceInBanking, gender, adminBranch, personalEmail, password, confirmPassword} = fields;
@@ -104,9 +112,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     }
   };
 
-  return isAdminAuthenticated ? (
-    <Navigate to="/adminDashboard" />
-  ) : (
+  return (
     <React.Fragment>
       <h1 className="large text-primary">Admin Sign Up</h1>
       <p className="lead">

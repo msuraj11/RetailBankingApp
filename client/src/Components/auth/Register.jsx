@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
-import {Link, Navigate, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import {setAlert} from '../../actions/alert';
 import {setTimer} from '../../actions/timer';
@@ -9,6 +9,13 @@ import axios from 'axios';
 
 const Register = ({setAlert, isAuthenticated, setTimer}) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated]);
+
   const [formData, setFormData] = useState({
     fields: {
       name: '',
@@ -89,9 +96,7 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
     }
   };
 
-  return isAuthenticated ? (
-    <Navigate to="/dashboard" />
-  ) : (
+  return (
     <React.Fragment>
       <h1 className="large text-primary">Sign Up</h1>
       <p className="lead">

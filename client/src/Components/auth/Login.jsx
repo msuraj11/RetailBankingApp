@@ -1,11 +1,19 @@
-import React, {useState} from 'react';
-import {Link, Navigate} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {login} from '../../actions/auth';
 
 const Login = ({login, isAuthenticated}) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated]);
+
   const [formData, setFormData] = useState({
     fields: {
       customerId: '',
@@ -41,9 +49,7 @@ const Login = ({login, isAuthenticated}) => {
     login(customerId, pwd);
   };
 
-  return isAuthenticated ? (
-    <Navigate to="/dashboard" />
-  ) : (
+  return (
     <React.Fragment>
       <h1 className="large text-primary">Sign In</h1>
       <p className="lead">

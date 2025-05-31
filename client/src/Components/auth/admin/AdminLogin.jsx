@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Link, Navigate, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
@@ -7,13 +7,12 @@ import {setAdminNavLinks, resetAdminNavLinks, adminLogin} from '../../../actions
 
 const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    fields: {
-      emailId: '',
-      password: ''
-    },
-    isValidEmailId: true
-  });
+
+  useEffect(() => {
+    if (isAdminAuthenticated) {
+      navigate('/adminDashboard');
+    }
+  }, [isAdminAuthenticated]);
 
   useEffect(() => {
     if (!activateAdminNavLinks) {
@@ -25,6 +24,15 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
       dispatch(resetAdminNavLinks());
     };
   }, [dispatch, activateAdminNavLinks, navigate]);
+
+  const [formData, setFormData] = useState({
+    fields: {
+      emailId: '',
+      password: ''
+    },
+    isValidEmailId: true
+  });
+
 
   const {fields, isValidEmailId} = formData;
   const {emailId, password} = fields;
@@ -46,9 +54,7 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
     dispatch(adminLogin(emailId, password));
   };
 
-  return isAdminAuthenticated ? (
-    <Navigate to="/adminDashboard" />
-  ) : (
+  return (
     <React.Fragment>
       <h1 className="large text-primary">Admin Sign In</h1>
       <p className="lead">

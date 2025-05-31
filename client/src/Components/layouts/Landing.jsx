@@ -1,12 +1,17 @@
-import React from 'react';
-import {Link, Navigate} from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 const Landing = ({isAuthenticated}) => {
-  return isAuthenticated ? (
-    <Navigate to="/dashboard" />
-  ) : (
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated]);
+
+  return (
     <section className="landing">
       <div className="dark-overlay">
         <div className="landing-inner">

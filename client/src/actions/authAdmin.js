@@ -68,6 +68,7 @@ export const resetAdminNavLinks = () => (dispatch) => {
 };
 
 export const adminLogout = () => (dispatch) => {
+  setAuthToken();
   dispatch({type: ADMIN_LOGOUT});
   dispatch({type: CLEAR_LOGS});
   dispatch({type: RESET_ADMIN_NAV_LINKS});

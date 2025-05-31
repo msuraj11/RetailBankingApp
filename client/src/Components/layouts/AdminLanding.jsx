@@ -1,13 +1,19 @@
-import React, {useState, Fragment} from 'react';
-import {Link, Navigate, useNavigate} from 'react-router-dom';
+import React, {useState, useEffect, Fragment} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {setAlert} from '../../actions/alert';
 import {setAdminNavLinks} from '../../actions/authAdmin';
 
 const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activateAdminNavLinks}) => {
-  const [adminCode, setAdminCode] = useState('');
   const navigate = useNavigate();
+  useEffect(() => {
+    if (isAdminAuthenticated) {
+      navigate('/adminDashboard');
+    }
+  }, [isAdminAuthenticated]);
+
+  const [adminCode, setAdminCode] = useState('');
 
   const onFieldChange = (e) => {
     setAdminCode(e.target.value);
@@ -36,9 +42,7 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activat
     </Fragment>
   );
 
-  const renderMainLanding = isAdminAuthenticated ? (
-    <Navigate to="/adminDashboard" />
-  ) : (
+  const renderMainLanding = (
     <Fragment>
       <h1 className="x-large">Welcome to Admin portal of Customer Connect</h1>
       <p className="lead">Sign-up or Login to handle Customer data</p>
@@ -53,9 +57,7 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activat
     </Fragment>
   );
 
-  return isAdminAuthenticated ? (
-    <Navigate to="/adminDashboard" />
-  ) : (
+  return (
     <section className="landing-admin">
       <div className="dark-overlay">
         <div className="landing-inner">{activateAdminNavLinks ? renderMainLanding : renderInputField}</div>

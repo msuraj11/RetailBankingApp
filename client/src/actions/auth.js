@@ -50,6 +50,7 @@ export const login = (customerId, password) => async (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
+  setAuthToken();
   dispatch({type: LOGOUT});
   dispatch({type: CLEAR_PROFILE});
   dispatch({type: CLEAR_ACC_INFO});
