@@ -25,7 +25,7 @@ export const loadAdmin = () => async (dispatch) => {
       dispatch({type: ADMIN_AUTH_ERROR});
     }
   } else {
-    setAuthToken();
+    setAuthToken(null, false);
     dispatch({type: ADMIN_AUTH_ERROR});
   }
 };
@@ -69,7 +69,7 @@ export const resetAdminNavLinks = () => (dispatch) => {
 };
 
 export const adminLogout = () => (dispatch) => {
-  setAuthToken();
+  setAuthToken(null, false);
   dispatch({type: ADMIN_LOGOUT});
   dispatch({type: CLEAR_LOGS});
   dispatch({type: RESET_ADMIN_NAV_LINKS});

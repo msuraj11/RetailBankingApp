@@ -16,7 +16,7 @@ export const loadUser = () => async (dispatch) => {
       dispatch({type: AUTH_ERROR});
     }
   } else {
-    setAuthToken();
+    setAuthToken(null);
     dispatch({type: AUTH_ERROR});
   }
 };
@@ -51,7 +51,7 @@ export const login = (customerId, password) => async (dispatch) => {
 };
 
 export const logout = () => (dispatch) => {
-  setAuthToken();
+  setAuthToken(null);
   dispatch({type: LOGOUT});
   dispatch({type: CLEAR_PROFILE});
   dispatch({type: CLEAR_ACC_INFO});
