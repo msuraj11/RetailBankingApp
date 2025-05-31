@@ -1,20 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {isEmpty, isNumber} from 'lodash';
 import {connect} from 'react-redux';
 import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {setAlert} from '../../actions/alert';
 import {getAccountInfo} from '../../actions/accountInfo';
 
-const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuthenticated && !loadingUser) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, loadingUser, navigate]);
-
+const Transaction = ({setAlert, getAccountInfo}) => {
   const [txState, setTx] = useState({
     txAmount: '',
     txType: '',
@@ -102,15 +94,8 @@ const Transaction = ({setAlert, getAccountInfo, isAuthenticated, loadingUser}) =
 };
 
 Transaction.propTypes = {
-  isAuthenticated: PropTypes.bool,
-  loadingUser: PropTypes.bool,
   setAlert: PropTypes.func,
   getAccountInfo: PropTypes.func
 };
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated,
-  loadingUser: state.auth.loading
-});
-
-export default connect(mapStateToProps, {setAlert, getAccountInfo})(Transaction);
+export default connect(null, {setAlert, getAccountInfo})(Transaction);

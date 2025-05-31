@@ -25,6 +25,7 @@ export const loadAdmin = () => async (dispatch) => {
       dispatch({type: ADMIN_AUTH_ERROR});
     }
   } else {
+    setAuthToken();
     dispatch({type: ADMIN_AUTH_ERROR});
   }
 };

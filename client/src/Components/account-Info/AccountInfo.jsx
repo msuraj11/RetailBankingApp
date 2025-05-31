@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {isEmpty} from 'lodash';
@@ -13,8 +12,6 @@ import StatementTable from './StatementTable';
 import {getCurrentProfile} from '../../actions/profile';
 
 const AccountInfo = ({
-  isAuthenticated,
-  loadingUser,
   dispatch,
   getStatement,
   accountInfo: {accInfo, loading, statement},
@@ -22,13 +19,6 @@ const AccountInfo = ({
   setAlert,
   removeStatement
 }) => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuthenticated && !loadingUser) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, loadingUser, navigate]);
-
   useEffect(() => {
     if (!profile) {
       dispatch(getCurrentProfile());
@@ -150,8 +140,6 @@ const AccountInfo = ({
 AccountInfo.propTypes = {
   accountInfo: PropTypes.object,
   profile: PropTypes.object,
-  isAuthenticated: PropTypes.bool,
-  loadingUser: PropTypes.bool,
   dispatch: PropTypes.func,
   setAlert: PropTypes.func,
   getStatement: PropTypes.func,
@@ -160,9 +148,7 @@ AccountInfo.propTypes = {
 
 const mapStateToProps = (state) => ({
   accountInfo: state.accountInfo,
-  profile: state.profile,
-  isAuthenticated: state.auth.isAuthenticated,
-  loadingUser: state.auth.loading
+  profile: state.profile
 });
 
 const mapDispatchToProps = (dispatch) => ({

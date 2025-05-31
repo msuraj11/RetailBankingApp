@@ -16,6 +16,7 @@ export const loadUser = () => async (dispatch) => {
       dispatch({type: AUTH_ERROR});
     }
   } else {
+    setAuthToken();
     dispatch({type: AUTH_ERROR});
   }
 };

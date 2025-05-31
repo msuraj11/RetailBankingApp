@@ -30,15 +30,8 @@ const INIT_STATE = {
   fieldCompany: null
 };
 
-const AllUsers = ({users, dispatch, loading, permissions, setAlert, isAdminAuthenticated}) => {
+const AllUsers = ({users, dispatch, loading, permissions, setAlert}) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAdminAuthenticated && !loading) {
-      navigate('/adminLanding');
-    }
-  }, [isAdminAuthenticated, loading, navigate]);
-
   useEffect(() => {
     dispatch(setAdminNavLinks());
     if (isEmpty(users)) {
@@ -275,7 +268,6 @@ AllUsers.propTypes = {
   users: PropTypes.array,
   loading: PropTypes.bool,
   permissions: PropTypes.array,
-  isAdminAuthenticated: PropTypes.bool,
   dispatch: PropTypes.func,
   setAlert: PropTypes.func
 };
@@ -283,8 +275,7 @@ AllUsers.propTypes = {
 const mapStateToProps = (state) => ({
   users: state.adminLogs.allUsers,
   loading: state.adminLogs.loading,
-  permissions: state.authAdmin?.admin?.permissions,
-  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
+  permissions: state.authAdmin?.admin?.permissions
 });
 
 export default connect(mapStateToProps, (dispatch) => ({

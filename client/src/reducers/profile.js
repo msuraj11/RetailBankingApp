@@ -25,8 +25,6 @@ function profileReducer(state = initialState, action) {
       };
 
     case CLEAR_PROFILE:
-      return {...initialState, loading: false};
-
     default:
       return state;
   }

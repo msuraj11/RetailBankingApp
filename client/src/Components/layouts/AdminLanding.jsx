@@ -23,7 +23,7 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activat
     e.preventDefault();
     if (adminCode !== '1413914') {
       setAlert('Access denied', 'danger', 6000);
-      setTimeout(() => navigate('/'), 6000);
+      setTimeout(() => navigate('/'), 1000);
     } else {
       setAdminNavLinks();
     }

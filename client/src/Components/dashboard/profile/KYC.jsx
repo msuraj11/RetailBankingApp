@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import {Fragment, useState} from 'react';
 import moment from 'moment';
 import {omit, includes, isEmpty} from 'lodash';
 import {Link, useNavigate} from 'react-router-dom';
@@ -8,13 +8,8 @@ import axios from 'axios';
 import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
 
-const Kyc = ({setAlert, isAuthenticated, loadingUser}) => {
+const Kyc = ({setAlert}) => {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuthenticated && !loadingUser) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, loadingUser, navigate]);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -348,14 +343,7 @@ const Kyc = ({setAlert, isAuthenticated, loadingUser}) => {
 };
 
 Kyc.propTypes = {
-  setAlert: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.bool,
-  loadingUser: PropTypes.bool
+  setAlert: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated,
-  loadingUser: state.auth.loading
-});
-
-export default connect(mapStateToProps, {setAlert})(Kyc);
+export default connect(null, {setAlert})(Kyc);

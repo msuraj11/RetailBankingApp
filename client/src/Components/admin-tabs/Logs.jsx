@@ -1,20 +1,12 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
-import {useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {getLogs} from '../../actions/adminLogs';
 import {setAdminNavLinks, resetAdminNavLinks} from '../../actions/authAdmin';
 import Spinner from '../layouts/Spinner';
 
-const Logs = ({logs, dispatch, loading, isAdminAuthenticated}) => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAdminAuthenticated && !loading) {
-      navigate('/adminLanding');
-    }
-  }, [isAdminAuthenticated, loading, navigate]);
-
+const Logs = ({logs, dispatch, loading}) => {
   useEffect(() => {
     dispatch(setAdminNavLinks());
     if (isEmpty(logs)) {
@@ -65,8 +57,7 @@ const Logs = ({logs, dispatch, loading, isAdminAuthenticated}) => {
 
 const mapStateToProps = (state) => ({
   logs: state.adminLogs.logs,
-  loading: state.adminLogs.loading,
-  isAdminAuthenticated: state.authAdmin.isAdminAuthenticated
+  loading: state.adminLogs.loading
 });
 
 export default connect(mapStateToProps)(Logs);

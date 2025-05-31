@@ -20,6 +20,7 @@ import Logs from './Components/admin-tabs/Logs';
 import AllUsers from './Components/admin-tabs/AllUsers';
 import RootLayout from './Components/layouts/RootLayout';
 import ContainerLayout from './Components/layouts/ContainerLayout';
+import PrivateRoute from './Components/routing/PrivateRoute';
 // Redux
 import {loadUser} from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
@@ -44,17 +45,21 @@ const router = createBrowserRouter(
         <Route path="/login" element={<Login />} />
         <Route path="/adminLogin" element={<AdminLogin />} />
         <Route path="/tokenVerifier/:fromScreen" element={<TokenVerifier />} />
-        {/* USER PRIVATE ROUTES */} {/* TODO - Add one more path /user/<*> */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/kyc" element={<Kyc />} />
-        <Route path="/accountInformation" element={<AccountInfo />} />
-        <Route path="/transaction" element={<Transaction />} />
-        {/* ADMIN PRIVATE ROUTES */} {/* TODO - Add one more path /admin/<*> */}
-        <Route path="/adminDashboard" element={<AdminDashboard />} />
-        <Route path="/logs" element={<Logs />} />
-        <Route path="/allUsers" element={<AllUsers />} />
+        {/* USER PRIVATE ROUTES */}
+        <Route element={<PrivateRoute role="user" />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/kyc" element={<Kyc />} />
+          <Route path="/accountInformation" element={<AccountInfo />} />
+          <Route path="/transaction" element={<Transaction />} />
+        </Route>
+        {/* ADMIN PRIVATE ROUTES */}
+        <Route element={<PrivateRoute role="admin" />}>
+          <Route path="/adminDashboard" element={<AdminDashboard />} />
+          <Route path="/logs" element={<Logs />} />
+          <Route path="/allUsers" element={<AllUsers />} />
+        </Route>
       </Route>
-      <Route element={<PageNotFound />} />
+      <Route path='*' element={<PageNotFound />} />
     </Route>
   )
 );

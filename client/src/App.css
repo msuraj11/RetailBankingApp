@@ -604,6 +604,10 @@ button {
   cursor: pointer;
 }
 
+.not-found {
+  margin-top: 80px;
+}
+
 /* Mobile Styles */
 @media (max-width: 700px) {
   .container {
