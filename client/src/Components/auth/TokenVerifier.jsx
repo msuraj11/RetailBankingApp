@@ -86,9 +86,9 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
         <i className="fas fa-paper-plane"></i> Check for Token in your Inbox of E-Mail you provided
       </p>
       {showTimer && <Timer />}
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
-          <input type="text" placeholder="Token" name="token" value={token} onChange={(e) => onFieldChange(e)} />
+          <input type="text" placeholder="Token" name="token" value={token} onChange={onFieldChange} />
           {!isValidToken && <small className="form-danger">Invalid token.</small>}
         </div>
         <button type="submit" className="btn btn-primary" disabled={isEmpty(token) || !isValidToken}>

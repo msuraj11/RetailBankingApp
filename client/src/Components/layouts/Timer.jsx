@@ -1,39 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 const Timer = ({startTimer}) => {
   const [time, setTime] = useState({
-    minutes: 5,
+    minutes: 2,
     seconds: 0
   });
 
-  const {seconds, minutes} = time;
-
   useEffect(() => {
-    const timeInterval = setInterval(() => {
-      if (seconds > 0) {
-        setTime((prevState) => ({
-          ...prevState,
-          seconds: prevState.seconds - 1
-        }));
-      }
-      if (seconds === 0) {
-        if (minutes === 0) {
-          clearInterval(timeInterval);
-        } else {
-          setTime((prevState) => ({
-            minutes: prevState.minutes - 1,
-            seconds: 59
-          }));
-        }
-      }
-    }, 1000);
+  if (!startTimer) return;
 
-    return () => {
-      clearInterval(timeInterval);
-    };
-  }, [startTimer, seconds, minutes]);
+  const timeInterval = setInterval(() => {
+    setTime((prevState) => {
+      const { seconds, minutes } = prevState;
+
+      if (seconds > 0) {
+        return { minutes, seconds: seconds - 1 };
+      }
+
+      if (minutes === 0) {
+        clearInterval(timeInterval);
+        return { minutes: 0, seconds: 0 };
+      }
+
+      return { minutes: minutes - 1, seconds: 59 };
+    });
+  }, 1000);
+
+  return () => clearInterval(timeInterval);
+}, [startTimer]);
+
+  const {seconds, minutes} = time;
 
   return (
     <div className="form">
