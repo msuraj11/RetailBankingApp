@@ -1,9 +1,16 @@
-import React, {Fragment} from 'react';
+import {Fragment} from 'react';
 import {isEmpty} from 'lodash';
 
 const getClassString = (boolVal) => `fas fa-${boolVal ? 'times' : 'edit'}`;
 
-const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFields, submitAddress}) => {
+const ProfileAbout = ({
+  profile,
+  editAddress,
+  editInfo,
+  onFieldChange,
+  onBlurFields,
+  submitAddress
+}) => {
   const {
     isAboutEditEnabled,
     isEditEnabled,
@@ -38,16 +45,22 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
             placeholder="* Current Address"
             name="fieldCurrAddress"
             value={fieldCurrAddress}
-            onChange={(e) => onFieldChange(e)}
+            onChange={onFieldChange}
             disabled={dateDiff}
           />
-          <button className="btn btn-primary m-1" onClick={() => submitAddress()} disabled={isEmpty(fieldCurrAddress) || dateDiff}>
+          <button
+            className="btn btn-primary m-1"
+            onClick={submitAddress}
+            disabled={isEmpty(fieldCurrAddress) || dateDiff}
+          >
             submit
           </button>
-          {dateDiff && <small className="form-danger">You cannot update address again with in 15 days.</small>}
+          {dateDiff && (
+            <small className="form-danger">You cannot update address again with in 15 days.</small>
+          )}
         </div>
       ) : (
-        <p>{currentAddress}</p>
+        <p className="address">{currentAddress}</p>
       )}
       <div className="line" />
       {permanentAddress && (
@@ -60,13 +73,17 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
                 placeholder="* Permanent Address"
                 name="fieldPermAddress"
                 value={fieldPermAddress}
-                onChange={(e) => onFieldChange(e)}
+                onChange={onFieldChange}
                 disabled={dateDiff}
               />
-              {dateDiff && <small className="form-danger">You cannot update address again with in 15 days.</small>}
+              {dateDiff && (
+                <small className="form-danger">
+                  You cannot update address again with in 15 days.
+                </small>
+              )}
             </div>
           ) : (
-            <p>{permanentAddress}</p>
+            <p className="address">{permanentAddress}</p>
           )}
           <div className="line" />
         </Fragment>
@@ -79,8 +96,8 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
         <div className="p-1">
           <i className="fa fa-check"></i> {PANCardNo}
         </div>
-        <div className="p-1">
-          <i className="fa fa-mobile"></i>
+        <div className="p-1 skills">
+          <i className="fa fa-mobile p-1"></i>
           {isEditEnabled ? (
             <div className="form">
               <input
@@ -89,11 +106,13 @@ const ProfileAbout = ({profile, editAddress, editInfo, onFieldChange, onBlurFiel
                 name="fieldMobileNum"
                 minLength="10"
                 value={fieldMobileNum}
-                onChange={(e) => onFieldChange(e)}
-                onBlur={(e) => onBlurFields(e)}
+                onChange={onFieldChange}
+                onBlur={onBlurFields}
                 disabled={dateDiff}
               />
-              {!isValidMobNumb && <small className="form-danger">Mobile number entered is not valid.</small>}
+              {!isValidMobNumb && (
+                <small className="form-danger">Mobile number entered is not valid.</small>
+              )}
             </div>
           ) : (
             mobileNumber

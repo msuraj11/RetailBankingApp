@@ -5,7 +5,12 @@ import PropTypes from 'prop-types';
 import {setAlert} from '../../actions/alert';
 import {setAdminNavLinks} from '../../actions/authAdmin';
 
-const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activateAdminNavLinks}) => {
+const AdminLanding = ({
+  isAdminAuthenticated,
+  setAlert,
+  setAdminNavLinks,
+  activateAdminNavLinks
+}) => {
   const navigate = useNavigate();
   useEffect(() => {
     if (isAdminAuthenticated) {
@@ -33,8 +38,14 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activat
     <Fragment>
       <h1 className="x-large">Admin access point</h1>
       <p className="lead">Type admin access code to enter</p>
-      <form className="form statement-dates" onSubmit={(e) => onSubmitForm(e)}>
-        <input type="password" placeholder="Access Code" name="adminCode" value={adminCode} onChange={(e) => onFieldChange(e)} />
+      <form className="form statement-dates" onSubmit={onSubmitForm}>
+        <input
+          type="password"
+          placeholder="Access Code"
+          name="adminCode"
+          value={adminCode}
+          onChange={onFieldChange}
+        />
         <button type="submit" className="btn btn-primary">
           <i className="fas fa-arrow-right"></i>
         </button>
@@ -60,7 +71,9 @@ const AdminLanding = ({isAdminAuthenticated, setAlert, setAdminNavLinks, activat
   return (
     <section className="landing-admin">
       <div className="dark-overlay">
-        <div className="landing-inner">{activateAdminNavLinks ? renderMainLanding : renderInputField}</div>
+        <div className="landing-inner">
+          {activateAdminNavLinks ? renderMainLanding : renderInputField}
+        </div>
       </div>
     </section>
   );

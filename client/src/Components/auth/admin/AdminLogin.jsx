@@ -33,7 +33,6 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
     isValidEmailId: true
   });
 
-
   const {fields, isValidEmailId} = formData;
   const {emailId, password} = fields;
 
@@ -60,22 +59,33 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
       <p className="lead">
         <i className="fas fa-user"></i> Sign Into Your Account
       </p>
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
           <input
             type="email"
             placeholder="* Email-ID"
             name="emailId"
             value={emailId}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurField(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurField}
           />
           {!isValidEmailId && <small className="form-danger">Invalid E-Mail format.</small>}
         </div>
         <div className="form-group">
-          <input type="password" placeholder="Password" name="password" value={password} onChange={(e) => onFieldChange(e)} minLength="6" />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            value={password}
+            onChange={onFieldChange}
+            minLength="6"
+          />
         </div>
-        <button type="submit" className="btn btn-primary" disabled={!isValidEmailId || isEmpty(password) || isEmpty(emailId) || password.length < 6}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={!isValidEmailId || isEmpty(password) || isEmpty(emailId) || password.length < 6}
+        >
           Login
         </button>
       </form>

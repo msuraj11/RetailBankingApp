@@ -24,7 +24,14 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
     fieldCompany
   } = profile;
 
-  const editIconJsx = <i className={`fas fa-${isEditEnabled ? 'times' : 'edit'}`} role="button" onClick={editInfo} onKeyDown={editInfo}></i>;
+  const editIconJsx = (
+    <i
+      className={`fas fa-${isEditEnabled ? 'times' : 'edit'}`}
+      role="button"
+      onClick={editInfo}
+      onKeyDown={editInfo}
+    ></i>
+  );
 
   return (
     <Fragment>
@@ -58,7 +65,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
                   placeholder="Spouse"
                   name="spouseName"
                   value={fieldSouseName}
-                  onChange={(e) => onFieldChange(e)}
+                  onChange={onFieldChange}
                   disabled={dateDiff}
                 />
               </div>
@@ -69,11 +76,13 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
                   name="fieldAltContNum"
                   minLength="10"
                   value={fieldAltContNum}
-                  onChange={(e) => onFieldChange(e)}
-                  onBlur={(e) => onBlurAltContField(e)}
+                  onChange={onFieldChange}
+                  onBlur={onBlurAltContField}
                   disabled={dateDiff}
                 />
-                {!isValidAltCont && <small className="form-danger">Mobile number entered is not valid.</small>}
+                {!isValidAltCont && (
+                  <small className="form-danger">Mobile number entered is not valid.</small>
+                )}
               </div>
             </Fragment>
           ) : (
@@ -100,7 +109,12 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
           {isEditEnabled ? (
             <Fragment>
               <div className="form">
-                <select name="fieldOccupation" value={fieldOccupation} disabled={dateDiff} onChange={(e) => onFieldChange(e)}>
+                <select
+                  name="fieldOccupation"
+                  value={fieldOccupation}
+                  disabled={dateDiff}
+                  onChange={onFieldChange}
+                >
                   <option value="">* --Select occupation--</option>
                   <option value="Salaried with PVT.">Salaried with PVT.</option>
                   <option value="Salaried with Govt.">Salaried with Govt.</option>
@@ -112,7 +126,12 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
                 </select>
               </div>
               <div className="form py">
-                <select name="fieldSOI" value={fieldSOI} disabled={dateDiff} onChange={(e) => onFieldChange(e)}>
+                <select
+                  name="fieldSOI"
+                  value={fieldSOI}
+                  disabled={dateDiff}
+                  onChange={onFieldChange}
+                >
                   <option value="">* --Select source of Income--</option>
                   <option value="Salary">Salary</option>
                   <option value="Business-income">Business-income</option>
@@ -127,7 +146,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
                   placeholder="* Company"
                   name="fieldCompany"
                   value={fieldCompany}
-                  onChange={(e) => onFieldChange(e)}
+                  onChange={onFieldChange}
                   disabled={dateDiff}
                 />
               </div>

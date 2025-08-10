@@ -55,25 +55,39 @@ const Login = ({login, isAuthenticated}) => {
       <p className="lead">
         <i className="fas fa-user"></i> Sign Into Your Account
       </p>
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
           <input
             type="number"
             placeholder="Customer-ID"
             name="customerId"
             value={customerId}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurField(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurField}
           />
-          {isErrorCustomerId && <small className="form-danger">Invalid Customer-ID format.</small>}
+          {isErrorCustomerId && (
+            <small className="form-danger">Invalid Customer-ID format.</small>
+          )}
         </div>
         <div className="form-group">
-          <input type="password" placeholder="Password" name="password" value={password} onChange={(e) => onFieldChange(e)} minLength="6" />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            value={password}
+            onChange={onFieldChange}
+            minLength="6"
+          />
         </div>
         <button
           type="submit"
           className="btn btn-primary"
-          disabled={isErrorCustomerId || isEmpty(password) || isEmpty(customerId) || password.length < 6}
+          disabled={
+            isErrorCustomerId ||
+            isEmpty(password) ||
+            isEmpty(customerId) ||
+            password.length < 6
+          }
         >
           Login
         </button>

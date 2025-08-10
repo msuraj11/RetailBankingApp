@@ -105,7 +105,10 @@ const Kyc = ({setAlert}) => {
         ...errorMsgs,
         isValidDOB:
           moment(e.target.value).isValid() &&
-          moment(e.target.value).isBetween('1930-01-01', moment(moment().subtract(18, 'years')).format('YYYY-MM-DD'))
+          moment(e.target.value).isBetween(
+            '1930-01-01',
+            moment(moment().subtract(18, 'years')).format('YYYY-MM-DD')
+          )
       });
     }
     if (e.target.name === 'PANCardNo') {
@@ -163,7 +166,9 @@ const Kyc = ({setAlert}) => {
         navigate('/dashboard');
       }, 4000);
     } catch (err) {
-      const errors = err.response.data.errors || [{msg: 'Something went wrong please try again later!'}];
+      const errors = err.response.data.errors || [
+        {msg: 'Something went wrong please try again later!'}
+      ];
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
@@ -177,25 +182,46 @@ const Kyc = ({setAlert}) => {
         <i className="fas fa-user"></i> Complete your KYC to get started your transactions
       </p>
       <div className="dash-buttons">
-        <button className={showPersonalInfo ? 'btn btn-dark' : 'btn btn-light'} onClick={() => ontoggleForm('personal')}>
+        <button
+          className={showPersonalInfo ? 'btn btn-dark' : 'btn btn-light'}
+          onClick={() => ontoggleForm('personal')}
+        >
           <i className="fas fa-user-circle text-primary"></i> Personal Info
         </button>
-        <button className={showContactInfo ? 'btn btn-dark' : 'btn btn-light'} onClick={() => ontoggleForm('contact')}>
+        <button
+          className={showContactInfo ? 'btn btn-dark' : 'btn btn-light'}
+          onClick={() => ontoggleForm('contact')}
+        >
           <i className="fas fa-address-card text-primary"></i> Contact Info & Govt. ID
         </button>
-        <button className={showProfessionalInfo ? 'btn btn-dark' : 'btn btn-light'} onClick={() => ontoggleForm('professional')}>
+        <button
+          className={showProfessionalInfo ? 'btn btn-dark' : 'btn btn-light'}
+          onClick={() => ontoggleForm('professional')}
+        >
           <i className="fab fa-black-tie text-primary"></i> Professional Info
         </button>
       </div>
 
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         {showPersonalInfo && (
           <Fragment>
             <div className="form-group">
-              <input type="text" placeholder="* First Name" name="firstName" value={firstName} onChange={(e) => onFieldChange(e)} />
+              <input
+                type="text"
+                placeholder="* First Name"
+                name="firstName"
+                value={firstName}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
-              <input type="text" placeholder="* Last Name" name="lastName" value={lastName} onChange={(e) => onFieldChange(e)} />
+              <input
+                type="text"
+                placeholder="* Last Name"
+                name="lastName"
+                value={lastName}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
               <input
@@ -205,26 +231,48 @@ const Kyc = ({setAlert}) => {
                 value={dateOfBirth}
                 min="1930-01-01"
                 max={moment(moment().subtract(18, 'years')).format('YYYY-MM-DD')}
-                onChange={(e) => onFieldChange(e)}
-                onBlur={(e) => onBlurFields(e)}
+                onChange={onFieldChange}
+                onBlur={onBlurFields}
               />
-              {!isValidDOB && <small className="form-danger">Invalid Date format or User should be 18 years old.</small>}
+              {!isValidDOB && (
+                <small className="form-danger">
+                  Invalid Date format or User should be 18 years old.
+                </small>
+              )}
             </div>
             <div className="form-group">
-              <select name="gender" value={gender} onChange={(e) => onFieldChange(e)}>
+              <select name="gender" value={gender} onChange={onFieldChange}>
                 <option value="">* --Select gender--</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
             </div>
             <div className="form-group">
-              <input type="text" placeholder="* Father's name" name="fatherName" value={fatherName} onChange={(e) => onFieldChange(e)} />
+              <input
+                type="text"
+                placeholder="* Father's name"
+                name="fatherName"
+                value={fatherName}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
-              <input type="text" placeholder="* Mother's name" name="motherName" value={motherName} onChange={(e) => onFieldChange(e)} />
+              <input
+                type="text"
+                placeholder="* Mother's name"
+                name="motherName"
+                value={motherName}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
-              <input type="text" placeholder="Spouse" name="spouse" value={spouse} onChange={(e) => onFieldChange(e)} />
+              <input
+                type="text"
+                placeholder="Spouse"
+                name="spouse"
+                value={spouse}
+                onChange={onFieldChange}
+              />
             </div>
             <button className="btn btn-primary" onClick={() => ontoggleForm('contact')}>
               Next
@@ -239,8 +287,8 @@ const Kyc = ({setAlert}) => {
                 placeholder="* PAN Card number"
                 name="PANCardNo"
                 value={PANCardNo}
-                onChange={(e) => onFieldChange(e)}
-                onBlur={(e) => onBlurFields(e)}
+                onChange={onFieldChange}
+                onBlur={onBlurFields}
               />
               {!isValidPAN && <small className="form-danger">Invalid PAN format.</small>}
             </div>
@@ -251,16 +299,28 @@ const Kyc = ({setAlert}) => {
                 name="AadharNo"
                 value={AadharNo}
                 minLength="14"
-                onChange={(e) => onFieldChange(e)}
-                onBlur={(e) => onBlurFields(e)}
+                onChange={onFieldChange}
+                onBlur={onBlurFields}
               />
-              {!isValidAadhar && <small className="form-danger">Invalid Aadhar number format.</small>}
+              {!isValidAadhar && (
+                <small className="form-danger">Invalid Aadhar number format.</small>
+              )}
             </div>
             <div className="form-group">
-              <textarea placeholder="* Current Address" name="currentAddress" value={currentAddress} onChange={(e) => onFieldChange(e)} />
+              <textarea
+                placeholder="* Current Address"
+                name="currentAddress"
+                value={currentAddress}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
-              <textarea placeholder="Permanent Address" name="permanentAddress" value={permanentAddress} onChange={(e) => onFieldChange(e)} />
+              <textarea
+                placeholder="Permanent Address"
+                name="permanentAddress"
+                value={permanentAddress}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
               <input
@@ -269,10 +329,12 @@ const Kyc = ({setAlert}) => {
                 name="alternateContactNumber"
                 minLength="10"
                 value={alternateContactNumber}
-                onChange={(e) => onFieldChange(e)}
-                onBlur={(e) => onBlurFields(e)}
+                onChange={onFieldChange}
+                onBlur={onBlurFields}
               />
-              {!isValidMobNumb && <small className="form-danger">Mobile number entered is not valid.</small>}
+              {!isValidMobNumb && (
+                <small className="form-danger">Mobile number entered is not valid.</small>
+              )}
             </div>
             <button className="btn btn-primary" onClick={() => ontoggleForm('professional')}>
               Next
@@ -282,7 +344,7 @@ const Kyc = ({setAlert}) => {
         {showProfessionalInfo && (
           <Fragment>
             <div className="form-group">
-              <select name="occupation" value={occupation} onChange={(e) => onFieldChange(e)}>
+              <select name="occupation" value={occupation} onChange={onFieldChange}>
                 <option value="">* --Select occupation--</option>
                 <option value="Salaried with PVT.">Salaried with PVT.</option>
                 <option value="Salaried with Govt.">Salaried with Govt.</option>
@@ -294,7 +356,7 @@ const Kyc = ({setAlert}) => {
               </select>
             </div>
             <div className="form-group">
-              <select name="sourceOfIncome" value={sourceOfIncome} onChange={(e) => onFieldChange(e)}>
+              <select name="sourceOfIncome" value={sourceOfIncome} onChange={onFieldChange}>
                 <option value="">* --Select source of Income--</option>
                 <option value="Salary">Salary</option>
                 <option value="Business-income">Business-income</option>
@@ -304,17 +366,23 @@ const Kyc = ({setAlert}) => {
               </select>
             </div>
             <div className="form-group">
-              <input type="text" placeholder="* Company" name="company" value={company} onChange={(e) => onFieldChange(e)} />
+              <input
+                type="text"
+                placeholder="* Company"
+                name="company"
+                value={company}
+                onChange={onFieldChange}
+              />
             </div>
             <div className="form-group">
-              <select name="accountType" value={accountType} onChange={(e) => onFieldChange(e)}>
+              <select name="accountType" value={accountType} onChange={onFieldChange}>
                 <option value="">* --Select account-type--</option>
                 <option value="Savings">Savings</option>
                 <option value="Current">Current</option>
               </select>
             </div>
             <div className="form-group">
-              <select name="accBranch" value={accBranch} onChange={(e) => onFieldChange(e)}>
+              <select name="accBranch" value={accBranch} onChange={onFieldChange}>
                 <option value="">* --Select account-branch--</option>
                 <option value="Neeladri, Bangalore">Neeladri, Bangalore</option>
                 <option value="E-City, Bangalore">E-City, Bangalore</option>
@@ -323,12 +391,25 @@ const Kyc = ({setAlert}) => {
               </select>
             </div>
             <div className="form-group">
-              <input type="text" placeholder="* IFSC Code" name="IFSC_Code" value={IFSC_Code} onChange={(e) => onFieldChange(e)} disabled />
+              <input
+                type="text"
+                placeholder="* IFSC Code"
+                name="IFSC_Code"
+                value={IFSC_Code}
+                onChange={onFieldChange}
+                disabled
+              />
             </div>
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={includes(omittedForm, '') || !isValidDOB || !isValidMobNumb || !isValidPAN || !isValidAadhar}
+              disabled={
+                includes(omittedForm, '') ||
+                !isValidDOB ||
+                !isValidMobNumb ||
+                !isValidPAN ||
+                !isValidAadhar
+              }
             >
               Submit
             </button>

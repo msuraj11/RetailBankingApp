@@ -6,7 +6,11 @@ import moment from 'moment';
 import {isEmpty} from 'lodash';
 import {Element} from 'react-scroll';
 import Spinner from '../layouts/Spinner';
-import {getAccountInfo, getStatement, removeStatement as removeStatementAction} from '../../actions/accountInfo';
+import {
+  getAccountInfo,
+  getStatement,
+  removeStatement as removeStatementAction
+} from '../../actions/accountInfo';
 import {setAlert} from '../../actions/alert';
 import StatementTable from './StatementTable';
 import {getCurrentProfile} from '../../actions/profile';
@@ -32,7 +36,9 @@ const AccountInfo = ({
   }, [dispatch, accInfo, profile]);
 
   const [date, setDates] = useState({
-    from: profile ? moment(profile.date[0].lastUpdated).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'),
+    from: profile
+      ? moment(profile.date[0].lastUpdated).format('YYYY-MM-DD')
+      : moment().format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD'),
     isValidDate: true
   });
@@ -112,8 +118,8 @@ const AccountInfo = ({
             value={from}
             min={moment(profile.date[0].lastUpdated).format('YYYY-MM-DD')}
             max={moment().format('YYYY-MM-DD')}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
           />
         </div>
         <div className="form mx">
@@ -124,15 +130,21 @@ const AccountInfo = ({
             value={to}
             min={from || moment(profile.date[0].lastUpdated).format('YYYY-MM-DD')}
             max={moment().format('YYYY-MM-DD')}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
           />
         </div>
-        <button className="btn btn-primary" onClick={() => submitDates()} disabled={!isValidDate || isEmpty(from) || isEmpty(to)}>
+        <button
+          className="btn btn-primary"
+          onClick={submitDates}
+          disabled={!isValidDate || isEmpty(from) || isEmpty(to)}
+        >
           Get Statement
         </button>
       </div>
-      <Element name="table">{statement && isValidDate && <StatementTable data={statement} />}</Element>
+      <Element name="table">
+        {statement && isValidDate && <StatementTable data={statement} />}
+      </Element>
     </React.Fragment>
   );
 };

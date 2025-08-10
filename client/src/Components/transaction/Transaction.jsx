@@ -46,7 +46,9 @@ const Transaction = ({setAlert, getAccountInfo}) => {
       getAccountInfo();
     } catch (err) {
       console.error(err.response.data);
-      const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
+      const errors = err.response.data.errors || [
+        {msg: 'Something went wrong! Please try again later'}
+      ];
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
@@ -59,33 +61,44 @@ const Transaction = ({setAlert, getAccountInfo}) => {
       <p className="lead">
         <i className="fas fa-coins"></i> Perform Credit/Debit transactions
       </p>
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
           <input
             type="number"
             placeholder="* Amount in INR"
             name="txAmount"
             value={txAmount}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurField(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurField}
           />
           {!isValidAmount && (
             <small className="form-danger">
-              Invalid INR format or Amount cannot be 0 more than 1,00,000 <i className="fas fa-rupee-sign"></i>.
+              Invalid INR format or Amount cannot be 0 more than 1,00,000{' '}
+              <i className="fas fa-rupee-sign"></i>.
             </small>
           )}
         </div>
         <div className="form-group">
-          <select name="txType" value={txType} onChange={(e) => onFieldChange(e)}>
+          <select name="txType" value={txType} onChange={onFieldChange}>
             <option value="">* --Select Transaction-type--</option>
             <option value="Credited">Credited</option>
             <option value="Debited">Debited</option>
           </select>
         </div>
         <div className="form-group">
-          <input type="text" placeholder="* Transaction comment" name="txBy" value={txBy} onChange={(e) => onFieldChange(e)} />
+          <input
+            type="text"
+            placeholder="* Transaction comment"
+            name="txBy"
+            value={txBy}
+            onChange={onFieldChange}
+          />
         </div>
-        <button type="submit" className="btn btn-primary" disabled={!isValidAmount || !isNumber(txAmount) || isEmpty(txType) || isEmpty(txBy)}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={!isValidAmount || !isNumber(txAmount) || isEmpty(txType) || isEmpty(txBy)}
+        >
           Submit
         </button>
       </form>

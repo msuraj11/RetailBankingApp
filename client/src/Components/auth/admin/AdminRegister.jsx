@@ -17,7 +17,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
       navigate('/adminDashboard');
     }
   }, [isAdminAuthenticated]);
-  
+
   useEffect(() => {
     if (!activateAdminNavLinks) {
       navigate('/adminLanding');
@@ -47,9 +47,18 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     disableRegButton: false
   });
 
-
   const {fields, isMobileNumValid, isPasswordMatch, isValidEmail, disableRegButton} = formData;
-  const {firstName, lastName, mobileNumber, experienceInBanking, gender, adminBranch, personalEmail, password, confirmPassword} = fields;
+  const {
+    firstName,
+    lastName,
+    mobileNumber,
+    experienceInBanking,
+    gender,
+    adminBranch,
+    personalEmail,
+    password,
+    confirmPassword
+  } = fields;
 
   const onFieldChange = (e) => {
     setFormData({
@@ -99,12 +108,16 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
           dispatch(setTimer());
         }, 4000);
       } else {
-        throw new Error('You are now registered successfully. There might be issue in receiving an email, Please contact support');
+        throw new Error(
+          'You are now registered successfully. There might be issue in receiving an email, Please contact support'
+        );
       }
     } catch (err) {
       console.error(err.response.data);
       dispatch(setAdminNavLinks());
-      const errors = err.response.data.errors || [{msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}];
+      const errors = err.response.data.errors || [
+        {msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}
+      ];
       if (errors) {
         errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
       }
@@ -118,12 +131,24 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
       <p className="lead">
         <i className="fas fa-user"></i> Create Your Account
       </p>
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
-          <input type="text" placeholder="* First name" name="firstName" value={firstName} onChange={(e) => onFieldChange(e)} />
+          <input
+            type="text"
+            placeholder="* First name"
+            name="firstName"
+            value={firstName}
+            onChange={onFieldChange}
+          />
         </div>
         <div className="form-group">
-          <input type="text" placeholder="* Last name" name="lastName" value={lastName} onChange={(e) => onFieldChange(e)} />
+          <input
+            type="text"
+            placeholder="* Last name"
+            name="lastName"
+            value={lastName}
+            onChange={onFieldChange}
+          />
         </div>
         <div className="form-group">
           <input
@@ -132,10 +157,12 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
             name="mobileNumber"
             minLength="10"
             value={mobileNumber}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
           />
-          {!isMobileNumValid && <small className="form-danger">Mobile number entered is not valid.</small>}
+          {!isMobileNumValid && (
+            <small className="form-danger">Mobile number entered is not valid.</small>
+          )}
         </div>
         <div className="form-group">
           <input
@@ -143,11 +170,13 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
             placeholder="* Personal Email Address"
             name="personalEmail"
             value={personalEmail}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
           />
           {!isValidEmail && <small className="form-danger">Invalid E-Mail format.</small>}
-          <small className="form-text">This site uses Gravatar so if you want a profile image, use a Gravatar email</small>
+          <small className="form-text">
+            This site uses Gravatar so if you want a profile image, use a Gravatar email
+          </small>
         </div>
         <div className="form-group">
           <input
@@ -155,18 +184,18 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
             placeholder="* Experience in Banking"
             name="experienceInBanking"
             value={experienceInBanking}
-            onChange={(e) => onFieldChange(e)}
+            onChange={onFieldChange}
           />
         </div>
         <div className="form-group">
-          <select name="gender" value={gender} onChange={(e) => onFieldChange(e)}>
+          <select name="gender" value={gender} onChange={onFieldChange}>
             <option value="">* --Select gender--</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
         </div>
         <div className="form-group">
-          <select name="adminBranch" value={adminBranch} onChange={(e) => onFieldChange(e)}>
+          <select name="adminBranch" value={adminBranch} onChange={onFieldChange}>
             <option value="">* --Select branch--</option>
             <option value="Neeladri, Bangalore">Neeladri, Bangalore</option>
             <option value="E-City, Bangalore">E-City, Bangalore</option>
@@ -180,11 +209,13 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
             placeholder="* Password"
             name="password"
             value={password}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
             minLength="6"
           />
-          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && <small className="form-danger">Passwords didnot match.</small>}
+          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && (
+            <small className="form-danger">Passwords didnot match.</small>
+          )}
         </div>
         <div className="form-group">
           <input
@@ -192,11 +223,13 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
             placeholder="* Confirm Password"
             name="confirmPassword"
             value={confirmPassword}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
             minLength="6"
           />
-          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && <small className="form-danger">Passwords didnot match.</small>}
+          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && (
+            <small className="form-danger">Passwords didnot match.</small>
+          )}
         </div>
         <button
           type="submit"

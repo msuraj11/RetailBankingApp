@@ -432,6 +432,10 @@ button {
   text-align: center;
 }
 
+.profile-about .address {
+  white-space: pre-wrap;
+}
+
 .profile-about .skills {
   display: flex;
   align-items: center;

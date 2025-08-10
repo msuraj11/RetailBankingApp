@@ -21,16 +21,29 @@ const RenderInputFields = ({state, onFieldChange, onBlurFields, submitHandler}) 
           name="fieldMobileNumber"
           minLength="10"
           value={fieldMobileNumber}
-          onChange={(e) => onFieldChange(e)}
-          onBlur={(e) => onBlurFields(e)}
+          onChange={onFieldChange}
+          onBlur={onBlurFields}
         />
-        {!isValidMobNumb && <small className="form-danger">Mobile number entered is not valid.</small>}
+        {!isValidMobNumb && (
+          <small className="form-danger">Mobile number entered is not valid.</small>
+        )}
       </div>
       <div className="form-group">
-        <textarea placeholder="* Permanent Address" name="fieldPermanentAddress" value={fieldPermanentAddress} onChange={(e) => onFieldChange(e)} />
+        <textarea
+          placeholder="* Permanent Address"
+          name="fieldPermanentAddress"
+          value={fieldPermanentAddress}
+          onChange={onFieldChange}
+        />
       </div>
       <div className="form-group">
-        <input type="text" placeholder="Spouse" name="fieldSpouseName" value={fieldSpouseName} onChange={(e) => onFieldChange(e)} />
+        <input
+          type="text"
+          placeholder="Spouse"
+          name="fieldSpouseName"
+          value={fieldSpouseName}
+          onChange={onFieldChange}
+        />
       </div>
       <div className="form-group">
         <input
@@ -39,13 +52,15 @@ const RenderInputFields = ({state, onFieldChange, onBlurFields, submitHandler}) 
           name="fieldAltContact"
           minLength="10"
           value={fieldAltContact}
-          onChange={(e) => onFieldChange(e)}
-          onBlur={(e) => onBlurFields(e)}
+          onChange={onFieldChange}
+          onBlur={onBlurFields}
         />
-        {!isValidAltMobNumb && <small className="form-danger">Mobile number entered is not valid.</small>}
+        {!isValidAltMobNumb && (
+          <small className="form-danger">Mobile number entered is not valid.</small>
+        )}
       </div>
       <div className="form-group">
-        <select name="fieldSOI" value={fieldSOI} onChange={(e) => onFieldChange(e)}>
+        <select name="fieldSOI" value={fieldSOI} onChange={onFieldChange}>
           <option value="">* --Select source of Income--</option>
           <option value="Salary">Salary</option>
           <option value="Business-income">Business-income</option>
@@ -55,7 +70,7 @@ const RenderInputFields = ({state, onFieldChange, onBlurFields, submitHandler}) 
         </select>
       </div>
       <div className="form-group">
-        <select name="fieldOcc" value={fieldOcc} onChange={(e) => onFieldChange(e)}>
+        <select name="fieldOcc" value={fieldOcc} onChange={onFieldChange}>
           <option value="">* --Select occupation--</option>
           <option value="Salaried with PVT.">Salaried with PVT.</option>
           <option value="Salaried with Govt.">Salaried with Govt.</option>
@@ -67,7 +82,13 @@ const RenderInputFields = ({state, onFieldChange, onBlurFields, submitHandler}) 
         </select>
       </div>
       <div className="form-group">
-        <input type="text" placeholder="* Company" name="fieldCompany" value={fieldCompany} onChange={(e) => onFieldChange(e)} />
+        <input
+          type="text"
+          placeholder="* Company"
+          name="fieldCompany"
+          value={fieldCompany}
+          onChange={onFieldChange}
+        />
       </div>
     </form>
   );

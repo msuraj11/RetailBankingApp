@@ -102,9 +102,9 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
       <p className="lead">
         <i className="fas fa-user"></i> Create Your Account
       </p>
-      <form className="form" onSubmit={(e) => onSubmitForm(e)}>
+      <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
-          <input type="text" placeholder="Name" name="name" value={name} onChange={(e) => onFieldChange(e)} />
+          <input type="text" placeholder="Name" name="name" value={name} onChange={onFieldChange} />
         </div>
         <div className="form-group">
           <input
@@ -112,8 +112,8 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             placeholder="Email Address"
             name="email"
             value={email}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
           />
           {isEmailError && <small className="form-danger">Invalid E-Mail format.</small>}
           <small className="form-text">This site uses Gravatar so if you want a profile image, use a Gravatar email</small>
@@ -125,8 +125,8 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             name="mobileNumber"
             minLength="10"
             value={mobileNumber}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
           />
           {isErrorMessageOnMobNumb && <small className="form-danger">Mobile number entered is not valid.</small>}
         </div>
@@ -136,8 +136,8 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             placeholder="Password"
             name="password"
             value={password}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
             minLength="6"
           />
           {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && <small className="form-danger">Passwords didnot match.</small>}
@@ -148,8 +148,8 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             placeholder="Confirm Password"
             name="confirmPassword"
             value={confirmPassword}
-            onChange={(e) => onFieldChange(e)}
-            onBlur={(e) => onBlurFields(e)}
+            onChange={onFieldChange}
+            onBlur={onBlurFields}
             minLength="6"
           />
           {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && <small className="form-danger">Passwords didnot match.</small>}

@@ -7,7 +7,13 @@ import {setAlert} from '../../actions/alert';
 import PropTypes from 'prop-types';
 import Timer from '../layouts/Timer';
 
-const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdminAuthenticated, showTimer}) => {
+const TokenVerifier = ({
+  setAlert,
+  isAuthenticated,
+  activateAdminNavLinks,
+  isAdminAuthenticated,
+  showTimer
+}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +46,8 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
   const {fromScreen} = params;
   const tokenKey = fromScreen === 'user' ? 'x-auth-token' : 'x-auth-admin-token';
 
-  const onFieldChange = (e) => setTokenData({...tokenData, token: e.target.value, isValidToken: true});
+  const onFieldChange = (e) =>
+    setTokenData({...tokenData, token: e.target.value, isValidToken: true});
 
   const onResendFieldChange = (e) =>
     setTokenData({
@@ -59,9 +66,16 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
     };
 
     try {
-      const res = await axios.get(fromScreen === 'user' ? '/api/auth/verifyToken' : '/api/authAdmin/verifyToken', config);
+      const res = await axios.get(
+        fromScreen === 'user' ? '/api/auth/verifyToken' : '/api/authAdmin/verifyToken',
+        config
+      );
       if (!isEmpty(res)) {
-        setAlert('Your login details has been sent to your E-Mail you registered. Please use them to login.', 'success', 12000);
+        setAlert(
+          'Your login details has been sent to your E-Mail you registered. Please use them to login.',
+          'success',
+          12000
+        );
         setTokenData({...tokenData, token: ''});
         setTimeout(() => navigate(fromScreen === 'user' ? '/login' : '/adminLogin'), 12000);
       } else {
@@ -70,7 +84,9 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
     } catch (error) {
       const errorMsg = error.response.data || error;
       console.error(errorMsg);
-      setAlert((errorMsg || 'There was an error in verifying your token.') + 'Please contact support');
+      setAlert(
+        (errorMsg || 'There was an error in verifying your token.') + 'Please contact support'
+      );
       setTokenData({...tokenData, isValidToken: false});
     }
   };
@@ -88,10 +104,20 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
       {showTimer && <Timer />}
       <form className="form" onSubmit={onSubmitForm}>
         <div className="form-group">
-          <input type="text" placeholder="Token" name="token" value={token} onChange={onFieldChange} />
+          <input
+            type="text"
+            placeholder="Token"
+            name="token"
+            value={token}
+            onChange={onFieldChange}
+          />
           {!isValidToken && <small className="form-danger">Invalid token.</small>}
         </div>
-        <button type="submit" className="btn btn-primary" disabled={isEmpty(token) || !isValidToken}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isEmpty(token) || !isValidToken}
+        >
           Verify
         </button>
       </form>
@@ -109,15 +135,32 @@ const TokenVerifier = ({setAlert, isAuthenticated, activateAdminNavLinks, isAdmi
           <p className="lead">
             <i className="fas fa-envelope-open-text"></i> Enter registered E-mail to get token again
           </p>
-          <form className="form" onSubmit={(e) => onSubmitResendForm(e)}>
+          <form className="form" onSubmit={onSubmitResendForm}>
             <div className="form-group">
-              <input type="email" placeholder="Email Address" name="email" value={email} onChange={(e) => onResendFieldChange(e)} />
+              <input
+                type="email"
+                placeholder="Email Address"
+                name="email"
+                value={email}
+                onChange={onResendFieldChange}
+              />
             </div>
             <div className="form-group">
-              <input type="password" placeholder="Password" name="password" value={password} onChange={(e) => onResendFieldChange(e)} minLength="6" />
+              <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                value={password}
+                onChange={onResendFieldChange}
+                minLength="6"
+              />
               {!isValidUser && <small className="form-danger">Invalid credentials.</small>}
             </div>
-            <button type="submit" className="btn btn-primary" disabled={isEmpty(email) || isEmpty(password) || !isValidUser}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={isEmpty(email) || isEmpty(password) || !isValidUser}
+            >
               Get Token
             </button>
           </form>
