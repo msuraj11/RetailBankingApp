@@ -1,19 +1,20 @@
-const express = require('express');
-const adminAuth = require('../../../middleware/adminAuth');
-const Admin = require('../../../models/adminModels/Admin');
-const {check, validationResult} = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jsonWebToken = require('jsonwebtoken');
-const config = require('config');
-const sendEmail = require('../../utils/emailTemplate');
-const {getCleanRequestBody} = require('../../utils/helpers');
+import express from 'express';
+import {check, validationResult} from 'express-validator';
+import bcrypt from 'bcryptjs';
+import jsonWebToken from 'jsonwebtoken';
+import config from 'config';
+
+import adminAuthMiddleware from '../../../middleware/adminAuth.js';
+import Admin from '../../../models/adminModels/Admin.js';
+import sendEmail from '../../utils/emailTemplate.js';
+import {getCleanRequestBody} from '../../utils/helpers.js';
 
 const router = express.Router();
 
 // @route   GET api/authAdmin
 // @desc    Validate with middleware
 // @access  Private
-router.get('/', adminAuth, async (req, res) => {
+router.get('/', adminAuthMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findById({$eq: req.admin.id}).select('-password');
     res.json(admin);
@@ -26,7 +27,7 @@ router.get('/', adminAuth, async (req, res) => {
 // @route   GET api/authAdmin/verifyToken
 // @desc    Validate with middleware
 // @access  Public
-router.get('/verifyToken', adminAuth, async (req, res) => {
+router.get('/verifyToken', adminAuthMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findById({$eq: req.admin.id}).select('-password');
 
@@ -44,7 +45,10 @@ router.get('/verifyToken', adminAuth, async (req, res) => {
 // @access  Public
 router.post(
   '/',
-  [check('email', 'Please include a valid Email-Id').isEmail(), check('password', 'Password is required').exists()],
+  [
+    check('email', 'Please include a valid Email-Id').isEmail(),
+    check('password', 'Password is required').exists()
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -88,4 +92,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

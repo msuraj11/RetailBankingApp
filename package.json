@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A retail banking app",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server",
     "server": "nodemon server",

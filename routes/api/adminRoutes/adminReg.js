@@ -1,14 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const {check, validationResult} = require('express-validator');
-const gravatar = require('gravatar');
-const bcrypt = require('bcryptjs');
-const jsonWebToken = require('jsonwebtoken');
-const config = require('config');
-const Admin = require('../../../models/adminModels/Admin');
-const sendEmail = require('../../utils/emailTemplate');
-const {getCleanRequestBody} = require('../../utils/helpers');
+import express from 'express';
+import {check, validationResult} from 'express-validator';
+import gravatar from 'gravatar';
+import bcrypt from 'bcryptjs';
+import jsonWebToken from 'jsonwebtoken';
+import config from 'config';
 
+import Admin from '../../../models/adminModels/Admin.js';
+import sendEmail from '../../utils/emailTemplate.js';
+import {getCleanRequestBody} from '../../utils/helpers.js';
+
+const router = express.Router();
 // @route   POST api/admin
 // @desc    Register Admin
 // @access  Public
@@ -23,7 +24,9 @@ router.post(
     check('gender', 'Please choose any option').notEmpty(),
     check('adminBranch', 'Please provide your branch').notEmpty(),
     check('password', 'Please enter the password with 6 or more characters').isLength({min: 6}),
-    check('confirmPassword', 'Please enter the confirm-password same as of password').isLength({min: 6})
+    check('confirmPassword', 'Please enter the confirm-password same as of password').isLength({
+      min: 6
+    })
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -35,15 +38,43 @@ router.post(
     // jssecurity:S5147, CWE fix
     const reqObj = getCleanRequestBody(req.body);
 
-    const {firstName, lastName, mobileNumber, experienceInBanking, adminBranch, gender, personalEmail, password, confirmPassword} = reqObj;
+    const {
+      firstName,
+      lastName,
+      mobileNumber,
+      experienceInBanking,
+      adminBranch,
+      gender,
+      personalEmail,
+      password,
+      confirmPassword
+    } = reqObj;
 
     // Create an admin email using fName, lName
     const emailTypes = [
-      `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName.trim().toLowerCase().split(' ').join('')}@BOS.com`,
-      `${firstName.trim().toLowerCase().split(' ').join('')}_${lastName.trim().toLowerCase().split(' ').join('')}@BOS.com`,
-      `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName.substr(0, 1).toLowerCase()}@BOS.com`,
-      `${lastName.trim().toLowerCase().split(' ').join('')}${firstName.trim().toLowerCase().split(' ').join('')}@BOS.com`,
-      `${lastName.trim().toLowerCase().split(' ').join('')}.${firstName.trim().toLowerCase().split(' ').join('')}@BOS.com`
+      `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .join('')}@BOS.com`,
+      `${firstName.trim().toLowerCase().split(' ').join('')}_${lastName
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .join('')}@BOS.com`,
+      `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName
+        .substr(0, 1)
+        .toLowerCase()}@BOS.com`,
+      `${lastName.trim().toLowerCase().split(' ').join('')}${firstName
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .join('')}@BOS.com`,
+      `${lastName.trim().toLowerCase().split(' ').join('')}.${firstName
+        .trim()
+        .toLowerCase()
+        .split(' ')
+        .join('')}@BOS.com`
     ];
 
     // Deciding permissions for admin
@@ -57,7 +88,14 @@ router.post(
     }
 
     // Checking correct branch
-    if (!['E-City, Bangalore', 'Neeladri, Bangalore', 'Kempegowda, Bangalore', 'Koramangala, Bangalore'].includes(adminBranch)) {
+    if (
+      ![
+        'E-City, Bangalore',
+        'Neeladri, Bangalore',
+        'Kempegowda, Bangalore',
+        'Koramangala, Bangalore'
+      ].includes(adminBranch)
+    ) {
       return res.status(400).json({errors: [{msg: 'Branch is not valid'}]});
     }
 
@@ -70,12 +108,16 @@ router.post(
       // Check if admin already exists
       let admin = await Admin.findOne({mobileNumber: {$eq: mobileNumber}});
       if (admin) {
-        return res.status(400).json({errors: [{msg: 'User already exist, Please try with new Number.'}]});
+        return res
+          .status(400)
+          .json({errors: [{msg: 'User already exist, Please try with new Number.'}]});
       }
 
       const adminEmail = await Admin.findOne({personalEmail: {$eq: personalEmail}});
       if (adminEmail) {
-        return res.status(400).json({errors: [{msg: 'E-mail already registered, Please try with new one'}]});
+        return res
+          .status(400)
+          .json({errors: [{msg: 'E-mail already registered, Please try with new one'}]});
       }
 
       // Checking E-mail already registered or not
@@ -140,4 +182,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

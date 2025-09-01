@@ -1,14 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const {check, validationResult} = require('express-validator');
-const gravatar = require('gravatar');
-const bcrypt = require('bcryptjs');
-const User = require('../../models/User');
-const jsonWebToken = require('jsonwebtoken');
-const config = require('config');
-const sendEmail = require('../utils/emailTemplate');
-const {getCleanRequestBody} = require('../utils/helpers');
+import express from 'express';
+import {check, validationResult} from 'express-validator';
+import gravatar from 'gravatar';
+import bcrypt from 'bcryptjs';
+import jsonWebToken from 'jsonwebtoken';
+import config from 'config';
 
+import User from '../../models/User.js';
+import sendEmail from '../utils/emailTemplate.js';
+import {getCleanRequestBody} from '../utils/helpers.js';
+
+const router = express.Router();
 // @route   POST api/users
 // @desc    Register User
 // @access  Public
@@ -32,13 +33,17 @@ router.post(
       // Check if user already exists
       let user = await User.findOne({mobileNumber: {$eq: mobileNumber}});
       if (user) {
-        return res.status(400).json({errors: [{msg: 'User already exist, Please try with new Number.'}]});
+        return res
+          .status(400)
+          .json({errors: [{msg: 'User already exist, Please try with new Number.'}]});
       }
 
       // Checking E-mail already registered or not
       user = await User.findOne({email: {$eq: email}});
       if (user) {
-        return res.status(400).json({errors: [{msg: 'E-mail already registered, Please try with new one'}]});
+        return res
+          .status(400)
+          .json({errors: [{msg: 'E-mail already registered, Please try with new one'}]});
       }
 
       // Avatar
@@ -90,4 +95,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

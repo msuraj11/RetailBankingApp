@@ -1,5 +1,5 @@
-const nodemailer = require('nodemailer');
-const config = require('config');
+import nodemailer from 'nodemailer';
+import config from 'config';
 
 const sendEmail = async (toEmail, name, dynamicValue) => {
   const fromMail = 'vaishnavimatchings.mamidi77@gmail.com';
@@ -36,4 +36,4 @@ const sendEmail = async (toEmail, name, dynamicValue) => {
   }
 };
 
-module.exports = sendEmail;
+export default sendEmail;

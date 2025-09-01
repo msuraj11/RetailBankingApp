@@ -1,6 +1,16 @@
-const express = require('express');
-const {rateLimit} = require('express-rate-limit');
-const connectDB = require('./config/db');
+import express from 'express';
+import {rateLimit} from 'express-rate-limit';
+
+import connectDB from './config/db.js';
+import newUsersRoute from './routes/api/users.js';
+import userAuthRoute from './routes/api/auth.js';
+import userAccountInfoRoute from './routes/api/accountInfo.js';
+import profileRoute from './routes/api/profile.js';
+import transactionsRoute from './routes/api/transactions.js';
+
+import newAdminRoute from './routes/api/adminRoutes/adminReg.js';
+import adminAuthRoute from './routes/api/adminRoutes/authAdmin.js';
+import adminActionRoute from './routes/api/adminRoutes/adminAction.js';
 
 const app = express();
 
@@ -25,16 +35,16 @@ app.use(limiter);
 app.get('/', (req, res) => res.send('API Running'));
 
 // Define Routes of user
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/accountInfo', require('./routes/api/accountInfo'));
-app.use('/api/profile', require('./routes/api/profile'));
-app.use('/api/transactions', require('./routes/api/transactions'));
+app.use('/api/users', newUsersRoute);
+app.use('/api/auth', userAuthRoute);
+app.use('/api/accountInfo', userAccountInfoRoute);
+app.use('/api/profile', profileRoute);
+app.use('/api/transactions', transactionsRoute);
 
 // Define Routes of admin
-app.use('/api/admin', require('./routes/api/adminRoutes/adminReg'));
-app.use('/api/authAdmin', require('./routes/api/adminRoutes/authAdmin'));
-app.use('/api/adminAction', require('./routes/api/adminRoutes/adminAction'));
+app.use('/api/admin', newAdminRoute);
+app.use('/api/authAdmin', adminAuthRoute);
+app.use('/api/adminAction', adminActionRoute);
 
 const PORT = process.env.PORT || 5001; //5000 port is for Mac Airplay receiver
 
