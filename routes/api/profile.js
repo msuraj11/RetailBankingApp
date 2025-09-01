@@ -1,19 +1,26 @@
-const express = require('express');
+import express from 'express';
+import moment from 'moment';
+import {check, validationResult} from 'express-validator';
+
+import {getCleanRequestBody} from '../utils/helpers.js';
+import authMiddleware from '../../middleware/auth.js';
+import Profile from '../../models/Profile.js';
+import User from '../../models/User.js';
+import UpdateRequests from '../../models/UpdateRequests.js';
+
 const router = express.Router();
-const moment = require('moment');
-const auth = require('../../middleware/auth');
-const Profile = require('../../models/Profile');
-const User = require('../../models/User');
-const UpdateRequests = require('../../models/UpdateRequests');
-const {check, validationResult} = require('express-validator');
-const {getCleanRequestBody} = require('../utils/helpers');
 
 // @route   GET api/profile/me
 // @desc    Get current user's profile
 // @access  Private
-router.get('/me', auth, async (req, res) => {
+router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const profile = await Profile.findOne({user: {$eq: req.user.id}}).populate('user', ['name', 'avatar', 'customerId', 'mobileNumber']);
+    const profile = await Profile.findOne({user: {$eq: req.user.id}}).populate('user', [
+      'name',
+      'avatar',
+      'customerId',
+      'mobileNumber'
+    ]);
 
     if (!profile) {
       return res.status(207).json({msg: 'There is no profile for this user'});
@@ -32,7 +39,7 @@ router.get('/me', auth, async (req, res) => {
 router.post(
   '/',
   [
-    auth,
+    authMiddleware,
     [
       check('firstName', 'Please provide First-name').not().isEmpty(),
       check('lastName', 'Please provide Last-name').not().isEmpty(),
@@ -41,12 +48,16 @@ router.post(
       check('PANCardNo', 'Please provide a valid PAN Card Number').isLength({min: 10, max: 10}),
       check('AadharNo', 'Please provide a valid Aadhar Card Number').isLength({min: 14, max: 14}),
       check('currentAddress', 'Please provide your current location address').not().isEmpty(),
-      check('alternateContactNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone('en-IN'),
+      check('alternateContactNumber', 'Please enter a valid 10 digit mobile number').isMobilePhone(
+        'en-IN'
+      ),
       check('sourceOfIncome', 'Please fill this field').not().isEmpty(),
       check('occupation', 'Please fill this field').not().isEmpty(),
       check('accountType', 'Please choose an account type.').notEmpty(),
       check('accBranch', 'Please provide valid branch name.').notEmpty(),
-      check('IFSC_Code', 'Please provide valid IFSC code for branch').notEmpty().isLength({min: 11, max: 11})
+      check('IFSC_Code', 'Please provide valid IFSC code for branch')
+        .notEmpty()
+        .isLength({min: 11, max: 11})
     ]
   ],
   async (req, res) => {
@@ -110,7 +121,11 @@ router.post(
 
       if (profiler) {
         if (currentAddress && profiler.currentAddress !== currentAddress) {
-          profiler = await Profile.findOneAndUpdate({user: {$eq: req.user.id}}, {$set: {currentAddress: currentAddress}}, {new: true});
+          profiler = await Profile.findOneAndUpdate(
+            {user: {$eq: req.user.id}},
+            {$set: {currentAddress: currentAddress}},
+            {new: true}
+          );
           profiler.date.push({
             lastUpdated: moment(),
             updatedBy: `User: ${profiler.firstName}`
@@ -133,19 +148,25 @@ router.post(
       // Check for unique PAN card number in the whole database
       profiler = await Profile.findOne({PANCardNo: {$eq: PANCardNo}});
       if (profiler) {
-        return res.status(400).json({errors: [{msg: 'PAN card number already exist by some user. Please enter a valid one'}]});
+        return res.status(400).json({
+          errors: [{msg: 'PAN card number already exist by some user. Please enter a valid one'}]
+        });
       }
 
       // Check for unique Aadhar number in the whole database
       profiler = await Profile.findOne({AadharNo: {$eq: AadharNo}});
       if (profiler) {
-        return res.status(400).json({errors: [{msg: 'Aadhar card number already exist by some user. Please enter a valid one'}]});
+        return res.status(400).json({
+          errors: [{msg: 'Aadhar card number already exist by some user. Please enter a valid one'}]
+        });
       }
 
       // Check if user mobile number and alternate contact are same
       const user = await User.findById({$eq: req.user.id}).select('-password');
       if (user.mobileNumber === profileFields.alternateContactNumber) {
-        return res.status(400).json({errors: [{msg: 'Mobile number and alternate contact number cannot be same'}]});
+        return res
+          .status(400)
+          .json({errors: [{msg: 'Mobile number and alternate contact number cannot be same'}]});
       }
 
       // Check for valid IFSC
@@ -168,8 +189,17 @@ router.post(
 // @route   POST api/profile/request-update
 // @desc    Request for Update of user profile
 // @access  Private
-router.post('/request-update', auth, async (req, res) => {
-  const {profileId, mobileNumber, permanentAddress, spouseName, alternateContactNumber, occupation, sourceOfIncome, company} = req.body;
+router.post('/request-update', authMiddleware, async (req, res) => {
+  const {
+    profileId,
+    mobileNumber,
+    permanentAddress,
+    spouseName,
+    alternateContactNumber,
+    occupation,
+    sourceOfIncome,
+    company
+  } = req.body;
 
   try {
     const profile = await Profile.findById({$eq: req.body.profileId});
@@ -178,7 +208,17 @@ router.post('/request-update', auth, async (req, res) => {
       return res.status(400).json({errors: [{msg: 'Profile not found or Invalid'}]});
     }
 
-    if (!(mobileNumber || permanentAddress || spouseName || alternateContactNumber || occupation || sourceOfIncome || company)) {
+    if (
+      !(
+        mobileNumber ||
+        permanentAddress ||
+        spouseName ||
+        alternateContactNumber ||
+        occupation ||
+        sourceOfIncome ||
+        company
+      )
+    ) {
       return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});
     }
 
@@ -196,11 +236,14 @@ router.post('/request-update', auth, async (req, res) => {
 
     await newRequest.save();
 
-    return res.json({success: 'Request submitted successfully..!!,Your data will be verified and will be updated by admin with-in 48 hours'});
+    return res.json({
+      success:
+        'Request submitted successfully..!!,Your data will be verified and will be updated by admin with-in 48 hours'
+    });
   } catch (err) {
     console.log(err.message);
     res.status(500).send('Server Error');
   }
 });
 
-module.exports = router;
+export default router;

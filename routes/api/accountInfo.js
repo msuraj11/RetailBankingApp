@@ -1,15 +1,16 @@
-const express = require('express');
-const moment = require('moment');
-const auth = require('../../middleware/auth');
-const Profile = require('../../models/Profile');
-const Transactions = require('../../models/Transactions');
+import express from 'express';
+import moment from 'moment';
+
+import authMiddleware from '../../middleware/auth.js';
+import Profile from '../../models/Profile.js';
+import Transactions from '../../models/Transactions.js';
 
 const router = express.Router();
 
 // @route   GET api/accountInfo/statement/:start_date/:end_date
 // @desc    To get account statement from day to day
 // @access  Private
-router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
+router.get('/statement/:start_date/:end_date', authMiddleware, async (req, res) => {
   try {
     const transactions = await Transactions.findOne({user: {$eq: req.user.id}});
     if (!transactions) {
@@ -23,7 +24,12 @@ router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
     }
 
     const filteredTxDetails = txDetails.filter((item) => {
-      return moment(moment(item.txDates).format('YYYY-MM-DD')).isBetween(start_date, end_date, undefined, []);
+      return moment(moment(item.txDates).format('YYYY-MM-DD')).isBetween(
+        start_date,
+        end_date,
+        undefined,
+        []
+      );
     });
     if (filteredTxDetails.length === 0) {
       return res.status(400).json({msg: 'There are no transactions in these dates'});
@@ -38,14 +44,16 @@ router.get('/statement/:start_date/:end_date', auth, async (req, res) => {
 // @route   GET api/accountInfo
 // @desc    This is to get the account Info
 // @access  Private
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const profile = await Profile.findOne({user: {$eq: req.user.id}});
     const transactions = await Transactions.findOne({user: {$eq: req.user.id}});
 
     // Here profile is mandatory to show User's data
     if (!profile) {
-      return res.status(400).json({msg: 'There is no profile for this user. Please do KYC to get Account Information'});
+      return res
+        .status(400)
+        .json({msg: 'There is no profile for this user. Please do KYC to get Account Information'});
     }
 
     const {accountNumber, accountType, firstName, lastName, IFSC_Code, accBranch} = profile;
@@ -66,4 +74,4 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

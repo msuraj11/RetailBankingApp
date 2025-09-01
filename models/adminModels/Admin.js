@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const moment = require('moment');
+import mongoose from 'mongoose';
+import moment from 'moment';
 
 const AdminSchema = new mongoose.Schema({
   firstName: {
@@ -56,4 +56,4 @@ const AdminSchema = new mongoose.Schema({
 
 const Admin = mongoose.model('admin', AdminSchema);
 
-module.exports = Admin;
+export default Admin;

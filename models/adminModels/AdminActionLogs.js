@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const AdminActionLogsSchema = new mongoose.Schema({
   admin: {
@@ -39,4 +39,4 @@ const AdminActionLogsSchema = new mongoose.Schema({
 
 const AdminActionLogs = mongoose.model('adminActionLogs', AdminActionLogsSchema);
 
-module.exports = AdminActionLogs;
+export default AdminActionLogs;

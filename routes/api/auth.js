@@ -1,19 +1,20 @@
-const express = require('express');
-const auth = require('../../middleware/auth');
-const User = require('../../models/User');
-const {check, validationResult} = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jsonWebToken = require('jsonwebtoken');
-const config = require('config');
-const sendEmail = require('../utils/emailTemplate');
-const {getCleanRequestBody} = require('../utils/helpers');
+import express from 'express';
+import {check, validationResult} from 'express-validator';
+import bcrypt from 'bcryptjs';
+import jsonWebToken from 'jsonwebtoken';
+import config from 'config';
+
+import sendEmail from '../utils/emailTemplate.js';
+import {getCleanRequestBody} from '../utils/helpers.js';
+import authMiddleware from '../../middleware/auth.js';
+import User from '../../models/User.js';
 
 const router = express.Router();
 
 // @route   GET api/auth
 // @desc    Validate with middleware
 // @access  Public
-router.get('/', auth, async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById({$eq: req.user.id}).select('-password');
     res.json(user);
@@ -26,7 +27,7 @@ router.get('/', auth, async (req, res) => {
 // @route   GET api/auth/verifyToken
 // @desc    Validate with middleware
 // @access  Public
-router.get('/verifyToken', auth, async (req, res) => {
+router.get('/verifyToken', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById({$eq: req.user.id}).select('-password');
 
@@ -44,7 +45,10 @@ router.get('/verifyToken', auth, async (req, res) => {
 // @access  Public
 router.post(
   '/',
-  [check('customerId', 'Please include a valid customer-Id').isLength({min: 9, max: 9}), check('password', 'Password is required').exists()],
+  [
+    check('customerId', 'Please include a valid customer-Id').isLength({min: 9, max: 9}),
+    check('password', 'Password is required').exists()
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -65,7 +69,10 @@ router.post(
       }
 
       // Check if password is correct
-      const isMatch = await bcrypt.compare(Buffer.from(password, 'base64').toString('ascii'), user.password); // Buffer.from(data, 'base64')
+      const isMatch = await bcrypt.compare(
+        Buffer.from(password, 'base64').toString('ascii'),
+        user.password
+      ); // Buffer.from(data, 'base64')
       if (!isMatch) {
         return res.status(400).json({errors: [{msg: 'Invalid Credentials'}]});
       }
@@ -92,4 +99,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

@@ -1,10 +1,12 @@
-const express = require('express');
+import express from 'express';
+import moment from 'moment';
+import {check, validationResult} from 'express-validator';
+
+import authMiddleware from '../../middleware/auth.js';
+import Profile from '../../models/Profile.js';
+import Transactions from '../../models/Transactions.js';
+
 const router = express.Router();
-const moment = require('moment');
-const auth = require('../../middleware/auth');
-const Transactions = require('../../models/Transactions');
-const Profile = require('../../models/Profile');
-const {check, validationResult} = require('express-validator');
 
 // @route   POST api/transactions
 // @desc    For transaction of money
@@ -12,7 +14,7 @@ const {check, validationResult} = require('express-validator');
 router.post(
   '/',
   [
-    auth,
+    authMiddleware,
     [
       check('txAmount', 'Please add some amount to open account').notEmpty().isNumeric(),
       check('txType', 'Please select Credited or Debited').notEmpty(),
@@ -35,7 +37,11 @@ router.post(
       // Here profile is used to fetch account number hence it is mandatory
       const profile = await Profile.findOne({user: {$eq: req.user.id}});
       if (!profile) {
-        return res.status(400).json({errors: [{msg: 'There is no profile for this user. Please do KYC and perform transactions'}]});
+        return res.status(400).json({
+          errors: [
+            {msg: 'There is no profile for this user. Please do KYC and perform transactions'}
+          ]
+        });
       }
 
       const isPrevTransaction = await Transactions.findOne({user: {$eq: req.user.id}});
@@ -56,8 +62,17 @@ router.post(
       const getTransactionDetails = await Transactions.findOne({user: {$eq: req.user.id}});
 
       if (txType === 'Debited') {
-        if (getTransactionDetails.accountBalance === 0 || txAmount > getTransactionDetails.accountBalance) {
-          return res.status(400).json({errors: [{msg: 'There is no sufficient balance in your account to complete this transaction.'}]});
+        if (
+          getTransactionDetails.accountBalance === 0 ||
+          txAmount > getTransactionDetails.accountBalance
+        ) {
+          return res.status(400).json({
+            errors: [
+              {
+                msg: 'There is no sufficient balance in your account to complete this transaction.'
+              }
+            ]
+          });
         }
 
         if (txAmount && txAmount > 0) {
@@ -109,4 +124,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

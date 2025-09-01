@@ -1,18 +1,19 @@
-const express = require('express');
-const router = express.Router();
-const moment = require('moment');
-const User = require('../../../models/User');
-const Profile = require('../../../models/Profile');
-const Transactions = require('../../../models/Transactions');
-const adminAuth = require('../../../middleware/adminAuth');
-const Admin = require('../../../models/adminModels/Admin');
-const AdminActionLogs = require('../../../models/adminModels/AdminActionLogs');
-const {getCleanRequestBody} = require('../../utils/helpers');
+import express from 'express';
+import moment from 'moment';
 
+import User from '../../../models/User.js';
+import Profile from '../../../models/Profile.js';
+import Transactions from '../../../models/Transactions.js';
+import Admin from '../../../models/adminModels/Admin.js';
+import AdminActionLogs from '../../../models/adminModels/AdminActionLogs.js';
+import adminAuthMiddleware from '../../../middleware/adminAuth.js';
+import {getCleanRequestBody} from '../../utils/helpers.js';
+
+const router = express.Router();
 // @route   GET api/adminAction/getAllUsers
 // @desc    Getting all the users data
 // @access  Private
-router.get('/getAllUsers', adminAuth, async (req, res) => {
+router.get('/getAllUsers', adminAuthMiddleware, async (req, res) => {
   try {
     // Get all users from data-base
     const profiles = await Profile.find().populate('user', ['mobileNumber', 'avatar']);
@@ -39,23 +40,46 @@ router.get('/getAllUsers', adminAuth, async (req, res) => {
 // @route   PUT api/adminAction/updateUserInfo
 // @desc    Update user info via admin
 // @access  Private
-router.put('/updateUserInfo', adminAuth, async (req, res) => {
-  const {userId, mobileNumber, permanentAddress, spouseName, alternateContactNumber, occupation, sourceOfIncome, company} = getCleanRequestBody(
-    req.body
-  );
+router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
+  const {
+    userId,
+    mobileNumber,
+    permanentAddress,
+    spouseName,
+    alternateContactNumber,
+    occupation,
+    sourceOfIncome,
+    company
+  } = getCleanRequestBody(req.body);
 
-  if (!(mobileNumber || permanentAddress || spouseName || alternateContactNumber || occupation || sourceOfIncome || company)) {
+  if (
+    !(
+      mobileNumber ||
+      permanentAddress ||
+      spouseName ||
+      alternateContactNumber ||
+      occupation ||
+      sourceOfIncome ||
+      company
+    )
+  ) {
     return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});
   }
 
-  const hasInvalidDataInput = [...Object.values(req.body)].filter((fedValue) => typeof fedValue !== 'string').length > 0;
+  const hasInvalidDataInput =
+    [...Object.values(req.body)].filter((fedValue) => typeof fedValue !== 'string').length > 0;
 
   if (hasInvalidDataInput) {
-    return res.status(422).json({errors: [{msg: 'Invalid input type, please provide correct data input.'}]});
+    return res
+      .status(422)
+      .json({errors: [{msg: 'Invalid input type, please provide correct data input.'}]});
   }
 
   const mobRegX = /^\+91[6-9]\d{9}$/;
-  if ((mobileNumber && !mobRegX.test(mobileNumber)) || (alternateContactNumber && !mobRegX.test(alternateContactNumber))) {
+  if (
+    (mobileNumber && !mobRegX.test(mobileNumber)) ||
+    (alternateContactNumber && !mobRegX.test(alternateContactNumber))
+  ) {
     return res.status(400).json({errors: [{msg: 'Please provide a valid mobile number.'}]});
   }
 
@@ -74,13 +98,21 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     // If valid then update the information
-    const getProfile = await Profile.findOne({user: {$eq: userId}}).populate('user', ['mobileNumber', 'avatar']);
+    const getProfile = await Profile.findOne({user: {$eq: userId}}).populate('user', [
+      'mobileNumber',
+      'avatar'
+    ]);
     if (!getProfile) {
       return res.status(400).json({errors: [{msg: 'Profile not found'}]});
     }
 
-    if (mobileNumber === getProfile.alternateContactNumber || alternateContactNumber === getProfile.user.mobileNumber) {
-      return res.status(400).json({errors: [{msg: 'Mobile number and alternate contact number cannot be same'}]});
+    if (
+      mobileNumber === getProfile.alternateContactNumber ||
+      alternateContactNumber === getProfile.user.mobileNumber
+    ) {
+      return res
+        .status(400)
+        .json({errors: [{msg: 'Mobile number and alternate contact number cannot be same'}]});
     }
 
     if (
@@ -129,7 +161,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (spouseName) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {'familyDetails.spouseName': spouseName}}, {new: true});
+      const profile = await Profile.findOneAndUpdate(
+        {user: {$eq: userId}},
+        {$set: {'familyDetails.spouseName': spouseName}},
+        {new: true}
+      );
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Spouse name`
@@ -146,7 +182,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (permanentAddress) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {permanentAddress}}, {new: true});
+      const profile = await Profile.findOneAndUpdate(
+        {user: {$eq: userId}},
+        {$set: {permanentAddress}},
+        {new: true}
+      );
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -163,7 +203,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (alternateContactNumber) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {alternateContactNumber}}, {new: true});
+      const profile = await Profile.findOneAndUpdate(
+        {user: {$eq: userId}},
+        {$set: {alternateContactNumber}},
+        {new: true}
+      );
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -180,7 +224,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (occupation) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {occupation}}, {new: true});
+      const profile = await Profile.findOneAndUpdate(
+        {user: {$eq: userId}},
+        {$set: {occupation}},
+        {new: true}
+      );
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -197,7 +245,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (sourceOfIncome) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {sourceOfIncome}}, {new: true});
+      const profile = await Profile.findOneAndUpdate(
+        {user: {$eq: userId}},
+        {$set: {sourceOfIncome}},
+        {new: true}
+      );
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -214,7 +266,11 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
     }
 
     if (company) {
-      const profile = await Profile.findOneAndUpdate({user: {$eq: userId}}, {$set: {company}}, {new: true});
+      const profile = await Profile.findOneAndUpdate(
+        {user: {$eq: userId}},
+        {$set: {company}},
+        {new: true}
+      );
       profile.date.push({
         lastUpdated: moment(),
         updatedBy: `Admin: ${admin.firstName}, id: ${admin.adminId}, item: Permanent Address`
@@ -239,7 +295,7 @@ router.put('/updateUserInfo', adminAuth, async (req, res) => {
 // @route   DELETE api/adminAction/deleteUser/:user_id
 // @desc    Delete the user and it's data
 // @access  Private http://localhost:3000/api/adminAction/deleteUser/60966a80fdbb661dc853e393
-router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
+router.delete('/deleteUser/:user_id', adminAuthMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findById({$eq: req.admin.id});
     if (admin.permissions.length < 3) {
@@ -291,7 +347,7 @@ router.delete('/deleteUser/:user_id', adminAuth, async (req, res) => {
 //@route    GET api/adminAction/logs
 //@des      Gets all the admin logs delete/update
 //access    Private
-router.get('/logs', adminAuth, async (req, res) => {
+router.get('/logs', adminAuthMiddleware, async (req, res) => {
   try {
     const admin = await Admin.findById({$eq: req.admin.id});
     if (!admin) {
@@ -311,4 +367,4 @@ router.get('/logs', adminAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

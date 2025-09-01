@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const RequestSchema = new mongoose.Schema({
   profileId: {
@@ -34,4 +34,4 @@ const RequestSchema = new mongoose.Schema({
 
 const UpdateRequests = mongoose.model('update_requests', RequestSchema);
 
-module.exports = UpdateRequests;
+export default UpdateRequests;
