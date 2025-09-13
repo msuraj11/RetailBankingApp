@@ -21,10 +21,11 @@ router.get('/getAllUsers', adminAuthMiddleware, async (req, res) => {
       return res.send(400).json({errors: [{msg: 'There are no users'}]});
     }
 
-    const isAdminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
+    const {id: adminId} = getCleanRequestBody(req?.admin);
+    const isAdminLogs = await AdminActionLogs.findOne({admin: {$eq: adminId}});
     if (!isAdminLogs) {
       const adminLogs = new AdminActionLogs({
-        admin: req.admin.id,
+        admin: adminId,
         logs: []
       });
       await adminLogs.save();
@@ -83,8 +84,9 @@ router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
     return res.status(400).json({errors: [{msg: 'Please provide a valid mobile number.'}]});
   }
 
+  const {id: adminId} = getCleanRequestBody(req?.admin);
   try {
-    const admin = await Admin.findById({$eq: req.admin.id});
+    const admin = await Admin.findById({$eq: adminId});
     if (admin.permissions.length < 2) {
       return res.status(400).json({msg: 'Permission denied'});
     }
@@ -141,7 +143,7 @@ router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
       userIFSC: getProfile.IFSC_Code
     };
 
-    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
+    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: adminId}});
 
     if (mobileNumber) {
       await User.findOneAndUpdate({_id: {$eq: userId}}, {$set: {mobileNumber}}, {new: true});
@@ -297,27 +299,28 @@ router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
 // @access  Private http://localhost:3000/api/adminAction/deleteUser/60966a80fdbb661dc853e393
 router.delete('/deleteUser/:user_id', adminAuthMiddleware, async (req, res) => {
   try {
-    const admin = await Admin.findById({$eq: req.admin.id});
+    const {id: adminId} = getCleanRequestBody(req?.admin);
+    const admin = await Admin.findById({$eq: adminId});
     if (admin.permissions.length < 3) {
       return res.status(400).json({msg: 'Permission denied'});
     }
 
-    const {user_id} = req.params;
+    const {user_id} = getCleanRequestBody(req.params);
     const user = await User.findById({$eq: user_id});
     const profile = await Profile.findOne({user: {$eq: user_id}});
     const transactions = await Transactions.findOne({user: {$eq: user_id}});
-    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
+    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: adminId}});
 
     if (!user) {
       return res.status(400).json({msg: 'User not found'});
     }
-    await User.findOneAndRemove({_id: {$eq: user_id}});
+    await User.findOneAndDelete({_id: {$eq: user_id}});
 
     if (profile) {
-      await Profile.findOneAndRemove({user: {$eq: user_id}});
+      await Profile.findOneAndDelete({user: {$eq: user_id}});
     }
     if (transactions) {
-      await Transactions.findOneAndRemove({user: {$eq: user_id}});
+      await Transactions.findOneAndDelete({user: {$eq: user_id}});
     }
 
     adminLogs.logs.unshift({
@@ -349,14 +352,15 @@ router.delete('/deleteUser/:user_id', adminAuthMiddleware, async (req, res) => {
 //access    Private
 router.get('/logs', adminAuthMiddleware, async (req, res) => {
   try {
-    const admin = await Admin.findById({$eq: req.admin.id});
+    const {id: adminId} = getCleanRequestBody(req?.admin);
+    const admin = await Admin.findById({$eq: adminId});
     if (!admin) {
       return res.status(400).json({msg: 'User not found'});
     }
     if (admin.permissions.length < 2) {
       return res.status(401).json({msg: 'Permission Denied'});
     }
-    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: req.admin.id}});
+    const adminLogs = await AdminActionLogs.findOne({admin: {$eq: adminId}});
     if (!adminLogs || adminLogs.logs.length === 0) {
       return res.status(400).json({msg: 'There are no logs yet.'});
     }
