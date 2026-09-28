@@ -27,7 +27,10 @@
     "yargs-parser": "^20.2.6"
   },
   "devDependencies": {
-    "concurrently": "^5.2.0",
-    "nodemon": "^3.1.10"
+    "concurrently": "^10.0.5",
+    "nodemon": "^3.1.14"
+  },
+  "allowScripts": {
+    "fsevents@2.3.2": true
   }
 }
