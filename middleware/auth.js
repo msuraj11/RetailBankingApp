@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
+import {getCleanRequestBody} from '../utils/helpers.js';
 
 export default function (req, res, next) {
   // Get token from header
@@ -13,7 +14,8 @@ export default function (req, res, next) {
   // Verify token
   try {
     const decoded = jwt.verify(token, config.get('jwtSecret'));
-    req.user = decoded.user;
+    const cleanUser = getCleanRequestBody(decoded.user);
+    req.user = cleanUser;
     next();
   } catch (err) {
     res.status(401).json({msg: 'Token is not valid'});

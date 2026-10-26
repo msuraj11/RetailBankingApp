@@ -6,8 +6,8 @@ import jsonWebToken from 'jsonwebtoken';
 import config from 'config';
 
 import User from '../../models/User.js';
-import sendEmail from '../utils/emailTemplate.js';
-import {getCleanRequestBody} from '../utils/helpers.js';
+import sendEmail from '../../utils/emailTemplate.js';
+import {getCleanRequestBody} from '../../utils/helpers.js';
 
 const router = express.Router();
 // @route   POST api/users

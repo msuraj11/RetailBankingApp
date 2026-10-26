@@ -2,7 +2,7 @@ import express from 'express';
 import moment from 'moment';
 import {check, validationResult} from 'express-validator';
 
-import {getCleanRequestBody} from '../utils/helpers.js';
+import {getCleanRequestBody} from '../../utils/helpers.js';
 import authMiddleware from '../../middleware/auth.js';
 import Profile from '../../models/Profile.js';
 import User from '../../models/User.js';

@@ -4,8 +4,8 @@ import bcrypt from 'bcryptjs';
 import jsonWebToken from 'jsonwebtoken';
 import config from 'config';
 
-import sendEmail from '../utils/emailTemplate.js';
-import {getCleanRequestBody} from '../utils/helpers.js';
+import sendEmail from '../../utils/emailTemplate.js';
+import {getCleanRequestBody} from '../../utils/helpers.js';
 import authMiddleware from '../../middleware/auth.js';
 import User from '../../models/User.js';
 

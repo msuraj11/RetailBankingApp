@@ -7,7 +7,7 @@ import Transactions from '../../../models/Transactions.js';
 import Admin from '../../../models/adminModels/Admin.js';
 import AdminActionLogs from '../../../models/adminModels/AdminActionLogs.js';
 import adminAuthMiddleware from '../../../middleware/adminAuth.js';
-import {getCleanRequestBody} from '../../utils/helpers.js';
+import {getCleanRequestBody} from '../../../utils/helpers.js';
 
 const router = express.Router();
 // @route   GET api/adminAction/getAllUsers
