@@ -1,16 +1,16 @@
-FROM node
+FROM node:latest
 
 WORKDIR /app/RetailBankingApp
 
 COPY package.json /app/RetailBankingApp/
 
-RUN npm install
+RUN npm ci --only=production --ignore-scripts
 
 COPY ./client/package.json /app/RetailBankingApp/client/
 
 WORKDIR /app/RetailBankingApp/client
 
-RUN npm install
+RUN npm ci --only=production --ignore-scripts
 
 COPY . /app/RetailBankingApp/
 
