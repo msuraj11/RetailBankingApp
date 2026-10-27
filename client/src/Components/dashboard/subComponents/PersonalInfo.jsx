@@ -30,6 +30,7 @@ const PersonalInfo = ({profile, editInfo, onFieldChange, onBlurAltContField}) =>
       role="button"
       onClick={editInfo}
       onKeyDown={editInfo}
+      tabIndex={0}
     ></i>
   );
 

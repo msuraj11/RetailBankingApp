@@ -39,8 +39,8 @@ router.post(
     const reqObj = getCleanRequestBody(req.body);
 
     const {
-      firstName,
-      lastName,
+      firstName = '',
+      lastName = '',
       mobileNumber,
       experienceInBanking,
       adminBranch,
@@ -52,29 +52,25 @@ router.post(
 
     // Create an admin email using fName, lName
     const emailTypes = [
-      `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName
+      `${firstName.trim().toLowerCase().replaceAll(' ', '')}.${lastName
         .trim()
         .toLowerCase()
-        .split(' ')
-        .join('')}@BOS.com`,
-      `${firstName.trim().toLowerCase().split(' ').join('')}_${lastName
+        .replaceAll(' ', '')}@BOS.com`,
+      `${firstName.trim().toLowerCase().replaceAll(' ', '')}_${lastName
         .trim()
         .toLowerCase()
-        .split(' ')
-        .join('')}@BOS.com`,
-      `${firstName.trim().toLowerCase().split(' ').join('')}.${lastName
+        .replaceAll(' ', '')}@BOS.com`,
+      `${firstName.trim().toLowerCase().replaceAll(' ', '')}.${lastName
         .substr(0, 1)
         .toLowerCase()}@BOS.com`,
-      `${lastName.trim().toLowerCase().split(' ').join('')}${firstName
+      `${lastName.trim().toLowerCase().replaceAll(' ', '')}${firstName
         .trim()
         .toLowerCase()
-        .split(' ')
-        .join('')}@BOS.com`,
-      `${lastName.trim().toLowerCase().split(' ').join('')}.${firstName
+        .replaceAll(' ', '')}@BOS.com`,
+      `${lastName.trim().toLowerCase().replaceAll(' ', '')}.${firstName
         .trim()
         .toLowerCase()
-        .split(' ')
-        .join('')}@BOS.com`
+        .replaceAll(' ', '')}@BOS.com`
     ];
 
     // Deciding permissions for admin
@@ -122,10 +118,10 @@ router.post(
 
       // Checking E-mail already registered or not
       const emailForAdmin = [];
-      for (let i = 0; i < emailTypes.length; i++) {
-        admin = await Admin.findOne({email: emailTypes[i]});
+      for (email of emailTypes) {
+        admin = await Admin.findOne({email: {$eq: email}});
         if (!admin) {
-          emailForAdmin.push(emailTypes[i]);
+          emailForAdmin.push(email);
         }
       }
 

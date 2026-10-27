@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
 
-export default function (req, res, next) {
+export default function adminAuth(req, res, next) {
   // Get token from header
   const token = req.header('x-auth-admin-token');
 
@@ -16,6 +16,7 @@ export default function (req, res, next) {
     req.admin = decoded.admin;
     next();
   } catch (err) {
+    console.error(err.message);
     res.status(401).json({msg: 'Token is not valid'});
   }
 }

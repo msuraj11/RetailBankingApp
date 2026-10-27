@@ -11,6 +11,7 @@ import ProfileTop from '../subComponents/ProfileTop';
 import ProfileAbout from '../subComponents/ProfileAbout';
 import PersonalInfo from '../subComponents/PersonalInfo';
 import Modal from '../../layouts/Modal';
+import {isValidMobileNumber} from '../../../../../utils/helpers';
 
 const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
   const {
@@ -29,7 +30,8 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
   const dateObj = date[date.length - 1];
   const lastUpdatedDate = moment(dateObj.lastUpdated).format('DD-MM-YYYY');
   const currentDate = moment().format('DD-MM-YYYY');
-  const dateDiff = moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') < 15;
+  const dateDiff =
+    moment(currentDate, 'DD-MM-YYYY').diff(moment(lastUpdatedDate, 'DD-MM-YYYY'), 'days') < 15;
 
   const [componentState, setComponentState] = useState({
     isAboutEditEnabled: false,
@@ -48,14 +50,29 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
     fieldSOI: sourceOfIncome,
     fieldCompany: company
   });
-  const {isAboutEditEnabled, fieldCurrAddress, isEditEnabled, isValidMobNumb, isValidAltCont, isModalVisible, modalJSX, payload} = componentState;
+  const {
+    isAboutEditEnabled,
+    fieldCurrAddress,
+    isEditEnabled,
+    isValidMobNumb,
+    isValidAltCont,
+    isModalVisible,
+    modalJSX,
+    payload
+  } = componentState;
 
   const editAddress = () => {
     setComponentState({...componentState, isAboutEditEnabled: !isAboutEditEnabled});
   };
 
   const editInfo = () => {
-    setComponentState({...componentState, isEditEnabled: !isEditEnabled, isModalVisible: false, modalJSX: null, payload: null});
+    setComponentState({
+      ...componentState,
+      isEditEnabled: !isEditEnabled,
+      isModalVisible: false,
+      modalJSX: null,
+      payload: null
+    });
   };
 
   const onFieldChange = (e) => {
@@ -76,7 +93,9 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
       getCurrentProfile();
     } catch (err) {
       console.error(err.response.data);
-      const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
+      const errors = err.response.data.errors || [
+        {msg: 'Something went wrong! Please try again later'}
+      ];
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
@@ -93,22 +112,24 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
       }
     } else {
       const mobNum = e.target.value;
-      const mobRegX = /^\+91[6-9]\d{9}$/;
-      setComponentState({...componentState, isValidMobNumb: mobRegX.test(mobNum)});
+      setComponentState({...componentState, isValidMobNumb: isValidMobileNumber(mobNum)});
     }
   };
 
   const onBlurAltContField = (e) => {
     if (isEmpty(e.target.value)) {
       if (!isValidAltCont) {
-        setComponentState({...componentState, fieldAltContNum: alternateContactNumber, isValidAltCont: true});
+        setComponentState({
+          ...componentState,
+          fieldAltContNum: alternateContactNumber,
+          isValidAltCont: true
+        });
       } else {
         setComponentState({...componentState, fieldAltContNum: alternateContactNumber});
       }
     } else {
       const mobNum = e.target.value;
-      const mobRegX = /^\+91[6-9]\d{9}$/;
-      setComponentState({...componentState, isValidAltCont: mobRegX.test(mobNum)});
+      setComponentState({...componentState, isValidAltCont: isValidMobileNumber(mobNum)});
     }
   };
 
@@ -189,7 +210,9 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
       editInfo();
     } catch (err) {
       console.error(err.response.data);
-      const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
+      const errors = err.response.data.errors || [
+        {msg: 'Something went wrong! Please try again later'}
+      ];
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
@@ -202,7 +225,14 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
     <Fragment>
       {isModalVisible && (
         <Modal
-          handleClose={() => setComponentState({...componentState, isModalVisible: false, modalJSX: null, payload: null})}
+          handleClose={() =>
+            setComponentState({
+              ...componentState,
+              isModalVisible: false,
+              modalJSX: null,
+              payload: null
+            })
+          }
           handleSubmit={finalSubmit}
           childJSX={modalJSX}
         />
@@ -226,7 +256,11 @@ const ShowProfile = ({profile, getCurrentProfile, setAlert}) => {
       </div>
       {isEditEnabled && (
         <div className="profile-submit">
-          <button className="btn btn-primary" onClick={() => submitInfo(_id)} disabled={dateDiff || !isValidMobNumb || !isValidAltCont}>
+          <button
+            className="btn btn-primary"
+            onClick={() => submitInfo(_id)}
+            disabled={dateDiff || !isValidMobNumb || !isValidAltCont}
+          >
             Request for update
           </button>
         </div>

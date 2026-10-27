@@ -15,7 +15,7 @@ import adminActionRoute from './routes/api/adminRoutes/adminAction.js';
 const app = express();
 
 // Connect to data-base
-connectDB();
+await connectDB();
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

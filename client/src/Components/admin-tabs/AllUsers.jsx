@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {isEmpty, omitBy} from 'lodash';
 import {connect} from 'react-redux';
@@ -12,7 +13,7 @@ import {getUsers} from '../../actions/adminLogs';
 import RenderInputFields from './sub-components/RenderInputFields';
 import {setAlert} from '../../actions/alert';
 import Modal from '../layouts/Modal';
-import axios from 'axios';
+import {isValidMobileNumber} from '../../../../utils/helpers';
 
 const INIT_STATE = {
   isEditEnabled: false,
@@ -79,12 +80,8 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert}) => {
 
   const onBlurFields = (e) => {
     const mobNum = e.target.value.substring(0, 3) === '+91' ? e.target.value : `+91${e.target.value}`;
-    const mobRegX = /^\+91[6-9]\d{9}$/;
-    if (e.target.name === 'fieldMobileNumber') {
-      setComponentState({...componentState, isValidMobNumb: mobRegX.test(mobNum)});
-    } else {
-      setComponentState({...componentState, isValidAltMobNumb: mobRegX.test(mobNum)});
-    }
+    const validationKey = e.target.name === 'fieldMobileNumber' ? 'isValidMobNumb' : 'isValidAltMobNumb';
+    setComponentState({...componentState, [validationKey]: isValidMobileNumber(mobNum)});
   };
 
   const submitHandler = async (user) => {
@@ -98,18 +95,25 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert}) => {
     const payload = {
       userId: user.user._id,
       mobileNumber:
-        componentState.fieldMobileNumber.substring(0, 3) === '+91' ? componentState.fieldMobileNumber : `+91${componentState.fieldMobileNumber}`,
+        componentState.fieldMobileNumber.substring(0, 3) === '+91'
+          ? componentState.fieldMobileNumber
+          : `+91${componentState.fieldMobileNumber}`,
       permanentAddress: componentState.fieldPermanentAddress,
       spouseName: componentState.fieldSpouseName,
       alternateContactNumber:
-        componentState.fieldAltContact.substring(0, 3) === '+91' ? componentState.fieldAltContact : `+91${componentState.fieldAltContact}`,
+        componentState.fieldAltContact.substring(0, 3) === '+91'
+          ? componentState.fieldAltContact
+          : `+91${componentState.fieldAltContact}`,
       sourceOfIncome: componentState.fieldSOI,
       occupation: componentState.fieldOcc,
       company: componentState.fieldCompany
     };
     const updatedPayload = omitBy(
       payload,
-      (value, key) => isEmpty(value) || (key === 'spouseName' ? value === user.familyDetails[key] : value === user[key]) || value === user.user[key]
+      (value, key) =>
+        isEmpty(value) ||
+        (key === 'spouseName' ? value === user.familyDetails[key] : value === user[key]) ||
+        value === user.user[key]
     );
 
     const body = JSON.stringify(updatedPayload);
@@ -170,7 +174,12 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert}) => {
             </div>
           </div>
           {isEditEnabled && id === user._id ? (
-            <RenderInputFields state={componentState} onFieldChange={onFieldChange} onBlurFields={onBlurFields} submitHandler={submitHandler} />
+            <RenderInputFields
+              state={componentState}
+              onFieldChange={onFieldChange}
+              onBlurFields={onBlurFields}
+              submitHandler={submitHandler}
+            />
           ) : (
             <div>
               <p className="my-1">
@@ -219,6 +228,7 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert}) => {
                 onClick={permissions.length > 1 ? () => editInfo(user) : undefined}
                 onKeyDown={permissions.length > 1 ? () => editInfo(user) : undefined}
                 role="button"
+                tabIndex={0}
               ></i>
             </li>
             <li>
@@ -231,7 +241,11 @@ const AllUsers = ({users, dispatch, loading, permissions, setAlert}) => {
               </button>
             </li>
             <li>
-              <button className="btn btn-danger btn-curved" onClick={() => onDeleClick(user.user._id)} disabled={permissions.length < 2}>
+              <button
+                className="btn btn-danger btn-curved"
+                onClick={() => onDeleClick(user.user._id)}
+                disabled={permissions.length < 2}
+              >
                 <i className="fas fa-times"></i>
               </button>
             </li>

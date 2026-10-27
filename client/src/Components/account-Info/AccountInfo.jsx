@@ -35,7 +35,7 @@ const AccountInfo = ({
     };
   }, [dispatch, accInfo, profile]);
 
-  const [date, setDates] = useState({
+  const [dates, setDates] = useState({
     from: profile
       ? moment(profile.date[0].lastUpdated).format('YYYY-MM-DD')
       : moment().format('YYYY-MM-DD'),
@@ -43,10 +43,10 @@ const AccountInfo = ({
     isValidDate: true
   });
 
-  const {from, to, isValidDate} = date;
+  const {from, to, isValidDate} = dates;
 
   const onFieldChange = (e) => {
-    setDates({...date, [e.target.name]: e.target.value});
+    setDates({...dates, [e.target.name]: e.target.value});
   };
 
   const onBlurFields = (e) => {
@@ -73,7 +73,7 @@ const AccountInfo = ({
       removeStatement();
     }
     setDates({
-      ...date,
+      ...dates,
       isValidDate: validDate && validDateRange && validCombination
     });
   };

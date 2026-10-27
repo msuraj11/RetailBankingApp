@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
+import {isValidMobileNumber} from '../../../../../utils/helpers';
 
 const Kyc = ({setAlert}) => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const Kyc = ({setAlert}) => {
     disableSubmitButton: false
   });
 
-  const [toggleForm, setToggle] = useState({
+  const [toggleForm, setToggleForm] = useState({
     showPersonalInfo: true,
     showContactInfo: false,
     showProfessionalInfo: false
@@ -97,8 +98,7 @@ const Kyc = ({setAlert}) => {
   const onBlurFields = (e) => {
     if (e.target.name === 'alternateContactNumber') {
       const mobNum = `+91${e.target.value}`;
-      const mobRegX = /^\+91[6-9]\d{9}$/;
-      setErrorMsgs({...errorMsgs, isValidMobNumb: mobRegX.test(mobNum)});
+      setErrorMsgs({...errorMsgs, isValidMobNumb: isValidMobileNumber(mobNum)});
     }
     if (e.target.name === 'dateOfBirth') {
       setErrorMsgs({
@@ -112,33 +112,31 @@ const Kyc = ({setAlert}) => {
       });
     }
     if (e.target.name === 'PANCardNo') {
-      const panRegX = /^[A-Z]{5}\d{4}[A-Z]$/;
-      setErrorMsgs({...errorMsgs, isValidPAN: panRegX.test(e.target.value)});
+      setErrorMsgs({...errorMsgs, isValidPAN: isValidPAN(e.target.value)});
     }
     if (e.target.name === 'AadharNo') {
-      const aadharRegX = /^[2-9]\d{3}-\d{4}-\d{4}$/;
       setErrorMsgs({
         ...errorMsgs,
-        isValidAadhar: aadharRegX.test(e.target.value)
+        isValidAadhar: isValidAadhar(e.target.value)
       });
     }
   };
 
   const ontoggleForm = (type) => {
     if (type === 'personal') {
-      setToggle({
+      setToggleForm({
         showPersonalInfo: true,
         showContactInfo: false,
         showProfessionalInfo: false
       });
     } else if (type === 'contact') {
-      setToggle({
+      setToggleForm({
         showPersonalInfo: false,
         showContactInfo: true,
         showProfessionalInfo: false
       });
     } else {
-      setToggle({
+      setToggleForm({
         showPersonalInfo: false,
         showContactInfo: false,
         showProfessionalInfo: true
@@ -274,7 +272,11 @@ const Kyc = ({setAlert}) => {
                 onChange={onFieldChange}
               />
             </div>
-            <button className="btn btn-primary" onClick={() => ontoggleForm('contact')}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => ontoggleForm('contact')}
+            >
               Next
             </button>
           </Fragment>
@@ -336,7 +338,11 @@ const Kyc = ({setAlert}) => {
                 <small className="form-danger">Mobile number entered is not valid.</small>
               )}
             </div>
-            <button className="btn btn-primary" onClick={() => ontoggleForm('professional')}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => ontoggleForm('professional')}
+            >
               Next
             </button>
           </Fragment>

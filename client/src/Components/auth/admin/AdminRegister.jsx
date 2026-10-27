@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
-import {Link, Navigate, useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import {animateScroll as scroll} from 'react-scroll';
 import {setAlert} from '../../../actions/alert';
 import {setTimer} from '../../../actions/timer';
 import {resetAdminNavLinks, setAdminNavLinks} from '../../../actions/authAdmin';
+import {isValidMobileNumber, isValidEmail as isValidEmailId} from '../../../../../utils/helpers';
 
 const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) => {
   const navigate = useNavigate();
@@ -68,6 +69,7 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
   };
 
   const onBlurFields = (e) => {
+    const name = e.target.name;
     if (!isEmpty(confirmPassword) && password !== confirmPassword) {
       setFormData({...formData, isPasswordMatch: false});
     } else {
@@ -75,12 +77,10 @@ const AdminRegister = ({dispatch, isAdminAuthenticated, activateAdminNavLinks}) 
     }
     if (e.target.name === 'mobileNumber') {
       const mobNum = `+91${e.target.value}`;
-      const mobRegX = /^\+91[6-9]\d{9}$/;
-      setFormData({...formData, isMobileNumValid: mobRegX.test(mobNum)});
+      setFormData({...formData, isMobileNumValid: isValidMobileNumber(mobNum)});
     }
     if (e.target.name === 'personalEmail') {
-      const emailRegX = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
-      setFormData({...formData, isValidEmail: emailRegX.test(personalEmail)});
+      setFormData({...formData, isValidEmail: isValidEmailId(personalEmail)});
     }
   };
 

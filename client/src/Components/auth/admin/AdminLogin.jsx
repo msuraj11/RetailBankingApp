@@ -4,6 +4,7 @@ import {isEmpty} from 'lodash';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {setAdminNavLinks, resetAdminNavLinks, adminLogin} from '../../../actions/authAdmin';
+import {isValidEmail} from '../../../../../utils/helpers';
 
 const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => {
   const navigate = useNavigate();
@@ -44,8 +45,7 @@ const AdminLogin = ({isAdminAuthenticated, dispatch, activateAdminNavLinks}) => 
   };
 
   const onBlurField = (e) => {
-    const emailRegX = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
-    setFormData({...formData, isValidEmailId: emailRegX.test(emailId)});
+    setFormData({...formData, isValidEmailId: isValidEmail(emailId)});
   };
 
   const onSubmitForm = (e) => {

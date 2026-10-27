@@ -7,7 +7,7 @@ import {setAlert} from '../../actions/alert';
 import {getAccountInfo} from '../../actions/accountInfo';
 
 const Transaction = ({setAlert, getAccountInfo}) => {
-  const [txState, setTx] = useState({
+  const [txState, setTxState] = useState({
     txAmount: '',
     txType: '',
     txBy: '',
@@ -17,7 +17,7 @@ const Transaction = ({setAlert, getAccountInfo}) => {
   const {txAmount, txBy, txType, isValidAmount} = txState;
 
   const onFieldChange = (e) => {
-    setTx({
+    setTxState({
       ...txState,
       [e.target.name]: e.target.name === 'txAmount' ? Number(e.target.value) : e.target.value
     });
@@ -25,7 +25,7 @@ const Transaction = ({setAlert, getAccountInfo}) => {
 
   const onBlurField = (e) => {
     const isNumberTxAble = e.target.value < 100000 && e.target.value > 0;
-    setTx({
+    setTxState({
       ...txState,
       isValidAmount: !isEmpty(e.target.value) && isNumberTxAble
     });
@@ -42,7 +42,7 @@ const Transaction = ({setAlert, getAccountInfo}) => {
     try {
       await axios.post('/api/transactions', {txAmount, txType, txBy}, config);
       setAlert(`Your account is ${txType} with amount: ${txAmount} Rupees`, 'success');
-      setTx({txAmount: '', txBy: '', txType: '', isValidAmount: true});
+      setTxState({txAmount: '', txBy: '', txType: '', isValidAmount: true});
       getAccountInfo();
     } catch (err) {
       console.error(err.response.data);

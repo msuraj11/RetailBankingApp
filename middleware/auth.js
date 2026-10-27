@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import config from 'config';
 import {getCleanRequestBody} from '../utils/helpers.js';
 
-export default function (req, res, next) {
+export default function auth(req, res, next) {
   // Get token from header
   const token = req.header('x-auth-token');
 
@@ -18,6 +18,7 @@ export default function (req, res, next) {
     req.user = cleanUser;
     next();
   } catch (err) {
+    console.error(err.message);
     res.status(401).json({msg: 'Token is not valid'});
   }
 }

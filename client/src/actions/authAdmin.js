@@ -22,7 +22,15 @@ export const loadAdmin = () => async (dispatch) => {
         payload: res.data
       });
     } catch (err) {
-      dispatch({type: ADMIN_AUTH_ERROR});
+      if (err.response) {
+        const errors = err.response.data.errors || [
+          {msg: 'Something went wrong! Please try again later'}
+        ];
+        if (errors) {
+          errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
+        }
+        dispatch({type: ADMIN_AUTH_ERROR});
+      }
     }
   } else {
     setAuthToken(null, false);
@@ -49,7 +57,9 @@ export const adminLogin = (email, password) => async (dispatch) => {
     dispatch(setAlert('Login Success', 'success', 2000));
   } catch (err) {
     console.error(err.response.data);
-    const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
+    const errors = err.response.data.errors || [
+      {msg: 'Something went wrong! Please try again later'}
+    ];
     if (errors) {
       errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
     }

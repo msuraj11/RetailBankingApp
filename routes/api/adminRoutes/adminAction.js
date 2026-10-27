@@ -7,7 +7,7 @@ import Transactions from '../../../models/Transactions.js';
 import Admin from '../../../models/adminModels/Admin.js';
 import AdminActionLogs from '../../../models/adminModels/AdminActionLogs.js';
 import adminAuthMiddleware from '../../../middleware/adminAuth.js';
-import {getCleanRequestBody} from '../../../utils/helpers.js';
+import {getCleanRequestBody, isValidMobileNumber} from '../../../utils/helpers.js';
 
 const router = express.Router();
 // @route   GET api/adminAction/getAllUsers
@@ -42,6 +42,7 @@ router.get('/getAllUsers', adminAuthMiddleware, async (req, res) => {
 // @desc    Update user info via admin
 // @access  Private
 router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
+  const cleanedRequestBody = getCleanRequestBody(req.body);
   const {
     userId,
     mobileNumber,
@@ -51,24 +52,16 @@ router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
     occupation,
     sourceOfIncome,
     company
-  } = getCleanRequestBody(req.body);
+  } = cleanedRequestBody;
 
-  if (
-    !(
-      mobileNumber ||
-      permanentAddress ||
-      spouseName ||
-      alternateContactNumber ||
-      occupation ||
-      sourceOfIncome ||
-      company
-    )
-  ) {
-    return res.status(400).json({errors: [{msg: 'Please try updating anyone field'}]});
+  const fieldItems = Object.keys(cleanedRequestBody).filter((key) => key !== 'userId');
+  const hasAllFieldsEmpty = fieldItems.every((key) => cleanedRequestBody[key].trim() === '');
+
+  if (hasAllFieldsEmpty) {
+    return res.status(400).json({errors: [{msg: 'Please fill any one field'}]});
   }
 
-  const hasInvalidDataInput =
-    [...Object.values(req.body)].filter((fedValue) => typeof fedValue !== 'string').length > 0;
+  const hasInvalidDataInput = Object.values(req.body).some((value) => typeof value !== 'string');
 
   if (hasInvalidDataInput) {
     return res
@@ -76,11 +69,11 @@ router.put('/updateUserInfo', adminAuthMiddleware, async (req, res) => {
       .json({errors: [{msg: 'Invalid input type, please provide correct data input.'}]});
   }
 
-  const mobRegX = /^\+91[6-9]\d{9}$/;
-  if (
-    (mobileNumber && !mobRegX.test(mobileNumber)) ||
-    (alternateContactNumber && !mobRegX.test(alternateContactNumber))
-  ) {
+  const hasValidPhoneNumber =
+    (mobileNumber && isValidMobileNumber(mobileNumber)) ||
+    (alternateContactNumber && isValidMobileNumber(alternateContactNumber));
+
+  if (!hasValidPhoneNumber && (mobileNumber || alternateContactNumber)) {
     return res.status(400).json({errors: [{msg: 'Please provide a valid mobile number.'}]});
   }
 

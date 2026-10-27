@@ -2,10 +2,11 @@ import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom';
 import {isEmpty} from 'lodash';
-import {setAlert} from '../../actions/alert';
-import {setTimer} from '../../actions/timer';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import {setAlert} from '../../actions/alert';
+import {setTimer} from '../../actions/timer';
+import {isValidEmail, isValidMobileNumber} from '../../../../utils/helpers';
 
 const Register = ({setAlert, isAuthenticated, setTimer}) => {
   const navigate = useNavigate();
@@ -30,7 +31,8 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
     disableRegButton: false
   });
 
-  const {fields, isErrorMessageOnMobNumb, isPasswordMatch, isEmailError, disableRegButton} = formData;
+  const {fields, isErrorMessageOnMobNumb, isPasswordMatch, isEmailError, disableRegButton} =
+    formData;
   const {name, email, mobileNumber, password, confirmPassword} = fields;
 
   const onFieldChange = (e) => {
@@ -48,15 +50,13 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
     }
     if (e.target.name === 'mobileNumber') {
       const mobNum = `+91${e.target.value}`;
-      const mobRegX = /^\+91[6-9]\d{9}$/;
       setFormData({
         ...formData,
-        isErrorMessageOnMobNumb: !mobRegX.test(mobNum)
+        isErrorMessageOnMobNumb: !isValidMobileNumber(mobNum)
       });
     }
     if (e.target.name === 'email') {
-      const emailRegX = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
-      setFormData({...formData, isEmailError: !emailRegX.test(email)});
+      setFormData({...formData, isEmailError: !isValidEmail(email)});
     }
   };
 
@@ -86,10 +86,14 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
           setTimer();
         }, 4000);
       } else {
-        throw new Error('You are now registered successfully. There might be issue in receiving an email, Please contact support');
+        throw new Error(
+          'You are now registered successfully. There might be issue in receiving an email, Please contact support'
+        );
       }
     } catch (err) {
-      const errors = err?.response?.data?.errors || [{msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}];
+      const errors = err?.response?.data?.errors || [
+        {msg: typeof err === 'string' ? err : 'Something went wrong please try again later!'}
+      ];
       if (errors) {
         errors.forEach((error) => setAlert(error.msg, 'danger', 10000));
       }
@@ -116,7 +120,9 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             onBlur={onBlurFields}
           />
           {isEmailError && <small className="form-danger">Invalid E-Mail format.</small>}
-          <small className="form-text">This site uses Gravatar so if you want a profile image, use a Gravatar email</small>
+          <small className="form-text">
+            This site uses Gravatar so if you want a profile image, use a Gravatar email
+          </small>
         </div>
         <div className="form-group">
           <input
@@ -128,7 +134,9 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             onChange={onFieldChange}
             onBlur={onBlurFields}
           />
-          {isErrorMessageOnMobNumb && <small className="form-danger">Mobile number entered is not valid.</small>}
+          {isErrorMessageOnMobNumb && (
+            <small className="form-danger">Mobile number entered is not valid.</small>
+          )}
         </div>
         <div className="form-group">
           <input
@@ -140,7 +148,9 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             onBlur={onBlurFields}
             minLength="6"
           />
-          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && <small className="form-danger">Passwords didnot match.</small>}
+          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && (
+            <small className="form-danger">Passwords didnot match.</small>
+          )}
         </div>
         <div className="form-group">
           <input
@@ -152,7 +162,9 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
             onBlur={onBlurFields}
             minLength="6"
           />
-          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && <small className="form-danger">Passwords didnot match.</small>}
+          {!isEmpty(password) && !isEmpty(confirmPassword) && !isPasswordMatch && (
+            <small className="form-danger">Passwords didnot match.</small>
+          )}
         </div>
         <button
           type="submit"
@@ -183,7 +195,6 @@ const Register = ({setAlert, isAuthenticated, setTimer}) => {
 
 Register.propTypes = {
   setAlert: PropTypes.func.isRequired,
-  history: PropTypes.object,
   isAuthenticated: PropTypes.bool,
   setTimer: PropTypes.func
 };

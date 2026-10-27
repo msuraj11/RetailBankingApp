@@ -4,7 +4,13 @@ const Modal = ({handleSubmit, handleClose, childJSX}) => {
   return (
     <div id="modal">
       <div className="modal-content">
-        <span className="close" onClick={handleClose} onKeyDown={handleClose} role="button">
+        <span
+          className="close"
+          onClick={handleClose}
+          onKeyDown={handleClose}
+          role="button"
+          tabIndex={0}
+        >
           &times;
         </span>
         <div className="modal-container">

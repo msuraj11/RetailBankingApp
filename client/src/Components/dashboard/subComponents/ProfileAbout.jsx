@@ -32,6 +32,7 @@ const ProfileAbout = ({
       role="button"
       onClick={isAbout ? editAddress : editInfo}
       onKeyDown={isAbout ? editAddress : editInfo}
+      tabIndex={0}
     ></i>
   );
 

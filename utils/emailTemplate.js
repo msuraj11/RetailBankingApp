@@ -28,8 +28,9 @@ const sendEmail = async (toEmail, name, dynamicValue) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Email sent to user: ${toMail} successfully.`);
-    return Promise.resolve(`Email sent to user: ${toMail} successfully.`);
+    const message = `Email sent to user: ${toMail} successfully.`;
+    console.log(message);
+    return message;
   } catch (error) {
     console.log('error sending email to user:', error);
     //return Promise.reject(error);

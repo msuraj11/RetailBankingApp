@@ -1,4 +1,13 @@
-import {USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_PROFILE, CLEAR_ACC_INFO, CLEAR_STATEMENT} from './types';
+import {
+  USER_LOADED,
+  AUTH_ERROR,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT,
+  CLEAR_PROFILE,
+  CLEAR_ACC_INFO,
+  CLEAR_STATEMENT
+} from './types';
 import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
 import {setAlert} from './alert';
@@ -13,7 +22,15 @@ export const loadUser = () => async (dispatch) => {
         payload: res.data
       });
     } catch (err) {
-      dispatch({type: AUTH_ERROR});
+      if (err.response) {
+        const errors = err.response.data.errors || [
+          {msg: 'Something went wrong! Please try again later'}
+        ];
+        if (errors) {
+          errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
+        }
+        dispatch({type: AUTH_ERROR});
+      }
     }
   } else {
     setAuthToken(null);
@@ -40,7 +57,9 @@ export const login = (customerId, password) => async (dispatch) => {
     dispatch(setAlert('Login Success', 'success', 2000));
   } catch (err) {
     console.error(err.response.data);
-    const errors = err.response.data.errors || [{msg: 'Something went wrong! Please try again later'}];
+    const errors = err.response.data.errors || [
+      {msg: 'Something went wrong! Please try again later'}
+    ];
     if (errors) {
       errors.forEach((error) => dispatch(setAlert(error.msg, 'danger', 10000)));
     }
