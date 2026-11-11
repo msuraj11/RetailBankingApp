@@ -21,7 +21,7 @@
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.31.0",
-    "mongoose": "^8.24.1",
+    "mongoose": "^8.24.7",
     "mquery": "^3.2.4",
     "nodemailer": "^10.1.4",
     "yargs-parser": "^20.2.6"
